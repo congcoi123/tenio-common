@@ -23,51 +23,65 @@ THE SOFTWARE.
 */
 package com.tenio.common.worker;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import com.tenio.common.logger.AbstractLogger;
+import com.tenio.common.logger.SystemLogger;
 
 /**
  * @author kong
  */
 // TODO: Add description
-public final class WorkerPoolRunnable extends AbstractLogger implements Runnable {
+public final class WorkerPool extends SystemLogger {
 
-	private Thread __thread;
 	private final BlockingQueue<Runnable> __taskQueue;
+	private final List<WorkerPoolRunnable> __runnables;
 	private final String __name;
-	private final int __index;
 	private boolean __isStopped;
 
-	public WorkerPoolRunnable(String name, int index, BlockingQueue<Runnable> taskQueue) {
-		__taskQueue = taskQueue;
+	public WorkerPool(String name, int noOfThreads, int maxNoOfTasks) {
+		__taskQueue = new ArrayBlockingQueue<Runnable>(maxNoOfTasks);
+		__runnables = new ArrayList<WorkerPoolRunnable>();
 		__name = name;
-		__index = index;
 		__isStopped = false;
+
+		info("CREATED NEW WORKERS",
+				buildgen("Number of threads: ", noOfThreads, ", Max number of tasks: ", maxNoOfTasks));
+
+		for (int i = 0; i < noOfThreads; i++) {
+			__runnables.add(new WorkerPoolRunnable(__name, i, __taskQueue));
+		}
+		for (WorkerPoolRunnable runnable : __runnables) {
+			new Thread(runnable).start();
+		}
 	}
 
-	public void run() {
-		__thread = Thread.currentThread();
-		__thread.setName(String.format("worker-%s-%d", __name, __index));
-		while (!isStopped()) {
+	public synchronized void execute(Runnable task, String debugText) throws Exception {
+		if (__isStopped) {
+			throw new IllegalStateException("WorkersPool is stopped");
+		}
+
+		trace("EXECUTED A TASK", debugText);
+		__taskQueue.offer(task);
+	}
+
+	public synchronized void stop() {
+		__isStopped = true;
+		for (WorkerPoolRunnable runnable : __runnables) {
+			runnable.doStop();
+		}
+	}
+
+	public synchronized void waitUntilAllTasksFinished() {
+		while (__taskQueue.size() > 0) {
 			try {
-				Runnable runnable = (Runnable) __taskQueue.take();
-				runnable.run();
-			} catch (Exception e) {
-				// log or otherwise report exception,
-				// but keep pool thread alive.
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
 				error(e);
 			}
 		}
 	}
 
-	public synchronized void doStop() {
-		__isStopped = true;
-		// break pool thread out of dequeue() call.
-		__thread.interrupt();
-	}
-
-	public synchronized boolean isStopped() {
-		return __isStopped;
-	}
 }

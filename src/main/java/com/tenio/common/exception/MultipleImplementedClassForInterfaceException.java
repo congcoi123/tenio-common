@@ -21,48 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package com.tenio.common.pool;
+package com.tenio.common.exception;
 
-import com.tenio.common.exception.NullElementPoolException;
-
-/**
- * In an application, you can have resources that are limited or time-consuming
- * to create a new one. A solution is to create a limited resource once and
- * reuse it. The object pool design will have the mechanism to create a bulk of
- * objects to pooling use. If the requirements of resources increases, the
- * current bulk's size will be also automatically increased.
- * 
- * @author kong
- * 
- */
-public interface ElementsPool<Element> {
-
+public final class MultipleImplementedClassForInterfaceException extends RuntimeException {
 	/**
-	 * Retrieves an element in the current pool
 	 * 
-	 * @return an element in the pool
 	 */
-	Element get();
+	private static final long serialVersionUID = 9186053637398483773L;
 
-	/**
-	 * When you finished using an element, repay (free) it for the reusing
-	 * 
-	 * @param element the finished using element
-	 * 
-	 * @throws NullElementPoolException
-	 */
-	void repay(Element element) throws NullElementPoolException;
-
-	/**
-	 * Clean up, after that all arrays will be set to <b>null</b>
-	 */
-	void cleanup();
-
-	/**
-	 * Retrieves the pool size
-	 * 
-	 * @return the total number of element or <b>-1</b> if any exceptions caused
-	 */
-	int getPoolSize();
+	public MultipleImplementedClassForInterfaceException(Class<?> clazz) {
+		super(String.format("Multiple implementations for the class: %s found", clazz.getName()));
+	}
 
 }

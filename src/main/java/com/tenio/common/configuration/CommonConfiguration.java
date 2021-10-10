@@ -26,7 +26,7 @@ package com.tenio.common.configuration;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.tenio.common.loggers.SystemLogger;
+import com.tenio.common.logger.SystemLogger;
 
 /**
  * This server needs some basic configuration to start running. The

@@ -21,53 +21,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package com.tenio.common.worker;
-
-import java.util.concurrent.BlockingQueue;
-
-import com.tenio.common.logger.AbstractLogger;
+package com.tenio.common.utility;
 
 /**
  * @author kong
  */
 // TODO: Add description
-public final class WorkerPoolRunnable extends AbstractLogger implements Runnable {
-
-	private Thread __thread;
-	private final BlockingQueue<Runnable> __taskQueue;
-	private final String __name;
-	private final int __index;
-	private boolean __isStopped;
-
-	public WorkerPoolRunnable(String name, int index, BlockingQueue<Runnable> taskQueue) {
-		__taskQueue = taskQueue;
-		__name = name;
-		__index = index;
-		__isStopped = false;
+public final class ByteUtility {
+	
+	private ByteUtility() {
+		
 	}
 
-	public void run() {
-		__thread = Thread.currentThread();
-		__thread.setName(String.format("worker-%s-%d", __name, __index));
-		while (!isStopped()) {
-			try {
-				Runnable runnable = (Runnable) __taskQueue.take();
-				runnable.run();
-			} catch (Exception e) {
-				// log or otherwise report exception,
-				// but keep pool thread alive.
-				error(e);
-			}
-		}
+	public static byte[] intToBytes(int value) {
+		return new byte[] { (byte) (value >> 24), (byte) (value >> 16), (byte) (value >> 8), (byte) value };
 	}
 
-	public synchronized void doStop() {
-		__isStopped = true;
-		// break pool thread out of dequeue() call.
-		__thread.interrupt();
+	public static int bytesToInt(byte[] bytes) {
+		return ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8)
+				| ((bytes[3] & 0xFF) << 0);
 	}
 
-	public synchronized boolean isStopped() {
-		return __isStopped;
+	public static byte[] shortToBytes(short value) {
+		return new byte[] { (byte) (value >> 8), (byte) value };
 	}
+
+	public static short bytesToShort(byte[] bytes) {
+		return (short) (((bytes[0] & 0xFF) << 8) | ((bytes[1] & 0xFF) << 0));
+	}
+
+	public static byte[] resizeBytesArray(byte[] source, int position, int size) {
+		byte[] binary = new byte[size];
+		System.arraycopy(source, position, binary, 0, size);
+		
+		return binary;
+	}
+
 }

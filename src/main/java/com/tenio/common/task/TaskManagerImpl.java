@@ -30,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import com.tenio.common.exceptions.RunningScheduledTaskException;
-import com.tenio.common.loggers.SystemLogger;
+import com.tenio.common.exception.RunningScheduledTaskException;
+import com.tenio.common.logger.SystemLogger;
 
 /**
  * This class uses Java scheduler ({@link ScheduledFuture}) to manage your

@@ -21,53 +21,31 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package com.tenio.common.worker;
-
-import java.util.concurrent.BlockingQueue;
-
-import com.tenio.common.logger.AbstractLogger;
+package com.tenio.common.utility;
 
 /**
+ * A collection of utility methods for time.
+ * 
  * @author kong
  */
-// TODO: Add description
-public final class WorkerPoolRunnable extends AbstractLogger implements Runnable {
-
-	private Thread __thread;
-	private final BlockingQueue<Runnable> __taskQueue;
-	private final String __name;
-	private final int __index;
-	private boolean __isStopped;
-
-	public WorkerPoolRunnable(String name, int index, BlockingQueue<Runnable> taskQueue) {
-		__taskQueue = taskQueue;
-		__name = name;
-		__index = index;
-		__isStopped = false;
+public final class TimeUtility {
+	
+	private TimeUtility() {
+		
 	}
 
-	public void run() {
-		__thread = Thread.currentThread();
-		__thread.setName(String.format("worker-%s-%d", __name, __index));
-		while (!isStopped()) {
-			try {
-				Runnable runnable = (Runnable) __taskQueue.take();
-				runnable.run();
-			} catch (Exception e) {
-				// log or otherwise report exception,
-				// but keep pool thread alive.
-				error(e);
-			}
-		}
+	/**
+	 * @return the current time in seconds
+	 */
+	public static long currentTimeSeconds() {
+		return System.currentTimeMillis() / 1000L;
 	}
 
-	public synchronized void doStop() {
-		__isStopped = true;
-		// break pool thread out of dequeue() call.
-		__thread.interrupt();
+	/**
+	 * @return {@link System#currentTimeMillis()}
+	 */
+	public static long currentTimeMillis() {
+		return System.currentTimeMillis();
 	}
 
-	public synchronized boolean isStopped() {
-		return __isStopped;
-	}
 }

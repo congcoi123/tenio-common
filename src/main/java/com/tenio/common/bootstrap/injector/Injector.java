@@ -36,11 +36,11 @@ import java.util.stream.Stream;
 
 import org.reflections.Reflections;
 
-import com.tenio.common.bootstrap.annotations.Component;
-import com.tenio.common.bootstrap.utilities.ClazzLoaderUtility;
-import com.tenio.common.bootstrap.utilities.InjectionUtility;
-import com.tenio.common.exceptions.MultipleImplementedClassForInterfaceException;
-import com.tenio.common.exceptions.NoImplementedClassFoundException;
+import com.tenio.common.bootstrap.annotation.Component;
+import com.tenio.common.bootstrap.utility.ClazzLoaderUtility;
+import com.tenio.common.bootstrap.utility.InjectionUtility;
+import com.tenio.common.exception.MultipleImplementedClassForInterfaceException;
+import com.tenio.common.exception.NoImplementedClassFoundException;
 
 public final class Injector {
 

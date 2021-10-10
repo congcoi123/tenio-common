@@ -21,53 +21,45 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package com.tenio.common.worker;
+package com.tenio.common.utility;
 
-import java.util.concurrent.BlockingQueue;
-
-import com.tenio.common.logger.AbstractLogger;
+import java.util.Locale;
 
 /**
  * @author kong
  */
 // TODO: Add description
-public final class WorkerPoolRunnable extends AbstractLogger implements Runnable {
-
-	private Thread __thread;
-	private final BlockingQueue<Runnable> __taskQueue;
-	private final String __name;
-	private final int __index;
-	private boolean __isStopped;
-
-	public WorkerPoolRunnable(String name, int index, BlockingQueue<Runnable> taskQueue) {
-		__taskQueue = taskQueue;
-		__name = name;
-		__index = index;
-		__isStopped = false;
+public final class OsUtility {
+	
+	/**
+	 * Types of Operating Systems
+	 */
+	public enum OSType {
+		Windows, MacOS, Linux, Other
+	};
+	
+	private OsUtility() {
+		
 	}
 
-	public void run() {
-		__thread = Thread.currentThread();
-		__thread.setName(String.format("worker-%s-%d", __name, __index));
-		while (!isStopped()) {
-			try {
-				Runnable runnable = (Runnable) __taskQueue.take();
-				runnable.run();
-			} catch (Exception e) {
-				// log or otherwise report exception,
-				// but keep pool thread alive.
-				error(e);
-			}
+	/**
+	 * Detect the operating system from the os.name System property and cache the
+	 * result
+	 * 
+	 * @return The operating system detected
+	 */
+	public static OSType getOperatingSystemType() {
+
+		String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+		if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
+			return OSType.MacOS;
+		} else if (OS.indexOf("win") >= 0) {
+			return OSType.Windows;
+		} else if (OS.indexOf("nux") >= 0) {
+			return OSType.Linux;
+		} else {
+			return OSType.Other;
 		}
-	}
 
-	public synchronized void doStop() {
-		__isStopped = true;
-		// break pool thread out of dequeue() call.
-		__thread.interrupt();
-	}
-
-	public synchronized boolean isStopped() {
-		return __isStopped;
 	}
 }

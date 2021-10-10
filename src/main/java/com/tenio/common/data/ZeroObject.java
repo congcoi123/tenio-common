@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import com.tenio.common.data.elements.ZeroData;
+import com.tenio.common.data.element.ZeroData;
 
 public interface ZeroObject extends ZeroElement {
 
