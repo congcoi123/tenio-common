@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.configuration.constant;
 
 import com.tenio.common.pool.ElementsPool;
@@ -31,36 +32,29 @@ import com.tenio.common.pool.ElementsPool;
  */
 public final class CommonConstant {
 
-	private CommonConstant() {
+  /**
+   * The number of elements in a bulk those created for the first time.
+   *
+   * @see ElementsPool
+   */
+  public static final int DEFAULT_NUMBER_ELEMENTS_POOL = 64;
+  /**
+   * When the desired number of elements exceeded the first configuration. The new
+   * number of elements will be added.
+   *
+   * @see ElementsPool
+   */
+  public static final int ADDITIONAL_NUMBER_ELEMENTS_POOL = 32;
+  /**
+   * The base FPS value in server.
+   */
+  public static final float FPS = 1 / 60.0f;
+  public static final String DEFAULT_CONFIGURATION_PACKAGE = "com.tenio.common.configuration";
+  public static final String DEFAULT_BOOTSTRAP_PACKAGE = "com.tenio.core.bootstrap";
+  public static final String DEFAULT_EXTENSION_EVENT_PACKAGE = "com.tenio.core.extension.events";
+  public static final String DEFAULT_ENGINE_HEARTBEAT_PACKAGE = "com.tenio.engine.heartbeat";
 
-	}
-
-	/**
-	 * The number of elements in a bulk those created for the first time.
-	 * 
-	 * @see ElementsPool
-	 */
-	public static final int DEFAULT_NUMBER_ELEMENTS_POOL = 64;
-
-	/**
-	 * When the desired number of elements exceeded the first configuration. The new
-	 * number of elements will be added.
-	 * 
-	 * @see ElementsPool
-	 */
-	public static final int ADDITIONAL_NUMBER_ELEMENTS_POOL = 32;
-
-	/**
-	 * Base FPS in server
-	 */
-	public static final float FPS = 1 / 60.0f;
-
-	public static final String DEFAULT_CONFIGURATION_PACKAGE = "com.tenio.common.configuration";
-
-	public static final String DEFAULT_BOOTSTRAP_PACKAGE = "com.tenio.core.bootstrap";
-
-	public static final String DEFAULT_EXTENSION_EVENT_PACKAGE = "com.tenio.core.extension.events";
-
-	public static final String DEFAULT_ENGINE_HEARTBEAT_PACKAGE = "com.tenio.engine.heartbeat";
-
+  private CommonConstant() {
+    throw new UnsupportedOperationException("This class doesn't support to create a new instance");
+  }
 }

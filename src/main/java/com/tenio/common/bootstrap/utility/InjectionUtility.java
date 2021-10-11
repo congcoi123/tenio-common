@@ -35,7 +35,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This class make process of creating <b>"bean"</b> instance by
+ * This class helps the process of creating <b>"bean"</b> instance by
  * {@link #autowire(Injector, Class, Object)} method.
  */
 public final class InjectionUtility {
@@ -46,40 +46,41 @@ public final class InjectionUtility {
   }
 
   /**
+   * Assigns bean values to the corresponding fields in a class.
    *
-   * @param injector
-   * @param clazz
-   * @param clazzInstance
-   * @throws InstantiationException
-   * @throws IllegalAccessException
-   * @throws IllegalArgumentException
-   * @throws InvocationTargetException
-   * @throws NoSuchMethodException
-   * @throws SecurityException
+   * @param injector the injector
+   * @param clazz    the target class that holds declared bean fields
+   * @param bean     the bean instance associated with the declared field
+   * @throws IllegalArgumentException  related to illegal argument exception
+   * @throws SecurityException         related to security exception
+   * @throws NoSuchMethodException     caused by <b>getDeclaredConstructor()</b>
+   * @throws InvocationTargetException caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @throws InstantiationException    caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @throws IllegalAccessException    caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @see Injector
    */
-  public static void autowire(Injector injector, Class<?> clazz, Object clazzInstance)
+  public static void autowire(Injector injector, Class<?> clazz, Object bean)
       throws InstantiationException, IllegalAccessException, IllegalArgumentException,
       InvocationTargetException,
       NoSuchMethodException, SecurityException, ClassNotFoundException {
-
-    Set<Field> fields = findFields(clazz);
-    for (Field field : fields) {
-      String qualifier = field.isAnnotationPresent(AutowiredQualifier.class)
+    var fields = findFields(clazz);
+    for (var field : fields) {
+      var qualifier = field.isAnnotationPresent(AutowiredQualifier.class)
           ? field.getAnnotation(AutowiredQualifier.class).value()
           : null;
       if (field.isAnnotationPresent(AutowiredAcceptNull.class)) {
         try {
-          Object fieldInstance =
+          var fieldInstance =
               injector.getBeanInstance(field.getType(), field.getName(), qualifier);
-          field.set(clazzInstance, fieldInstance);
+          field.set(bean, fieldInstance);
           autowire(injector, fieldInstance.getClass(), fieldInstance);
         } catch (NoImplementedClassFoundException e) {
           // do nothing
         }
       } else {
-        Object fieldInstance =
+        var fieldInstance =
             injector.getBeanInstance(field.getType(), field.getName(), qualifier);
-        field.set(clazzInstance, fieldInstance);
+        field.set(bean, fieldInstance);
         autowire(injector, fieldInstance.getClass(), fieldInstance);
       }
     }

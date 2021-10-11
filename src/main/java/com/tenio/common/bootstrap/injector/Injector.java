@@ -158,7 +158,7 @@ public final class Injector {
    * Retrieves a bean which is declared in a class's field and put it in map of beans as well.
    *
    * @param classInterface The interface using to create a new bean
-   * @param fieldName      The name of field that holds a reference of a bean in a class
+   * @param fieldName      The name of class's field that holds a reference of a bean in a class
    * @param qualifier      To differentiate which implemented class should be used to create the
    *                       bean
    * @param <T>            the type of implemented class
