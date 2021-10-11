@@ -24,17 +24,18 @@ THE SOFTWARE.
 
 package com.tenio.common.bootstrap.annotation;
 
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Declare this annotation for the root class which works as the entry point of the application.
+ * Declares this annotation for the root class which works as the entry point of the application.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Retention(RUNTIME)
+@Target(TYPE)
 @Documented
 public @interface Bootstrap {
 }

@@ -21,8 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.bootstrap.injector;
 
+import com.tenio.common.bootstrap.annotation.Component;
+import com.tenio.common.bootstrap.utility.ClassLoaderUtility;
+import com.tenio.common.bootstrap.utility.InjectionUtility;
+import com.tenio.common.exception.MultipleImplementedClassForInterfaceException;
+import com.tenio.common.exception.NoImplementedClassFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -33,122 +39,124 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.reflections.Reflections;
-
-import com.tenio.common.bootstrap.annotation.Component;
-import com.tenio.common.bootstrap.utility.ClazzLoaderUtility;
-import com.tenio.common.bootstrap.utility.InjectionUtility;
-import com.tenio.common.exception.MultipleImplementedClassForInterfaceException;
-import com.tenio.common.exception.NoImplementedClassFoundException;
 
 public final class Injector {
 
-	private final Map<Class<?>, Class<?>> __implementedClazzsMap;
-	private final Map<Class<?>, Object> __clazzInstancesMap;
+  private static final Injector __instance = new Injector();
+  
+  private final Map<Class<?>, Class<?>> __implementedClazzsMap;
+  private final Map<Class<?>, Object> __clazzInstancesMap;
 
-	public static Injector newInstance() {
-		return new Injector();
-	}
+  private Injector() {
+    __implementedClazzsMap = new HashMap<Class<?>, Class<?>>();
+    __clazzInstancesMap = new HashMap<Class<?>, Object>();
+  }
 
-	private Injector() {
-		__implementedClazzsMap = new HashMap<Class<?>, Class<?>>();
-		__clazzInstancesMap = new HashMap<Class<?>, Object>();
-	}
+  public static Injector newInstance() {
+    return __instance;
+  }
 
-	public <T> T getInstance(Class<T> clazz) throws Exception {
-		return __getBeanInstance(clazz);
-	}
+  public <T> T getInstance(Class<T> clazz) throws Exception {
+    return __getBeanInstance(clazz);
+  }
 
-	public void scanPackages(Class<?> entryClazz, String... packages)
-			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
-			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+  public void scanPackages(Class<?> entryClazz, String... packages)
+      throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
+      IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
+      SecurityException {
 
-		Class<?>[] clazzs = ClazzLoaderUtility.getClazzs(entryClazz.getPackage().getName());
-		Reflections reflections = new Reflections(entryClazz.getPackage().getName());
+    Class<?>[] clazzs = ClassLoaderUtility.getClasses(entryClazz.getPackage().getName());
+    Reflections reflections = new Reflections(entryClazz.getPackage().getName());
 
-		for (String pack : packages) {
-			Class<?>[] clazzPackage = ClazzLoaderUtility.getClazzs(pack);
-			clazzs = Stream.concat(Arrays.stream(clazzs), Arrays.stream(clazzPackage)).toArray(Class<?>[]::new);
+    for (String pack : packages) {
+      Class<?>[] clazzPackage = ClassLoaderUtility.getClasses(pack);
+      clazzs = Stream.concat(Arrays.stream(clazzs), Arrays.stream(clazzPackage))
+          .toArray(Class<?>[]::new);
 
-			Reflections reflectionPackage = new Reflections(pack);
-			reflections.merge(reflectionPackage);
-		}
+      Reflections reflectionPackage = new Reflections(pack);
+      reflections.merge(reflectionPackage);
+    }
 
-		Set<Class<?>> implementedClazzs = reflections.getTypesAnnotatedWith(Component.class);
+    Set<Class<?>> implementedClazzs = reflections.getTypesAnnotatedWith(Component.class);
 
-		// scan all interface with its implemented classes
-		for (Class<?> implementedClazz : implementedClazzs) {
-			Class<?>[] clazzInterfaces = implementedClazz.getInterfaces();
-			if (clazzInterfaces.length == 0) {
-				__implementedClazzsMap.put(implementedClazz, implementedClazz);
-			} else {
-				for (Class<?> clazzInterface : clazzInterfaces) {
-					__implementedClazzsMap.put(implementedClazz, clazzInterface);
-				}
-			}
-		}
+    // scan all interface with its implemented classes
+    for (Class<?> implementedClazz : implementedClazzs) {
+      Class<?>[] clazzInterfaces = implementedClazz.getInterfaces();
+      if (clazzInterfaces.length == 0) {
+        __implementedClazzsMap.put(implementedClazz, implementedClazz);
+      } else {
+        for (Class<?> clazzInterface : clazzInterfaces) {
+          __implementedClazzsMap.put(implementedClazz, clazzInterface);
+        }
+      }
+    }
 
-		// create class instance based on annotations
-		for (Class<?> clazz : clazzs) {
-			if (clazz.isAnnotationPresent(Component.class)) {
-				Object clazzInstance = clazz.getDeclaredConstructor().newInstance();
-				__clazzInstancesMap.put(clazz, clazzInstance);
-				// recursively create field instance for this class instance
-				InjectionUtility.autowire(this, clazz, clazzInstance);
-			}
-		}
+    // create class instance based on annotations
+    for (Class<?> clazz : clazzs) {
+      if (clazz.isAnnotationPresent(Component.class)) {
+        Object clazzInstance = clazz.getDeclaredConstructor().newInstance();
+        __clazzInstancesMap.put(clazz, clazzInstance);
+        // recursively create field instance for this class instance
+        InjectionUtility.autowire(this, clazz, clazzInstance);
+      }
+    }
 
-	}
+  }
 
-	public <T> Object getBeanInstance(Class<T> clazzInterface, String fieldName, String qualifier)
-			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException, SecurityException {
-		Class<?> implementedClazz = __getImplementedClazz(clazzInterface, fieldName, qualifier);
+  public <T> Object getBeanInstance(Class<T> clazzInterface, String fieldName, String qualifier)
+      throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+      InvocationTargetException,
+      NoSuchMethodException, SecurityException {
+    Class<?> implementedClazz = __getImplementedClazz(clazzInterface, fieldName, qualifier);
 
-		if (__clazzInstancesMap.containsKey(implementedClazz)) {
-			return __clazzInstancesMap.get(implementedClazz);
-		}
+    if (__clazzInstancesMap.containsKey(implementedClazz)) {
+      return __clazzInstancesMap.get(implementedClazz);
+    }
 
-		synchronized (__clazzInstancesMap) {
-			Object clazzInstance = implementedClazz.getDeclaredConstructor().newInstance();
-			__clazzInstancesMap.put(implementedClazz, clazzInstance);
-			return clazzInstance;
-		}
-	}
+    synchronized (__clazzInstancesMap) {
+      Object clazzInstance = implementedClazz.getDeclaredConstructor().newInstance();
+      __clazzInstancesMap.put(implementedClazz, clazzInstance);
+      return clazzInstance;
+    }
+  }
 
-	@SuppressWarnings("unchecked")
-	private <T> T __getBeanInstance(Class<T> clazzInterface) throws InstantiationException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		return (T) getBeanInstance(clazzInterface, null, null);
-	}
+  @SuppressWarnings("unchecked")
+  private <T> T __getBeanInstance(Class<T> clazzInterface)
+      throws InstantiationException, IllegalAccessException,
+      IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
+      SecurityException {
+    return (T) getBeanInstance(clazzInterface, null, null);
+  }
 
-	private Class<?> __getImplementedClazz(Class<?> clazzInterface, final String fieldName, final String qualifier) {
-		Set<Entry<Class<?>, Class<?>>> implementedClazzs = __implementedClazzsMap.entrySet().stream()
-				.filter(entry -> entry.getValue() == clazzInterface).collect(Collectors.toSet());
+  private Class<?> __getImplementedClazz(Class<?> clazzInterface, final String fieldName,
+                                         final String qualifier) {
+    Set<Entry<Class<?>, Class<?>>> implementedClazzs = __implementedClazzsMap.entrySet().stream()
+        .filter(entry -> entry.getValue() == clazzInterface).collect(Collectors.toSet());
 
-		if (implementedClazzs == null || implementedClazzs.isEmpty()) {
-			throw new NoImplementedClassFoundException(clazzInterface);
-		} else if (implementedClazzs.size() == 1) {
-			// just only one implemented class for the interface
-			Optional<Entry<Class<?>, Class<?>>> optional = implementedClazzs.stream().findFirst();
-			if (optional.isPresent()) {
-				return optional.get().getKey();
-			}
-		} else if (implementedClazzs.size() > 1) {
-			// multiple implemented class from the interface, need to be selected by
-			// "qualifier" value
-			final String findBy = (qualifier == null || qualifier.trim().length() == 0) ? fieldName : qualifier;
-			Optional<Entry<Class<?>, Class<?>>> optional = implementedClazzs.stream()
-					.filter(entry -> entry.getKey().getSimpleName().equalsIgnoreCase(findBy)).findAny();
-			if (optional.isPresent()) {
-				return optional.get().getKey();
-			} else {
-				// could not find a appropriately single instance, so throw an exception
-				throw new MultipleImplementedClassForInterfaceException(clazzInterface);
-			}
-		}
+    if (implementedClazzs == null || implementedClazzs.isEmpty()) {
+      throw new NoImplementedClassFoundException(clazzInterface);
+    } else if (implementedClazzs.size() == 1) {
+      // just only one implemented class for the interface
+      Optional<Entry<Class<?>, Class<?>>> optional = implementedClazzs.stream().findFirst();
+      if (optional.isPresent()) {
+        return optional.get().getKey();
+      }
+    } else if (implementedClazzs.size() > 1) {
+      // multiple implemented class from the interface, need to be selected by
+      // "qualifier" value
+      final String findBy =
+          (qualifier == null || qualifier.trim().length() == 0) ? fieldName : qualifier;
+      Optional<Entry<Class<?>, Class<?>>> optional = implementedClazzs.stream()
+          .filter(entry -> entry.getKey().getSimpleName().equalsIgnoreCase(findBy)).findAny();
+      if (optional.isPresent()) {
+        return optional.get().getKey();
+      } else {
+        // could not find a appropriately single instance, so throw an exception
+        throw new MultipleImplementedClassForInterfaceException(clazzInterface);
+      }
+    }
 
-		return null;
-	}
+    return null;
+  }
 }
