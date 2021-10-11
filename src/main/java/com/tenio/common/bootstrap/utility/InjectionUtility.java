@@ -41,16 +41,28 @@ import java.util.Set;
 public final class InjectionUtility {
 
   private InjectionUtility() {
-    throw new UnsupportedOperationException("This class did not support to create a new " +
-        "instance");
+    throw new UnsupportedOperationException("This class did not support to create a new "
+        + "instance");
   }
 
+  /**
+   *
+   * @param injector
+   * @param clazz
+   * @param clazzInstance
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws IllegalArgumentException
+   * @throws InvocationTargetException
+   * @throws NoSuchMethodException
+   * @throws SecurityException
+   */
   public static void autowire(Injector injector, Class<?> clazz, Object clazzInstance)
       throws InstantiationException, IllegalAccessException, IllegalArgumentException,
       InvocationTargetException,
-      NoSuchMethodException, SecurityException {
+      NoSuchMethodException, SecurityException, ClassNotFoundException {
 
-    Set<Field> fields = __findFields(clazz);
+    Set<Field> fields = findFields(clazz);
     for (Field field : fields) {
       String qualifier = field.isAnnotationPresent(AutowiredQualifier.class)
           ? field.getAnnotation(AutowiredQualifier.class).value()
@@ -80,7 +92,7 @@ public final class InjectionUtility {
    * @param clazz a target class
    * @return a set of fields in the class
    */
-  private static Set<Field> __findFields(Class<?> clazz) {
+  private static Set<Field> findFields(Class<?> clazz) {
     var fields = new HashSet<Field>();
 
     while (clazz != null) {

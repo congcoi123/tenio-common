@@ -35,126 +35,177 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.reflections.Reflections;
 
+/**
+ * This class helps us create and retrieve <b>"beans"</b> (the class instances).
+ */
 public final class Injector {
 
-  private static final Injector __instance = new Injector();
-  
-  private final Map<Class<?>, Class<?>> __implementedClazzsMap;
-  private final Map<Class<?>, Object> __clazzInstancesMap;
+  private static final Injector instance = new Injector();
+
+  /**
+   * With the key is the interface and the value holds an implemented class.
+   */
+  private final Map<Class<?>, Class<?>> classesMap;
+  /**
+   * With the key is the interface implemented class and the value holds its instance.
+   */
+  private final Map<Class<?>, Object> classBeansMap;
 
   private Injector() {
-    __implementedClazzsMap = new HashMap<Class<?>, Class<?>>();
-    __clazzInstancesMap = new HashMap<Class<?>, Object>();
+    if (instance != null) {
+      throw new ExceptionInInitializerError("Could not re-create the class instance");
+    }
+
+    classesMap = new HashMap<Class<?>, Class<?>>();
+    classBeansMap = new HashMap<Class<?>, Object>();
   }
 
   public static Injector newInstance() {
-    return __instance;
+    return instance;
   }
 
-  public <T> T getInstance(Class<T> clazz) throws Exception {
-    return __getBeanInstance(clazz);
-  }
-
-  public void scanPackages(Class<?> entryClazz, String... packages)
+  /**
+   * Scans all input packages to create beans and put them into map.
+   *
+   * @param entryClass the root class which should be located in the parent package of other
+   *                   class' packages
+   * @param packages   free to define the scanning packages by their names
+   * @throws IOException               related to input/output exception
+   * @throws IllegalArgumentException  related to illegal argument exception
+   * @throws SecurityException         related to security exception
+   * @throws ClassNotFoundException    caused by <b>getImplementedClass()</b>
+   * @throws NoSuchMethodException     caused by <b>getDeclaredConstructor()</b>
+   * @throws InvocationTargetException caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @throws InstantiationException    caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @throws IllegalAccessException    caused by <b>getDeclaredConstructor().newInstance()</b>
+   */
+  public void scanPackages(Class<?> entryClass, String... packages)
       throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
       IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
       SecurityException {
+    // fetches all classes that are in the same package as the root one
+    var classes = ClassLoaderUtility.getClasses(entryClass.getPackage().getName());
+    // declares a reflection object based on the package of root class
+    var reflections = new Reflections(entryClass.getPackage().getName());
 
-    Class<?>[] clazzs = ClassLoaderUtility.getClasses(entryClazz.getPackage().getName());
-    Reflections reflections = new Reflections(entryClazz.getPackage().getName());
-
-    for (String pack : packages) {
-      Class<?>[] clazzPackage = ClassLoaderUtility.getClasses(pack);
-      clazzs = Stream.concat(Arrays.stream(clazzs), Arrays.stream(clazzPackage))
+    for (var pack : packages) {
+      var packageClasses = ClassLoaderUtility.getClasses(pack);
+      classes = Stream.concat(Arrays.stream(classes), Arrays.stream(packageClasses))
           .toArray(Class<?>[]::new);
 
-      Reflections reflectionPackage = new Reflections(pack);
+      var reflectionPackage = new Reflections(pack);
       reflections.merge(reflectionPackage);
     }
 
-    Set<Class<?>> implementedClazzs = reflections.getTypesAnnotatedWith(Component.class);
+    // the implemented class is defined with the "Component" annotation declared inside it
+    // in case you need more annotations with the same effect with this one, you should put them
+    // in here
+    var implementedClasses = reflections.getTypesAnnotatedWith(Component.class);
 
-    // scan all interface with its implemented classes
-    for (Class<?> implementedClazz : implementedClazzs) {
-      Class<?>[] clazzInterfaces = implementedClazz.getInterfaces();
-      if (clazzInterfaces.length == 0) {
-        __implementedClazzsMap.put(implementedClazz, implementedClazz);
+    // scans all interfaces with their implemented classes
+    for (var implementedClass : implementedClasses) {
+      var classInterfaces = implementedClass.getInterfaces();
+      // in case the class has not implemented any interfaces, it still can be created, so put
+      // the class into the map
+      if (classInterfaces.length == 0) {
+        classesMap.put(implementedClass, implementedClass);
       } else {
-        for (Class<?> clazzInterface : clazzInterfaces) {
-          __implementedClazzsMap.put(implementedClazz, clazzInterface);
+        // normal case, put the pair of class and interface
+        // the interface will be used to retrieved back the corresponding class when we want to
+        // create a bean by its interface
+        for (var classInterface : classInterfaces) {
+          classesMap.put(implementedClass, classInterface);
         }
       }
     }
 
-    // create class instance based on annotations
-    for (Class<?> clazz : clazzs) {
+    // create beans (class instances) based on annotations
+    for (var clazz : classes) {
+      // in case you need to create a bean with another annotation, put it in here
+      // but notices to put it in "implementedClasses" first
       if (clazz.isAnnotationPresent(Component.class)) {
-        Object clazzInstance = clazz.getDeclaredConstructor().newInstance();
-        __clazzInstancesMap.put(clazz, clazzInstance);
+        var bean = clazz.getDeclaredConstructor().newInstance();
+        classBeansMap.put(clazz, bean);
         // recursively create field instance for this class instance
-        InjectionUtility.autowire(this, clazz, clazzInstance);
+        InjectionUtility.autowire(this, clazz, bean);
       }
     }
-
   }
 
-  public <T> Object getBeanInstance(Class<T> clazzInterface, String fieldName, String qualifier)
-      throws InstantiationException, IllegalAccessException, IllegalArgumentException,
-      InvocationTargetException,
-      NoSuchMethodException, SecurityException {
-    Class<?> implementedClazz = __getImplementedClazz(clazzInterface, fieldName, qualifier);
+  /**
+   * Gets a bean by its declared interface.
+   *
+   * @param clazz the interface class
+   * @param <T>   the returned type of interface
+   * @return a bean (an instance of the interface
+   * @throws ClassNotFoundException    caused by <b>getImplementedClass()</b>
+   * @throws NoSuchMethodException     caused by <b>getDeclaredConstructor()</b>
+   * @throws InvocationTargetException caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @throws InstantiationException    caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @throws IllegalAccessException    caused by <b>getDeclaredConstructor().newInstance()</b>
+   */
+  public <T> T getBean(Class<T> clazz)
+      throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
+      InstantiationException, IllegalAccessException {
+    return (T) getBeanInstance(clazz, null, null);
+  }
 
-    if (__clazzInstancesMap.containsKey(implementedClazz)) {
-      return __clazzInstancesMap.get(implementedClazz);
+  /**
+   * Retrieves a bean which is declared in a class's field and put it in map of beans as well.
+   *
+   * @param classInterface The interface using to create a new bean
+   * @param fieldName      The name of field that holds a reference of a bean in a class
+   * @param qualifier      To differentiate which implemented class should be used to create the
+   *                       bean
+   * @param <T>            the type of implemented class
+   * @return a bean object, an instance of the implemented class
+   * @throws ClassNotFoundException    caused by <b>getImplementedClass()</b>
+   * @throws NoSuchMethodException     caused by <b>getDeclaredConstructor()</b>
+   * @throws InvocationTargetException caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @throws InstantiationException    caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @throws IllegalAccessException    caused by <b>getDeclaredConstructor().newInstance()</b>
+   */
+  public <T> Object getBeanInstance(Class<T> classInterface, String fieldName, String qualifier)
+      throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
+      InstantiationException, IllegalAccessException {
+    var implementedClass = getImplementedClass(classInterface, fieldName, qualifier);
+
+    synchronized (classBeansMap) {
+      if (classBeansMap.containsKey(implementedClass)) {
+        return classBeansMap.get(implementedClass);
+      }
+
+      var bean = implementedClass.getDeclaredConstructor().newInstance();
+      classBeansMap.put(implementedClass, bean);
+      return bean;
     }
-
-    synchronized (__clazzInstancesMap) {
-      Object clazzInstance = implementedClazz.getDeclaredConstructor().newInstance();
-      __clazzInstancesMap.put(implementedClazz, clazzInstance);
-      return clazzInstance;
-    }
   }
 
-  @SuppressWarnings("unchecked")
-  private <T> T __getBeanInstance(Class<T> clazzInterface)
-      throws InstantiationException, IllegalAccessException,
-      IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
-      SecurityException {
-    return (T) getBeanInstance(clazzInterface, null, null);
-  }
+  private Class<?> getImplementedClass(Class<?> classInterface, String fieldName,
+                                       String qualifier) throws ClassNotFoundException {
+    var implementedClasses = classesMap.entrySet().stream()
+        .filter(entry -> entry.getValue() == classInterface).collect(Collectors.toSet());
 
-  private Class<?> __getImplementedClazz(Class<?> clazzInterface, final String fieldName,
-                                         final String qualifier) {
-    Set<Entry<Class<?>, Class<?>>> implementedClazzs = __implementedClazzsMap.entrySet().stream()
-        .filter(entry -> entry.getValue() == clazzInterface).collect(Collectors.toSet());
-
-    if (implementedClazzs == null || implementedClazzs.isEmpty()) {
-      throw new NoImplementedClassFoundException(clazzInterface);
-    } else if (implementedClazzs.size() == 1) {
+    if (implementedClasses == null || implementedClasses.isEmpty()) {
+      throw new NoImplementedClassFoundException(classInterface);
+    } else if (implementedClasses.size() == 1) {
       // just only one implemented class for the interface
-      Optional<Entry<Class<?>, Class<?>>> optional = implementedClazzs.stream().findFirst();
-      if (optional.isPresent()) {
-        return optional.get().getKey();
-      }
-    } else if (implementedClazzs.size() > 1) {
+      var optional = implementedClasses.stream().findFirst();
+      return optional.map(Entry::getKey).orElseThrow(ClassNotFoundException::new);
+    } else if (implementedClasses.size() > 1) {
       // multiple implemented class from the interface, need to be selected by
       // "qualifier" value
-      final String findBy =
+      final var findBy =
           (qualifier == null || qualifier.trim().length() == 0) ? fieldName : qualifier;
-      Optional<Entry<Class<?>, Class<?>>> optional = implementedClazzs.stream()
+      var optional = implementedClasses.stream()
           .filter(entry -> entry.getKey().getSimpleName().equalsIgnoreCase(findBy)).findAny();
-      if (optional.isPresent()) {
-        return optional.get().getKey();
-      } else {
-        // could not find a appropriately single instance, so throw an exception
-        throw new MultipleImplementedClassForInterfaceException(clazzInterface);
-      }
+      // in case of could not find an appropriately single instance, so throw an exception
+      return optional.map(Entry::getKey)
+          .orElseThrow(() -> new MultipleImplementedClassForInterfaceException(classInterface));
     }
 
     return null;

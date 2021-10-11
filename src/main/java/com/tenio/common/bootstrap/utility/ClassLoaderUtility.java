@@ -36,12 +36,20 @@ import java.util.List;
 public final class ClassLoaderUtility {
 
   private ClassLoaderUtility() {
-    throw new UnsupportedOperationException("This class did not support to create a new " +
-        "instance");
+    throw new UnsupportedOperationException("This class did not support to create a new "
+        + "instance");
   }
 
+  /**
+   * Scans a package to retrieve all classes inside it.
+   *
+   * @param packageName the package which contains loading classes
+   * @return an array of classes or an empty array
+   * @throws IOException when the class loader could not get the resources
+   * @throws ClassNotFoundException when the target class was not found
+   */
   public static Class<?>[] getClasses(String packageName)
-      throws IOException, ClassNotFoundException {
+      throws ClassNotFoundException, IOException {
     var classLoader = Thread.currentThread().getContextClassLoader();
 
     if (classLoader == null) {
@@ -59,13 +67,13 @@ public final class ClassLoaderUtility {
 
     var classes = new ArrayList<Class<?>>();
     for (var file : directories) {
-      classes.addAll(__findClasses(file, packageName));
+      classes.addAll(findClasses(file, packageName));
     }
 
     return classes.toArray(new Class[classes.size()]);
   }
 
-  private static List<Class<?>> __findClasses(File directory, String packageName)
+  private static List<Class<?>> findClasses(File directory, String packageName)
       throws ClassNotFoundException {
     var classes = new ArrayList<Class<?>>();
 
@@ -80,7 +88,7 @@ public final class ClassLoaderUtility {
         if (!file.getName().contains(".")) {
           throw new IllegalArgumentException("Directory does not contain the separator");
         }
-        classes.addAll(__findClasses(file, StringUtility.strgen(packageName, ".", file.getName())));
+        classes.addAll(findClasses(file, StringUtility.strgen(packageName, ".", file.getName())));
       } else if (file.getName().endsWith(".class")) {
         String className = StringUtility.strgen(packageName, ".",
             file.getName().substring(0, file.getName().length() - 6));

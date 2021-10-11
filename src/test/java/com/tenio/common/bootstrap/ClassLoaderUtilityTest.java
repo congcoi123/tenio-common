@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
-public final class BootstrapTest {
+public final class ClassLoaderUtilityTest {
 
   @Test
   public void scanPackageShouldReturnListOfClasses() throws IOException, ClassNotFoundException {
