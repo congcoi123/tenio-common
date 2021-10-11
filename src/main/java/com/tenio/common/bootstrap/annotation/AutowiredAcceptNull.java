@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.bootstrap.annotation;
 
 import static java.lang.annotation.ElementType.CONSTRUCTOR;
@@ -28,13 +29,21 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import com.tenio.common.exception.NoImplementedClassFoundException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-@Target({ METHOD, CONSTRUCTOR, FIELD })
+/**
+ * This annotation helps you create inject the object dependency like {@link Autowired} does.
+ * But the difference is that this one should be used in case you don't know the implementing
+ * class was defined or not. When the corresponding class was not found then the variable
+ * associated with it will be set by <b>null</b>.
+ * <br>
+ * Using this annotation will never throw {@link NoImplementedClassFoundException} exception.
+ */
+@Target({METHOD, CONSTRUCTOR, FIELD})
 @Retention(RUNTIME)
 @Documented
 public @interface AutowiredAcceptNull {
-
 }

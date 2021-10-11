@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.bootstrap.annotation;
 
 import static java.lang.annotation.ElementType.CONSTRUCTOR;
@@ -32,9 +33,15 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-@Target({ METHOD, CONSTRUCTOR, FIELD })
+/**
+ * <b>Autowiring</b> feature enables you to inject the object dependency implicitly, and it
+ * internally uses <b>setter</b> or <b>constructor</b> injection.
+ * <br>
+ * <b>Autowiring</b> can't be used to inject <b>primitive</b> and <b>string values</b> because it
+ * works with reference only.
+ */
+@Target({METHOD, CONSTRUCTOR, FIELD})
 @Retention(RUNTIME)
 @Documented
 public @interface Autowired {
-
 }
