@@ -22,13 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.configuration;
+package com.tenio.common.bootstrap.test.impl;
 
-/**
- * This server needs some basic configuration to start running. The
- * configuration file can be defined as an XML file. See an example in
- * <b>configuration.example.xml</b>. You can also extend this file to create your own
- * configuration values.
- */
-public interface ConfigurationType {
+import com.tenio.common.bootstrap.annotation.Component;
+import com.tenio.common.bootstrap.test.inf.TestInterfaceD;
+
+@Component
+public class TestClassD implements TestInterfaceD {
 }

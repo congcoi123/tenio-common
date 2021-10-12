@@ -30,28 +30,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.tenio.common.bootstrap.utility.ClassLoaderUtility;
 import java.io.IOException;
-import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 public final class ClassLoaderUtilityTest {
 
   @Test
   public void scanPackageShouldReturnListOfClasses() throws IOException, ClassNotFoundException {
-    var listClasses = ClassLoaderUtility.getClasses("com.tenio.common.bootstrap.clazz");
+    var listClasses = ClassLoaderUtility.getClasses("com.tenio.common.bootstrap.loader");
     assertAll("scanPackageShouldReturnListOfClasses",
-        () -> assertEquals(listClasses.length, 3),
+        () -> assertEquals(listClasses.size(), 3),
         () -> assertTrue(
-            Arrays.stream(listClasses).map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
-                "com.tenio" +
-                    ".common.bootstrap.clazz.TestClassA"))),
+            listClasses.stream().map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
+                "com.tenio.common.bootstrap.loader.TestClassA"))),
         () -> assertTrue(
-            Arrays.stream(listClasses).map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
-                "com.tenio" +
-                    ".common.bootstrap.clazz.TestClassB"))),
+            listClasses.stream().map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
+                "com.tenio.common.bootstrap.loader.TestClassB"))),
         () -> assertTrue(
-            Arrays.stream(listClasses).map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
-                "com.tenio" +
-                    ".common.bootstrap.clazz.TestClassC")))
+            listClasses.stream().map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
+                "com.tenio.common.bootstrap.loader.TestClassC")))
     );
   }
 
@@ -59,6 +55,6 @@ public final class ClassLoaderUtilityTest {
   public void scanNonExistedPackageShouldReturnEmptyArray()
       throws IOException, ClassNotFoundException {
     var listClasses = ClassLoaderUtility.getClasses("com.tenio.common.bootstrap.null");
-    assertTrue(listClasses.length == 0);
+    assertTrue(listClasses.isEmpty());
   }
 }

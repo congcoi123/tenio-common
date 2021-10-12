@@ -22,13 +22,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.configuration;
+package com.tenio.common.bootstrap.test;
 
-/**
- * This server needs some basic configuration to start running. The
- * configuration file can be defined as an XML file. See an example in
- * <b>configuration.example.xml</b>. You can also extend this file to create your own
- * configuration values.
- */
-public interface ConfigurationType {
+import com.tenio.common.bootstrap.annotation.Autowired;
+import com.tenio.common.bootstrap.annotation.AutowiredAcceptNull;
+import com.tenio.common.bootstrap.annotation.AutowiredQualifier;
+import com.tenio.common.bootstrap.annotation.Component;
+import com.tenio.common.bootstrap.test.impl.TestClassAlone;
+import com.tenio.common.bootstrap.test.inf.TestInterfaceA;
+import com.tenio.common.bootstrap.test.inf.TestInterfaceB;
+import com.tenio.common.bootstrap.test.inf.TestInterfaceC;
+
+@Component
+public class BootstrapComponent {
+
+  @Autowired
+  public TestInterfaceA a;
+  /**
+   * This declaration should not throw any exceptions while scanning packages
+   */
+  @AutowiredAcceptNull
+  public TestInterfaceB b;
+  @Autowired
+  @AutowiredQualifier(
+      value = "TestClassCCopy"
+  )
+  public TestInterfaceC c;
+  @Autowired
+  public TestClassAlone alone;
 }

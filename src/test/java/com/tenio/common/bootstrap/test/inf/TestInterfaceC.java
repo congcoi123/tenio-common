@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.bootstrap.clazz;
+package com.tenio.common.bootstrap.test.inf;
 
-public class TestClassA {
+public interface TestInterfaceC {
 }

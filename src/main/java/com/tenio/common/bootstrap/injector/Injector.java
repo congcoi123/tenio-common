@@ -24,19 +24,24 @@ THE SOFTWARE.
 
 package com.tenio.common.bootstrap.injector;
 
+import com.tenio.common.bootstrap.annotation.Autowired;
+import com.tenio.common.bootstrap.annotation.AutowiredAcceptNull;
+import com.tenio.common.bootstrap.annotation.AutowiredQualifier;
 import com.tenio.common.bootstrap.annotation.Component;
 import com.tenio.common.bootstrap.utility.ClassLoaderUtility;
-import com.tenio.common.bootstrap.utility.InjectionUtility;
 import com.tenio.common.exception.MultipleImplementedClassForInterfaceException;
 import com.tenio.common.exception.NoImplementedClassFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
 import org.reflections.Reflections;
 
 /**
@@ -49,10 +54,12 @@ public final class Injector {
   /**
    * With the key is the interface and the value holds an implemented class.
    */
+  @GuardedBy("this")
   private final Map<Class<?>, Class<?>> classesMap;
   /**
    * With the key is the interface implemented class and the value holds its instance.
    */
+  @GuardedBy("this")
   private final Map<Class<?>, Object> classBeansMap;
 
   private Injector() {
@@ -87,17 +94,30 @@ public final class Injector {
       throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
       IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
       SecurityException {
+    // clean first
+    reset();
+
+    var setPackageNames = new HashSet<String>();
+
+    if (entryClass != null) {
+      setPackageNames.add(entryClass.getPackage().getName());
+    }
+
+    if (packages != null) {
+      for (var pack : packages) {
+        setPackageNames.add(pack);
+      }
+    }
+
     // fetches all classes that are in the same package as the root one
-    var classes = ClassLoaderUtility.getClasses(entryClass.getPackage().getName());
+    var classes = new HashSet<Class<?>>();
     // declares a reflection object based on the package of root class
-    var reflections = new Reflections(entryClass.getPackage().getName());
+    var reflections = new Reflections();
+    for (var packageName : setPackageNames) {
+      var packageClasses = ClassLoaderUtility.getClasses(packageName);
+      classes.addAll(packageClasses);
 
-    for (var pack : packages) {
-      var packageClasses = ClassLoaderUtility.getClasses(pack);
-      classes = Stream.concat(Arrays.stream(classes), Arrays.stream(packageClasses))
-          .toArray(Class<?>[]::new);
-
-      var reflectionPackage = new Reflections(pack);
+      var reflectionPackage = new Reflections(packageName);
       reflections.merge(reflectionPackage);
     }
 
@@ -131,7 +151,7 @@ public final class Injector {
         var bean = clazz.getDeclaredConstructor().newInstance();
         classBeansMap.put(clazz, bean);
         // recursively create field instance for this class instance
-        InjectionUtility.autowire(this, clazz, bean);
+        autowire(clazz, bean);
       }
     }
   }
@@ -142,16 +162,17 @@ public final class Injector {
    * @param clazz the interface class
    * @param <T>   the returned type of interface
    * @return a bean (an instance of the interface
-   * @throws ClassNotFoundException    caused by <b>getImplementedClass()</b>
-   * @throws NoSuchMethodException     caused by <b>getDeclaredConstructor()</b>
-   * @throws InvocationTargetException caused by <b>getDeclaredConstructor().newInstance()</b>
-   * @throws InstantiationException    caused by <b>getDeclaredConstructor().newInstance()</b>
-   * @throws IllegalAccessException    caused by <b>getDeclaredConstructor().newInstance()</b>
    */
-  public <T> T getBean(Class<T> clazz)
-      throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
-      InstantiationException, IllegalAccessException {
-    return (T) getBeanInstance(clazz, null, null);
+  @Nullable
+  public <T> T getBean(Class<T> clazz) {
+    var optional = classesMap.entrySet().stream()
+        .filter(entry -> entry.getValue() == clazz).findFirst();
+
+    if (optional.isPresent()) {
+      return (T) classBeansMap.get(optional.get().getKey());
+    }
+
+    return null;
   }
 
   /**
@@ -169,9 +190,11 @@ public final class Injector {
    * @throws InstantiationException    caused by <b>getDeclaredConstructor().newInstance()</b>
    * @throws IllegalAccessException    caused by <b>getDeclaredConstructor().newInstance()</b>
    */
-  public <T> Object getBeanInstance(Class<T> classInterface, String fieldName, String qualifier)
+  private <T> Object getBeanInstanceForInjector(Class<T> classInterface, String fieldName,
+                                                String qualifier)
       throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
-      InstantiationException, IllegalAccessException {
+      InstantiationException, IllegalAccessException, NoImplementedClassFoundException,
+      MultipleImplementedClassForInterfaceException {
     var implementedClass = getImplementedClass(classInterface, fieldName, qualifier);
 
     synchronized (classBeansMap) {
@@ -185,6 +208,7 @@ public final class Injector {
     }
   }
 
+  @Nullable
   private Class<?> getImplementedClass(Class<?> classInterface, String fieldName,
                                        String qualifier) throws ClassNotFoundException {
     var implementedClasses = classesMap.entrySet().stream()
@@ -209,5 +233,80 @@ public final class Injector {
     }
 
     return null;
+  }
+
+  /**
+   * Assigns bean values to the corresponding fields in a class.
+   *
+   * @param clazz the target class that holds declared bean fields
+   * @param bean  the bean instance associated with the declared field
+   * @throws IllegalArgumentException  related to illegal argument exception
+   * @throws SecurityException         related to security exception
+   * @throws NoSuchMethodException     caused by <b>getDeclaredConstructor()</b>
+   * @throws InvocationTargetException caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @throws InstantiationException    caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @throws IllegalAccessException    caused by <b>getDeclaredConstructor().newInstance()</b>
+   * @see Injector
+   */
+  private void autowire(Class<?> clazz, Object bean)
+      throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+      InvocationTargetException,
+      NoSuchMethodException, SecurityException, ClassNotFoundException {
+    var fields = findFields(clazz);
+    for (var field : fields) {
+      var qualifier = field.isAnnotationPresent(AutowiredQualifier.class)
+          ? field.getAnnotation(AutowiredQualifier.class).value()
+          : null;
+      if (field.isAnnotationPresent(AutowiredAcceptNull.class)) {
+        try {
+          var fieldInstance =
+              getBeanInstanceForInjector(field.getType(), field.getName(), qualifier);
+          field.set(bean, fieldInstance);
+          autowire(fieldInstance.getClass(), fieldInstance);
+        } catch (NoImplementedClassFoundException e) {
+          // do nothing
+        }
+      } else if (field.isAnnotationPresent(Autowired.class)) {
+        var fieldInstance =
+            getBeanInstanceForInjector(field.getType(), field.getName(), qualifier);
+        field.set(bean, fieldInstance);
+        autowire(fieldInstance.getClass(), fieldInstance);
+      }
+    }
+  }
+
+  /**
+   * Retrieves all the fields having {@link Autowired} or {@link AutowiredAcceptNull}
+   * annotation used while declaration.
+   *
+   * @param clazz a target class
+   * @return a set of fields in the class
+   */
+  private Set<Field> findFields(Class<?> clazz) {
+    var fields = new HashSet<Field>();
+
+    while (clazz != null) {
+      for (var field : clazz.getDeclaredFields()) {
+        if (field.isAnnotationPresent(Autowired.class)
+            || field.isAnnotationPresent(AutowiredAcceptNull.class)) {
+          field.setAccessible(true);
+          fields.add(field);
+        }
+      }
+      // make recursion
+      clazz = clazz.getSuperclass();
+    }
+
+    return fields;
+  }
+
+  /**
+   * Clear all references and beans created by injector.
+   */
+  private void reset() {
+    synchronized (this) {
+      classesMap.clear();
+      classBeansMap.clear();
+    }
   }
 }

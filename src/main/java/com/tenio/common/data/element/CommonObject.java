@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.data.element;
 
 import java.io.Serializable;
@@ -30,64 +31,60 @@ import java.util.HashMap;
  * This is an element object in your server. It can be used to hold your map
  * data. All message comes from a client will be converted to this object. That
  * helps us normalize the way to communicate and easy to use.
- * 
- * @author kong
- * 
  */
 public final class CommonObject extends HashMap<String, Object> implements Serializable {
 
-	private static final long serialVersionUID = 8818783476027583633L;
+  private static final long serialVersionUID = 8818783476027583633L;
 
-	public static CommonObject newInstance() {
-		return new CommonObject();
-	}
-	
-	public CommonObject() {
-	}
+  public CommonObject() {
+  }
 
-	public double getDouble(String key) {
-		return (double) get(key);
-	}
+  public static CommonObject newInstance() {
+    return new CommonObject();
+  }
 
-	public float getFloat(String key) {
-		return (float) get(key);
-	}
+  public double getDouble(String key) {
+    return (double) get(key);
+  }
 
-	public long getLong(String key) {
-		return (long) get(key);
-	}
+  public float getFloat(String key) {
+    return (float) get(key);
+  }
 
-	public int getInt(String key) {
-		return (int) get(key);
-	}
+  public long getLong(String key) {
+    return (long) get(key);
+  }
 
-	public boolean getBoolean(String key) {
-		return (boolean) get(key);
-	}
+  public int getInt(String key) {
+    return (int) get(key);
+  }
 
-	public String getString(String key) {
-		return (String) get(key);
-	}
+  public boolean getBoolean(String key) {
+    return (boolean) get(key);
+  }
 
-	public Object getObject(String key) {
-		return get(key);
-	}
+  public String getString(String key) {
+    return (String) get(key);
+  }
 
-	public CommonObject getMessageObject(String key) {
-		return (CommonObject) get(key);
-	}
+  public Object getObject(String key) {
+    return get(key);
+  }
 
-	public CommonObjectArray getMessageObjectArray(String key) {
-		return (CommonObjectArray) get(key);
-	}
+  public CommonObject getMessageObject(String key) {
+    return (CommonObject) get(key);
+  }
 
-	public boolean contain(String key) {
-		return containsKey(key);
-	}
+  public CommonObjectArray getMessageObjectArray(String key) {
+    return (CommonObjectArray) get(key);
+  }
 
-	public CommonObject add(String key, Object value) {
-		put(key, value);
-		return this;
-	}
+  public boolean contains(String key) {
+    return containsKey(key);
+  }
 
+  public CommonObject add(String key, Object value) {
+    put(key, value);
+    return this;
+  }
 }

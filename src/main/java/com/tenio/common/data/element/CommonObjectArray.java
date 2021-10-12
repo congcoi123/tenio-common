@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.data.element;
 
 import java.io.Serializable;
@@ -29,56 +30,52 @@ import java.util.ArrayList;
 /**
  * This is an element object in your server. You can use it for holding array
  * data and make it serialize to send through the network.
- * 
- * @author kong
- * 
  */
 public final class CommonObjectArray extends ArrayList<Object> implements Serializable {
 
-	private static final long serialVersionUID = -5100842875580575666L;
+  private static final long serialVersionUID = -5100842875580575666L;
 
-	public static CommonObjectArray newInstance() {
-		return new CommonObjectArray();
-	}
+  public CommonObjectArray() {
+  }
 
-	public CommonObjectArray() {
-	}
+  public static CommonObjectArray newInstance() {
+    return new CommonObjectArray();
+  }
 
-	public CommonObjectArray put(Object value) {
-		add(value);
-		return this;
-	}
+  public CommonObjectArray put(Object value) {
+    add(value);
+    return this;
+  }
 
-	public double getDouble(int index) {
-		return (double) get(index);
-	}
+  public double getDouble(int index) {
+    return (double) get(index);
+  }
 
-	public float getFloat(int index) {
-		return (float) get(index);
-	}
+  public float getFloat(int index) {
+    return (float) get(index);
+  }
 
-	public long getLong(int index) {
-		return (long) get(index);
-	}
+  public long getLong(int index) {
+    return (long) get(index);
+  }
 
-	public int getInt(int index) {
-		return (int) get(index);
-	}
+  public int getInt(int index) {
+    return (int) get(index);
+  }
 
-	public boolean getBoolean(int index) {
-		return (boolean) get(index);
-	}
+  public boolean getBoolean(int index) {
+    return (boolean) get(index);
+  }
 
-	public String getString(int index) {
-		return (String) get(index);
-	}
+  public String getString(int index) {
+    return (String) get(index);
+  }
 
-	public Object getObject(int index) {
-		return get(index);
-	}
+  public Object getObject(int index) {
+    return get(index);
+  }
 
-	public CommonObjectArray getObjectAt(int index) {
-		return (CommonObjectArray) get(index);
-	}
-
+  public CommonObjectArray getObjectAt(int index) {
+    return (CommonObjectArray) get(index);
+  }
 }

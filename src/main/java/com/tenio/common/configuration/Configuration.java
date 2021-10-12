@@ -21,71 +21,84 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.configuration;
 
 /**
  * This server needs some basic configuration to start running. The
  * configuration file can be defined as an XML file. See an example in
- * TenIOConfig.example.xml. You can also extend this file to create your own
+ * <b>configuration.example.xml</b>. You can also extend this file to create your own
  * configuration values.
  */
 public interface Configuration {
 
-	/**
-	 * @param file the configuration file
-	 * @throws Exception something went wrong on parsing the configuration file
-	 */
-	void load(String file) throws Exception;
+  /**
+   * Load the configuration by configured files.
+   *
+   * @param file the configuration file
+   * @throws Exception something went wrong on parsing the configuration file
+   */
+  void load(String file) throws Exception;
 
-	/**
-	 * @param key the configuration's key
-	 * @return the value in {@link Boolean}
-	 */
-	boolean getBoolean(ConfigurationType key);
+  /**
+   * Retrieves the value by key.
+   *
+   * @param key the configuration's key
+   * @return the value in {@link Boolean}
+   */
+  boolean getBoolean(ConfigurationType key);
 
-	/**
-	 * @param key the configuration's key
-	 * @return the value in {@link Integer}
-	 */
-	int getInt(ConfigurationType key);
+  /**
+   * Retrieves the value by key.
+   *
+   * @param key the configuration's key
+   * @return the value in {@link Integer}
+   */
+  int getInt(ConfigurationType key);
 
-	/**
-	 * @param key the configuration's key
-	 * @return the value in {@link Float}
-	 */
-	float getFloat(ConfigurationType key);
+  /**
+   * Retrieves the value by key.
+   *
+   * @param key the configuration's key
+   * @return the value in {@link Float}
+   */
+  float getFloat(ConfigurationType key);
 
-	/**
-	 * @param key the configuration's key
-	 * @return the value in {@link String}
-	 */
-	String getString(ConfigurationType key);
+  /**
+   * Retrieves the value by key.
+   *
+   * @param key the configuration's key
+   * @return the value in {@link String}
+   */
+  String getString(ConfigurationType key);
 
-	/**
-	 * @param key the configuration's key
-	 * @return the value in {@link Object}
-	 */
-	Object get(ConfigurationType key);
+  /**
+   * Retrieves the value by key.
+   *
+   * @param key the configuration's key
+   * @return the value in {@link Object}
+   */
+  Object get(ConfigurationType key);
 
-	/**
-	 * Determine if this configuration is existed or defined. If you want some
-	 * configuration value to be treated as an "undefined" status, let its value
-	 * "-1".
-	 * 
-	 * @param key The desired configuration's key
-	 * @return <b>true</b> if the configuration is defined and otherwise return
-	 *         <b>false</b>
-	 */
-	boolean isDefined(ConfigurationType key);
+  /**
+   * Determine if this configuration is existed or defined. If you want some
+   * configuration value to be treated as an "undefined" status, let its value
+   * "-1".
+   *
+   * @param key The desired configuration's key
+   * @return <b>true</b> if the configuration is defined, otherwise return <b>false</b>
+   */
+  boolean isDefined(ConfigurationType key);
 
-	/**
-	 * @return configuration information as human readable data
-	 */
-	String toString();
+  /**
+   * Retrieves readable text.
+   *
+   * @return configuration information as human-readable data
+   */
+  String toString();
 
-	/**
-	 * remove all configurations
-	 */
-	void clear();
-
+  /**
+   * Remove all configurations.
+   */
+  void clear();
 }

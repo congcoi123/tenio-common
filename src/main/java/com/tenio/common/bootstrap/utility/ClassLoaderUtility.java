@@ -28,7 +28,7 @@ import com.tenio.common.utility.StringUtility;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 
 /**
  * This utility class helps you retrieve all classes from a java package.
@@ -44,11 +44,11 @@ public final class ClassLoaderUtility {
    * Scans a package to retrieve all classes inside it.
    *
    * @param packageName the package which contains loading classes
-   * @return an array of classes or an empty array
+   * @return a set of classes or an empty array
    * @throws IOException when the class loader could not get the resources
    * @throws ClassNotFoundException when the target class was not found
    */
-  public static Class<?>[] getClasses(String packageName)
+  public static HashSet<Class<?>> getClasses(String packageName)
       throws ClassNotFoundException, IOException {
     var classLoader = Thread.currentThread().getContextClassLoader();
 
@@ -65,17 +65,17 @@ public final class ClassLoaderUtility {
       directories.add(new File(resource.getFile()));
     }
 
-    var classes = new ArrayList<Class<?>>();
+    var classes = new HashSet<Class<?>>();
     for (var file : directories) {
       classes.addAll(findClasses(file, packageName));
     }
 
-    return classes.toArray(new Class[classes.size()]);
+    return classes;
   }
 
-  private static List<Class<?>> findClasses(File directory, String packageName)
+  private static HashSet<Class<?>> findClasses(File directory, String packageName)
       throws ClassNotFoundException {
-    var classes = new ArrayList<Class<?>>();
+    var classes = new HashSet<Class<?>>();
 
     if (!directory.exists()) {
       throw new ClassNotFoundException(String.format("The directory [%s] was not found",
@@ -85,12 +85,9 @@ public final class ClassLoaderUtility {
     var files = directory.listFiles();
     for (var file : files) {
       if (file.isDirectory()) {
-        if (!file.getName().contains(".")) {
-          throw new IllegalArgumentException("Directory does not contain the separator");
-        }
         classes.addAll(findClasses(file, StringUtility.strgen(packageName, ".", file.getName())));
       } else if (file.getName().endsWith(".class")) {
-        String className = StringUtility.strgen(packageName, ".",
+        var className = StringUtility.strgen(packageName, ".",
             file.getName().substring(0, file.getName().length() - 6));
         classes.add(Class.forName(className));
       }

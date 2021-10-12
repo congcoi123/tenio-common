@@ -21,101 +21,103 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.data;
 
 import com.tenio.common.data.element.ZeroData;
-
 import java.util.Collection;
 import java.util.Iterator;
 
+/**
+ * This class holds sequence elements.
+ */
 public interface ZeroArray extends ZeroElement {
 
-    boolean contains(Object element);
+  boolean contains(Object element);
 
-    Iterator<ZeroData> iterator();
+  Iterator<ZeroData> iterator();
 
-    Object getElementAt(int index);
+  Object getElementAt(int index);
 
-    void removeElementAt(int index);
+  void removeElementAt(int index);
 
-    boolean isNull(int index);
+  boolean isNull(int index);
 
-    Boolean getBoolean(int index);
+  Boolean getBoolean(int index);
 
-    Byte getByte(int index);
+  Byte getByte(int index);
 
-    Short getShort(int index);
+  Short getShort(int index);
 
-    Integer getInteger(int index);
+  Integer getInteger(int index);
 
-    Long getLong(int index);
+  Long getLong(int index);
 
-    Float getFloat(int index);
+  Float getFloat(int index);
 
-    Double getDouble(int index);
+  Double getDouble(int index);
 
-    String getString(int index);
+  String getString(int index);
 
-    ZeroArray getZeroArray(int index);
+  ZeroArray getZeroArray(int index);
 
-    ZeroObject getZeroObject(int index);
+  ZeroObject getZeroObject(int index);
 
-    ZeroData getZeroData(int index);
+  ZeroData getZeroData(int index);
 
-    ZeroArray addNull();
+  ZeroArray addNull();
 
-    ZeroArray addBoolean(boolean element);
+  ZeroArray addBoolean(boolean element);
 
-    ZeroArray addByte(byte element);
+  ZeroArray addByte(byte element);
 
-    ZeroArray addShort(short element);
+  ZeroArray addShort(short element);
 
-    ZeroArray addInteger(int element);
+  ZeroArray addInteger(int element);
 
-    ZeroArray addLong(long element);
+  ZeroArray addLong(long element);
 
-    ZeroArray addFloat(float element);
+  ZeroArray addFloat(float element);
 
-    ZeroArray addDouble(double element);
+  ZeroArray addDouble(double element);
 
-    ZeroArray addString(String element);
+  ZeroArray addString(String element);
 
-    ZeroArray addZeroArray(ZeroArray element);
+  ZeroArray addZeroArray(ZeroArray element);
 
-    ZeroArray addZeroObject(ZeroObject element);
+  ZeroArray addZeroObject(ZeroObject element);
 
-    ZeroArray addZeroData(ZeroData data);
+  ZeroArray addZeroData(ZeroData data);
 
-    Collection<Boolean> getBooleanArray(int index);
+  Collection<Boolean> getBooleanArray(int index);
 
-    byte[] getByteArray(int index);
+  byte[] getByteArray(int index);
 
-    Collection<Short> getShortArray(int index);
+  Collection<Short> getShortArray(int index);
 
-    Collection<Integer> getIntegerArray(int index);
+  Collection<Integer> getIntegerArray(int index);
 
-    Collection<Long> getLongArray(int index);
+  Collection<Long> getLongArray(int index);
 
-    Collection<Float> getFloatArray(int index);
+  Collection<Float> getFloatArray(int index);
 
-    Collection<Double> getDoubleArray(int index);
+  Collection<Double> getDoubleArray(int index);
 
-    Collection<String> getStringArray(int index);
+  Collection<String> getStringArray(int index);
 
-    ZeroArray addBooleanArray(Collection<Boolean> element);
+  ZeroArray addBooleanArray(Collection<Boolean> element);
 
-    ZeroArray addByteArray(byte[] element);
+  ZeroArray addByteArray(byte[] element);
 
-    ZeroArray addShortArray(Collection<Short> element);
+  ZeroArray addShortArray(Collection<Short> element);
 
-    ZeroArray addIntegerArray(Collection<Integer> element);
+  ZeroArray addIntegerArray(Collection<Integer> element);
 
-    ZeroArray addLongArray(Collection<Long> element);
+  ZeroArray addLongArray(Collection<Long> element);
 
-    ZeroArray addFloatArray(Collection<Float> element);
+  ZeroArray addFloatArray(Collection<Float> element);
 
-    ZeroArray addDoubleArray(Collection<Double> element);
+  ZeroArray addDoubleArray(Collection<Double> element);
 
-    ZeroArray addStringArray(Collection<String> element);
-
+  ZeroArray addStringArray(Collection<String> element);
 }

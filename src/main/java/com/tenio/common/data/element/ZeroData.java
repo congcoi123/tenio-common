@@ -21,35 +21,38 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.data.element;
 
 import com.tenio.common.data.ZeroDataType;
 
+/**
+ * This class holds a relationship between the self-definition data type and its value.
+ */
 public final class ZeroData {
 
-	private final ZeroDataType __type;
-	private final Object __element;
+  private final ZeroDataType type;
+  private final Object element;
 
-	public static ZeroData newInstance(ZeroDataType type, Object element) {
-		return new ZeroData(type, element);
-	}
+  private ZeroData(ZeroDataType type, Object element) {
+    this.type = type;
+    this.element = element;
+  }
 
-	private ZeroData(ZeroDataType type, Object element) {
-		__type = type;
-		__element = element;
-	}
+  public static ZeroData newInstance(ZeroDataType type, Object element) {
+    return new ZeroData(type, element);
+  }
 
-	public ZeroDataType getType() {
-		return __type;
-	}
+  public ZeroDataType getType() {
+    return type;
+  }
 
-	public Object getElement() {
-		return __element;
-	}
+  public Object getElement() {
+    return element;
+  }
 
-	@Override
-	public String toString() {
-		return String.format("{ __type: %s, value: %s }", __type.toString(), __element.toString());
-	}
-
+  @Override
+  public String toString() {
+    return String.format("{ type: %s, value: %s }", type.toString(), element.toString());
+  }
 }
