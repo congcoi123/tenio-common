@@ -21,67 +21,72 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.worker;
 
+import com.tenio.common.logger.SystemLogger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import com.tenio.common.logger.SystemLogger;
-
 /**
- * @author kong
+ * This class helps you create a worker pool.
  */
-// TODO: Add description
 public final class WorkerPool extends SystemLogger {
 
-	private final BlockingQueue<Runnable> __taskQueue;
-	private final List<WorkerPoolRunnable> __runnables;
-	private final String __name;
-	private boolean __isStopped;
+  private final BlockingQueue<Runnable> taskQueue;
+  private final List<WorkerPoolRunnable> runnableWorkerPools;
+  private final String name;
+  private boolean isStopped;
 
-	public WorkerPool(String name, int noOfThreads, int maxNoOfTasks) {
-		__taskQueue = new ArrayBlockingQueue<Runnable>(maxNoOfTasks);
-		__runnables = new ArrayList<WorkerPoolRunnable>();
-		__name = name;
-		__isStopped = false;
+  /**
+   * Create a new worker pool.
+   *
+   * @param name         the worker pool's name
+   * @param noOfThreads  number of provided threads
+   * @param maxNoOfTasks the maximum supported tasks
+   */
+  public WorkerPool(String name, int noOfThreads, int maxNoOfTasks) {
+    taskQueue = new ArrayBlockingQueue<Runnable>(maxNoOfTasks);
+    runnableWorkerPools = new ArrayList<WorkerPoolRunnable>();
+    this.name = name;
+    isStopped = false;
 
-		info("CREATED NEW WORKERS",
-				buildgen("Number of threads: ", noOfThreads, ", Max number of tasks: ", maxNoOfTasks));
+    info("CREATED NEW WORKERS",
+        buildgen("Number of threads: ", noOfThreads, ", Max number of tasks: ", maxNoOfTasks));
 
-		for (int i = 0; i < noOfThreads; i++) {
-			__runnables.add(new WorkerPoolRunnable(__name, i, __taskQueue));
-		}
-		for (WorkerPoolRunnable runnable : __runnables) {
-			new Thread(runnable).start();
-		}
-	}
+    for (int i = 0; i < noOfThreads; i++) {
+      runnableWorkerPools.add(new WorkerPoolRunnable(this.name, i, taskQueue));
+    }
+    for (WorkerPoolRunnable runnable : runnableWorkerPools) {
+      new Thread(runnable).start();
+    }
+  }
 
-	public synchronized void execute(Runnable task, String debugText) throws Exception {
-		if (__isStopped) {
-			throw new IllegalStateException("WorkersPool is stopped");
-		}
+  public synchronized void execute(Runnable task, String debugText) throws Exception {
+    if (isStopped) {
+      throw new IllegalStateException("WorkersPool is stopped");
+    }
 
-		trace("EXECUTED A TASK", debugText);
-		__taskQueue.offer(task);
-	}
+    trace("EXECUTED A TASK", debugText);
+    taskQueue.offer(task);
+  }
 
-	public synchronized void stop() {
-		__isStopped = true;
-		for (WorkerPoolRunnable runnable : __runnables) {
-			runnable.doStop();
-		}
-	}
+  public synchronized void stop() {
+    isStopped = true;
+    for (WorkerPoolRunnable runnable : runnableWorkerPools) {
+      runnable.doStop();
+    }
+  }
 
-	public synchronized void waitUntilAllTasksFinished() {
-		while (__taskQueue.size() > 0) {
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				error(e);
-			}
-		}
-	}
-
+  public synchronized void waitUntilAllTasksFinished() {
+    while (taskQueue.size() > 0) {
+      try {
+        Thread.sleep(1);
+      } catch (InterruptedException e) {
+        error(e);
+      }
+    }
+  }
 }

@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.pool;
 
 import com.tenio.common.exception.NullElementPoolException;
@@ -31,38 +32,40 @@ import com.tenio.common.exception.NullElementPoolException;
  * reuse it. The object pool design will have the mechanism to create a bulk of
  * objects to pooling use. If the requirements of resources increases, the
  * current bulk's size will be also automatically increased.
- * 
- * @author kong
- * 
  */
-public interface ElementsPool<Element> {
+public interface ElementPool<T> {
 
-	/**
-	 * Retrieves an element in the current pool
-	 * 
-	 * @return an element in the pool
-	 */
-	Element get();
+  /**
+   * Retrieves an element in the current pool.
+   *
+   * @return an element in the pool
+   */
+  T get();
 
-	/**
-	 * When you finished using an element, repay (free) it for the reusing
-	 * 
-	 * @param element the finished using element
-	 * 
-	 * @throws NullElementPoolException
-	 */
-	void repay(Element element) throws NullElementPoolException;
+  /**
+   * When you finished using an element, repay (free) it for the reusing.
+   *
+   * @param element the finished using element
+   * @throws NullElementPoolException when you try to repay an invalid element
+   */
+  void repay(T element) throws NullElementPoolException;
 
-	/**
-	 * Clean up, after that all arrays will be set to <b>null</b>
-	 */
-	void cleanup();
+  /**
+   * Clean up, after that all array elements will be set to <b>null</b>.
+   */
+  void cleanup();
 
-	/**
-	 * Retrieves the pool size
-	 * 
-	 * @return the total number of element or <b>-1</b> if any exceptions caused
-	 */
-	int getPoolSize();
+  /**
+   * Retrieves the pool size.
+   *
+   * @return the total number of element or <b>-1</b> if any exceptions caused
+   */
+  int getPoolSize();
 
+  /**
+   * Retrieves the current available slots.
+   *
+   * @return the number of available slots in the pool
+   */
+  int getAvailableSlot();
 }

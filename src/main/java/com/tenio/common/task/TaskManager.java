@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.task;
 
 import java.util.concurrent.ScheduledFuture;
@@ -31,38 +32,34 @@ import java.util.concurrent.ScheduledFuture;
  * certain period of time or periodically at a fixed interval. It's useful when
  * you want to create a time counter before starting a match or send messages
  * periodically for one player.
- * 
- * @author kong
- * 
  */
 public interface TaskManager {
 
-	/**
-	 * Create a new task.
-	 * 
-	 * @param id   the unique id for management
-	 * @param task the running task, see {@link ScheduledFuture}
-	 */
-	void create(String id, ScheduledFuture<?> task);
+  /**
+   * Create a new task.
+   *
+   * @param id   the unique id for management
+   * @param task the running task, see {@link ScheduledFuture}
+   */
+  void create(String id, ScheduledFuture<?> task);
 
-	/**
-	 * Kill or stop a running task.
-	 * 
-	 * @param id the unique id
-	 */
-	void kill(String id);
+  /**
+   * Kill or stop a running task.
+   *
+   * @param id the unique id
+   */
+  void kill(String id);
 
-	/**
-	 * Kill or stop all running tasks.
-	 */
-	void clear();
+  /**
+   * Kill or stop all running tasks.
+   */
+  void clear();
 
-	/**
-	 * Retrieve the remain time of one task.
-	 * 
-	 * @param id the unique for retrieving the desired task
-	 * @return the left time
-	 */
-	int getRemainTime(String id);
-
+  /**
+   * Retrieve the remained time of one task.
+   *
+   * @param id the unique for retrieving the desired task
+   * @return the left time
+   */
+  int getRemainTime(String id);
 }

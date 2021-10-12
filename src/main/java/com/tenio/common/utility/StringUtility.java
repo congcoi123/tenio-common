@@ -21,68 +21,67 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.utility;
 
 import java.util.UUID;
 
 /**
  * A collection of utility methods for strings.
- * 
- * @author kong
  */
 public final class StringUtility {
 
-	private static String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
+  private static final String ALPHA_NUMERIC_STRING =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
 
-	private StringUtility() {
-		
-	}
-	
-	/**
-	 * To generate {@code String} for logging information by the corresponding
-	 * objects
-	 * 
-	 * @param objects the corresponding objects, {@link Object}
-	 * @return a string value
-	 */
-	public static String strgen(Object... objects) {
-		StringBuilder builder = new StringBuilder();
-		for (var object : objects) {
-			builder.append(object);
-		}
-		return builder.toString();
-	}
+  private StringUtility() {
+    throw new UnsupportedOperationException("This class does not support to create a new instance");
+  }
 
-	/**
-	 * To generate an unique string in UUID format
-	 * 
-	 * @return an unique string
-	 */
-	public static String getRandomUUID() {
-		return UUID.randomUUID().toString();
-	}
+  /**
+   * To generate {@code String} for logging information by the corresponding
+   * objects.
+   *
+   * @param objects the corresponding objects, {@link Object}
+   * @return a string value
+   */
+  public static String strgen(Object... objects) {
+    var builder = new StringBuilder();
+    for (var object : objects) {
+      builder.append(object);
+    }
+    return builder.toString();
+  }
 
-	/**
-	 * To generate a randomized string
-	 * 
-	 * @param length limited size of the text
-	 * @return a randomized string that could be duplicated
-	 */
-	public static String getRandomTextByLength(int length) {
-		// create StringBuffer size of AlphaNumericString
-		StringBuilder sb = new StringBuilder(length);
+  /**
+   * To generate an unique string in UUID format.
+   *
+   * @return an unique string
+   */
+  public static String getRandomUuid() {
+    return UUID.randomUUID().toString();
+  }
 
-		for (int i = 0; i < length; i++) {
+  /**
+   * To generate a randomized string.
+   *
+   * @param length limited size of the text
+   * @return a randomized string that could be duplicated
+   */
+  public static String getRandomTextByLength(int length) {
+    // create StringBuffer size of AlphaNumericString
+    var builder = new StringBuilder(length);
 
-			// generate a random number between
-			// 0 to AlphaNumericString variable length
-			int index = (int) (ALPHA_NUMERIC_STRING.length() * Math.random());
+    for (int i = 0; i < length; i++) {
 
-			// add Character one by one in end of sb
-			sb.append(ALPHA_NUMERIC_STRING.charAt(index));
-		}
+      // generate a random number between
+      // 0 to AlphaNumericString variable length
+      int index = (int) (ALPHA_NUMERIC_STRING.length() * Math.random());
 
-		return sb.toString();
-	}
+      // add Character one by one in end of sb
+      builder.append(ALPHA_NUMERIC_STRING.charAt(index));
+    }
 
+    return builder.toString();
+  }
 }

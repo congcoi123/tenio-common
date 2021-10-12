@@ -22,16 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.exception;
+package com.tenio.common.task;
 
-import com.tenio.common.task.TaskManagerImpl;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * This exception would be thrown when you try to start a running task.
- *
- * @see TaskManagerImpl
- */
-public final class RunningScheduledTaskException extends RuntimeException {
+import org.junit.jupiter.api.Test;
 
-  private static final long serialVersionUID = 6549514020356397713L;
+public class TaskManagerTest {
+
+  @Test
+  public void createNewTaskShouldWork() {
+    var taskManager = TaskManagerImpl.newInstance();
+    taskManager.create("test-task", new TestTask().run());
+
+    assertEquals(taskManager.getRemainTime("test-task"), TestTask.DELAY_SECOND - 1);
+  }
+
+  @Test
+  public void killATaskShouldWork() {
+    var taskManager = TaskManagerImpl.newInstance();
+    taskManager.create("test-task", new TestTask().run());
+    taskManager.kill("test-task");
+
+    assertEquals(taskManager.getRemainTime("test-task"), -1);
+  }
+
+  @Test
+  public void startARunningTaskShouldNotThrowException() {
+    var taskManager = TaskManagerImpl.newInstance();
+    taskManager.create("test-task", new TestTask().run());
+    taskManager.create("test-task", new TestTask().run());
+
+    assertTrue(true);
+  }
 }

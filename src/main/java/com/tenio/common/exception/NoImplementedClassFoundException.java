@@ -24,14 +24,17 @@ THE SOFTWARE.
 
 package com.tenio.common.exception;
 
+import com.tenio.common.bootstrap.annotation.Component;
+
+/**
+ * This exception should be thrown when there is no {@link Component} annotation associated class
+ * found for the corresponding declared field in a class.
+ */
 public final class NoImplementedClassFoundException extends RuntimeException {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2836756456705984458L;
 
-	public NoImplementedClassFoundException(Class<?> clazz) {
-		super(String.format("Unable to find any implementation for the class: %s", clazz.getName()));
-	}
+  private static final long serialVersionUID = -2836756456705984458L;
 
+  public NoImplementedClassFoundException(Class<?> clazz) {
+    super(String.format("Unable to find any implementation for the class: %s", clazz.getName()));
+  }
 }

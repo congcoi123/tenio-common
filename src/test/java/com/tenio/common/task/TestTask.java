@@ -22,16 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.exception;
+package com.tenio.common.task;
 
-import com.tenio.common.task.TaskManagerImpl;
+import com.tenio.common.task.schedule.Task;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
-/**
- * This exception would be thrown when you try to start a running task.
- *
- * @see TaskManagerImpl
- */
-public final class RunningScheduledTaskException extends RuntimeException {
+public class TestTask implements Task {
 
-  private static final long serialVersionUID = 6549514020356397713L;
+  public static final int DELAY_SECOND = 10;
+
+  @Override
+  public ScheduledFuture<?> run() {
+    return Executors.newSingleThreadScheduledExecutor().schedule(() -> {
+      System.out.println("test task");
+    }, DELAY_SECOND, TimeUnit.SECONDS);
+  }
 }

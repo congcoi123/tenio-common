@@ -21,15 +21,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.task.schedule;
 
 import java.util.concurrent.ScheduledFuture;
 
 /**
- * @author kong
+ * This class provides a {@link ScheduledFuture} to do a mission.
  */
 public interface Task {
 
-	ScheduledFuture<?> run();
-
+  ScheduledFuture<?> run();
 }

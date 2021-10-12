@@ -21,17 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.task;
 
+import com.tenio.common.exception.RunningScheduledTaskException;
+import com.tenio.common.logger.SystemLogger;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
 import javax.annotation.concurrent.ThreadSafe;
-
-import com.tenio.common.exception.RunningScheduledTaskException;
-import com.tenio.common.logger.SystemLogger;
 
 /**
  * This class uses Java scheduler ({@link ScheduledFuture}) to manage your
@@ -39,75 +38,71 @@ import com.tenio.common.logger.SystemLogger;
  * certain period of time or periodically at a fixed interval. It's useful when
  * you want to create a time counter before starting a match or send messages
  * periodically for one player.
- * 
+ *
  * @see TaskManager
- * 
- * @author kong
- * 
  */
 @ThreadSafe
 public final class TaskManagerImpl extends SystemLogger implements TaskManager {
 
-	/**
-	 * A list of tasks in the server
-	 */
-	private final Map<String, ScheduledFuture<?>> __tasks;
+  /**
+   * A list of tasks in the server.
+   */
+  private final Map<String, ScheduledFuture<?>> tasks;
 
-	public static TaskManager newInstance() {
-		return new TaskManagerImpl();
-	}
+  private TaskManagerImpl() {
+    tasks = new ConcurrentHashMap<String, ScheduledFuture<?>>();
+  }
 
-	private TaskManagerImpl() {
-		__tasks = new ConcurrentHashMap<String, ScheduledFuture<?>>();
-	}
+  public static TaskManager newInstance() {
+    return new TaskManagerImpl();
+  }
 
-	@Override
-	public void create(String id, ScheduledFuture<?> task) {
-		if (__tasks.containsKey(id)) {
-			try {
-				if (!__tasks.get(id).isDone() || !__tasks.get(id).isCancelled()) {
-					throw new RunningScheduledTaskException();
-				}
-			} catch (RunningScheduledTaskException e) {
-				error(e, "task id: ", id);
-				return;
-			}
-		}
+  @Override
+  public void create(String id, ScheduledFuture<?> task) {
+    if (tasks.containsKey(id)) {
+      try {
+        if (!tasks.get(id).isDone() || !tasks.get(id).isCancelled()) {
+          throw new RunningScheduledTaskException();
+        }
+      } catch (RunningScheduledTaskException e) {
+        error(e, "task id: ", id);
+        return;
+      }
+    }
 
-		__tasks.put(id, task);
-		info("RUN TASK", buildgen(id, " >Time left> ", task.getDelay(TimeUnit.SECONDS), " seconds"));
-	}
+    tasks.put(id, task);
+    info("RUN TASK", buildgen(id, " >Time left> ", task.getDelay(TimeUnit.SECONDS), " seconds"));
+  }
 
-	@Override
-	public void kill(String id) {
-		if (__tasks.containsKey(id)) {
-			info("KILLED TASK", id);
-			__tasks.remove(id);
-			var task = __tasks.get(id);
-			if (task != null && (!task.isDone() || !task.isCancelled())) {
-				task.cancel(true);
-			}
-		}
-	}
+  @Override
+  public void kill(String id) {
+    if (tasks.containsKey(id)) {
+      info("KILLED TASK", id);
+      tasks.remove(id);
+      var task = tasks.get(id);
+      if (task != null && (!task.isDone() || !task.isCancelled())) {
+        task.cancel(true);
+      }
+    }
+  }
 
-	@Override
-	public void clear() {
-		__tasks.forEach((id, task) -> {
-			info("KILLED TASK", id);
-			if (task != null && (!task.isDone() || !task.isCancelled())) {
-				task.cancel(true);
-			}
-		});
-		__tasks.clear();
-	}
+  @Override
+  public void clear() {
+    tasks.forEach((id, task) -> {
+      info("KILLED TASK", id);
+      if (task != null && (!task.isDone() || !task.isCancelled())) {
+        task.cancel(true);
+      }
+    });
+    tasks.clear();
+  }
 
-	@Override
-	public int getRemainTime(String id) {
-		var task = __tasks.get(id);
-		if (task != null) {
-			return (int) task.getDelay(TimeUnit.SECONDS);
-		}
-		return -1;
-	}
-
+  @Override
+  public int getRemainTime(String id) {
+    var task = tasks.get(id);
+    if (task != null) {
+      return (int) task.getDelay(TimeUnit.SECONDS);
+    }
+    return -1;
+  }
 }

@@ -21,31 +21,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.utility;
 
 /**
  * A collection of utility methods for time.
- * 
- * @author kong
  */
 public final class TimeUtility {
-	
-	private TimeUtility() {
-		
-	}
 
-	/**
-	 * @return the current time in seconds
-	 */
-	public static long currentTimeSeconds() {
-		return System.currentTimeMillis() / 1000L;
-	}
+  private TimeUtility() {
+    throw new UnsupportedOperationException("This class does not support to create a new instance");
+  }
 
-	/**
-	 * @return {@link System#currentTimeMillis()}
-	 */
-	public static long currentTimeMillis() {
-		return System.currentTimeMillis();
-	}
+  /**
+   * Retrieves the current time in seconds.
+   *
+   * @return the current time in seconds
+   */
+  public static long currentTimeSeconds() {
+    return System.currentTimeMillis() / 1000L;
+  }
 
+  /**
+   * Retrieves the current time in milliseconds.
+   *
+   * @return {@link System#currentTimeMillis()}
+   */
+  public static long currentTimeMillis() {
+    return System.currentTimeMillis();
+  }
 }

@@ -21,170 +21,180 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.logger.pool;
-
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Throwables;
 import com.tenio.common.configuration.constant.CommonConstant;
 import com.tenio.common.exception.NullElementPoolException;
-import com.tenio.common.pool.ElementsPool;
+import com.tenio.common.pool.ElementPool;
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The object pool mechanism for {@link StringBuilder}.
- * 
- * @author kong
- * 
  */
 @ThreadSafe
-public final class StringBuilderPool implements ElementsPool<StringBuilder> {
+public final class StringBuilderPool implements ElementPool<StringBuilder> {
 
-	private static volatile StringBuilderPool __instance;
+  private static volatile StringBuilderPool instance;
+  private final Logger logger = LogManager.getLogger(getClass());
 
-	// preventing Singleton object instantiation from outside
-	// creates multiple instance if two thread access this method simultaneously
-	public static StringBuilderPool getInstance() {
-		var reference = __instance;
-		if (reference == null) {
-			synchronized (StringBuilderPool.class) {
-				reference = __instance;
-				if (reference == null) {
-					__instance = reference = new StringBuilderPool();
-				}
-			}
-		}
-		return reference;
-	}
+  @GuardedBy("this")
+  private StringBuilder[] pool;
+  @GuardedBy("this")
+  private boolean[] used;
 
-	private final Logger __logger = LogManager.getLogger(getClass());
-	@GuardedBy("this")
-	private StringBuilder[] __pool;
-	@GuardedBy("this")
-	private boolean[] __used;
+  private StringBuilderPool() {
+    pool = new StringBuilder[CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL];
+    used = new boolean[CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL];
 
-	private StringBuilderPool() {
-		__pool = new StringBuilder[CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL];
-		__used = new boolean[CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL];
+    for (int i = 0; i < pool.length; i++) {
+      pool[i] = new StringBuilder();
+      used[i] = false;
+    }
+  }
 
-		for (int i = 0; i < __pool.length; i++) {
-			__pool[i] = new StringBuilder();
-			__used[i] = false;
-		}
-	}
+  /**
+   * Preventing Singleton object instantiation from outside creates multiple instance if two
+   * thread access this method simultaneously.
+   *
+   * @return the instance of this class
+   */
+  public static StringBuilderPool getInstance() {
+    var reference = instance;
+    if (reference == null) {
+      synchronized (StringBuilderPool.class) {
+        reference = instance;
+        if (reference == null) {
+          instance = reference = new StringBuilderPool();
+        }
+      }
+    }
+    return reference;
+  }
 
-	@Override
-	public synchronized StringBuilder get() {
-		for (int i = 0; i < __used.length; i++) {
-			if (!__used[i]) {
-				__used[i] = true;
-				return __pool[i];
-			}
-		}
-		// If we got here, then all the Elements are in use. We will
-		// increase the number in our pool by @ADD_ELEMENT_POOL (arbitrary value for
-		// illustration purposes).
-		var oldUsed = __used;
-		__used = new boolean[oldUsed.length + CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL];
-		System.arraycopy(oldUsed, 0, __used, 0, oldUsed.length);
+  @Override
+  public synchronized StringBuilder get() {
+    for (int i = 0; i < used.length; i++) {
+      if (!used[i]) {
+        used[i] = true;
+        return pool[i];
+      }
+    }
+    // If we got here, then all the Elements are in use. We will
+    // increase the number in our pool by @ADD_ELEMENT_POOL (arbitrary value for
+    // illustration purposes).
+    var oldUsed = used;
+    used = new boolean[oldUsed.length + CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL];
+    System.arraycopy(oldUsed, 0, used, 0, oldUsed.length);
 
-		var oldPool = __pool;
-		__pool = new StringBuilder[oldPool.length + CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL];
-		System.arraycopy(oldPool, 0, __pool, 0, oldPool.length);
+    var oldPool = pool;
+    pool = new StringBuilder[oldPool.length + CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL];
+    System.arraycopy(oldPool, 0, pool, 0, oldPool.length);
 
-		for (int i = oldPool.length; i < __pool.length; i++) {
-			__pool[i] = new StringBuilder();
-			__used[i] = false;
-		}
+    for (int i = oldPool.length; i < pool.length; i++) {
+      pool[i] = new StringBuilder();
+      used[i] = false;
+    }
 
-		__infoWithoutPool("STRINGBUILDER POOL", __strgen("Increased the number of elements by ",
-				CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL, " to ", __used.length));
+    infoWithoutPool("STRINGBUILDER POOL", strgen("Increased the number of elements by ",
+        CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL, " to ", used.length));
 
-		// and allocate the last old ELement
-		__used[oldPool.length - 1] = true;
-		return __pool[oldPool.length - 1];
-	}
+    // and allocate the last old element
+    used[oldPool.length - 1] = true;
+    return pool[oldPool.length - 1];
+  }
 
-	@Override
-	public synchronized void repay(StringBuilder element) {
-		boolean flagFound = false;
-		for (int i = 0; i < __pool.length; i++) {
-			if (__pool[i] == element) {
-				__used[i] = false;
-				// Clear
-				element.setLength(0);
-				flagFound = true;
-				break;
-			}
-		}
-		if (!flagFound) {
-			var e = new NullElementPoolException();
-			__errorWithoutPool(e);
-			throw e;
-		}
-	}
+  @Override
+  public synchronized void repay(StringBuilder element) {
+    var flagFound = false;
+    for (int i = 0; i < pool.length; i++) {
+      if (pool[i] == element) {
+        used[i] = false;
+        // clear the array
+        element.setLength(0);
+        flagFound = true;
+        break;
+      }
+    }
+    if (!flagFound) {
+      var e = new NullElementPoolException(element.toString());
+      errorWithoutPool(e);
+      throw e;
+    }
+  }
 
-	@Override
-	public synchronized void cleanup() {
-		for (int i = 0; i < __pool.length; i++) {
-			__pool[i] = null;
-		}
-		__used = null;
-		__pool = null;
-	}
+  @Override
+  public synchronized void cleanup() {
+    for (int i = 0; i < pool.length; i++) {
+      pool[i] = null;
+      used[i] = false;
+    }
+  }
 
-	@Override
-	public synchronized int getPoolSize() {
-		return (__pool.length == __used.length) ? __pool.length : -1;
-	}
+  @Override
+  public synchronized int getPoolSize() {
+    return (pool.length == used.length) ? pool.length : -1;
+  }
 
-	/**
-	 * Only use for {@link StringBuilderPool}. It might cause out of memory, so be
-	 * careful if you use it. You are warned!
-	 * 
-	 * @param tag the tag type
-	 * @param msg the message content
-	 */
-	private void __infoWithoutPool(String tag, String msg) {
-		if (!__logger.isInfoEnabled()) {
-			return;
-		}
-		var builder = new StringBuilder();
-		builder.append("[").append(tag).append("] ").append(msg);
-		__logger.info(builder.toString());
-	}
+  @Override
+  public synchronized int getAvailableSlot() {
+    int slot = 0;
+    for (int i = 0; i < used.length; i++) {
+      if (!used[i]) {
+        slot++;
+      }
+    }
 
-	/**
-	 * Only use for {@link StringBuilderPool}. It might cause out of memory, so be
-	 * careful if you use it. You are warned!
-	 * 
-	 * @param cause the throwable
-	 */
-	private void __errorWithoutPool(Throwable cause) {
-		if (!__logger.isErrorEnabled()) {
-			return;
-		}
-		StringBuilder builder = new StringBuilder();
-		builder.append(Throwables.getStackTraceAsString(cause));
-		__logger.error(builder.toString());
-	}
+    return slot;
+  }
 
-	/**
-	 * To generate {@code String} for logging information by the corresponding
-	 * objects
-	 * 
-	 * @param objects the corresponding objects, see {@link Object}
-	 * @return a string value
-	 */
-	private String __strgen(Object... objects) {
-		var builder = new StringBuilder();
-		for (var object : objects) {
-			builder.append(object);
-		}
-		return builder.toString();
-	}
+  /**
+   * Only use for {@link StringBuilderPool}. It might cause out of memory, so be
+   * careful if you use it. You are warned!
+   *
+   * @param tag the tag type
+   * @param msg the message content
+   */
+  private void infoWithoutPool(String tag, String msg) {
+    if (!logger.isInfoEnabled()) {
+      return;
+    }
+    var builder = new StringBuilder();
+    builder.append("[").append(tag).append("] ").append(msg);
+    logger.info(builder.toString());
+  }
 
+  /**
+   * Only use for {@link StringBuilderPool}. It might cause out of memory, so be
+   * careful if you use it. You are warned!
+   *
+   * @param cause the throwable
+   */
+  private void errorWithoutPool(Throwable cause) {
+    if (!logger.isErrorEnabled()) {
+      return;
+    }
+    var builder = new StringBuilder();
+    builder.append(Throwables.getStackTraceAsString(cause));
+    logger.error(builder.toString());
+  }
+
+  /**
+   * To generate {@code String} for logging information by the corresponding
+   * objects.
+   *
+   * @param objects the corresponding objects, see {@link Object}
+   * @return a string value
+   */
+  private String strgen(Object... objects) {
+    var builder = new StringBuilder();
+    for (var object : objects) {
+      builder.append(object);
+    }
+    return builder.toString();
+  }
 }

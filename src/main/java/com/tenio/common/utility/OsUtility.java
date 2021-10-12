@@ -21,45 +21,43 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.utility;
 
 import java.util.Locale;
 
 /**
- * @author kong
+ * This class provides some utility methods to work with OS.
  */
-// TODO: Add description
 public final class OsUtility {
-	
-	/**
-	 * Types of Operating Systems
-	 */
-	public enum OSType {
-		Windows, MacOS, Linux, Other
-	};
-	
-	private OsUtility() {
-		
-	}
 
-	/**
-	 * Detect the operating system from the os.name System property and cache the
-	 * result
-	 * 
-	 * @return The operating system detected
-	 */
-	public static OSType getOperatingSystemType() {
+  private OsUtility() {
+    throw new UnsupportedOperationException("This class does not support to create a new instance");
+  }
 
-		String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-		if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
-			return OSType.MacOS;
-		} else if (OS.indexOf("win") >= 0) {
-			return OSType.Windows;
-		} else if (OS.indexOf("nux") >= 0) {
-			return OSType.Linux;
-		} else {
-			return OSType.Other;
-		}
+  /**
+   * Detect the operating system from the os.name System property and cache the
+   * result.
+   *
+   * @return The operating system detected
+   */
+  public static OsType getOperatingSystemType() {
+    var osName = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+    if ((osName.indexOf("mac") >= 0) || (osName.indexOf("darwin") >= 0)) {
+      return OsType.MacOS;
+    } else if (osName.indexOf("win") >= 0) {
+      return OsType.Windows;
+    } else if (osName.indexOf("nux") >= 0) {
+      return OsType.Linux;
+    } else {
+      return OsType.Other;
+    }
+  }
 
-	}
+  /**
+   * Types of Operating Systems.
+   */
+  public enum OsType {
+    Windows, MacOS, Linux, Other
+  }
 }

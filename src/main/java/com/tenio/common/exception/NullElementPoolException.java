@@ -21,23 +21,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.exception;
 
+import com.tenio.common.pool.ElementPool;
+
 /**
- * @author kong
+ * This exception would be thrown when you try to repay a null element.
+ *
+ * @see ElementPool
  */
 public final class NullElementPoolException extends RuntimeException {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1702807220957046354L;
 
-	public NullElementPoolException() {
+  private static final long serialVersionUID = 1702807220957046354L;
 
-	}
-
-	public NullElementPoolException(String message) {
-		super(message);
-	}
-
+  public NullElementPoolException(String message) {
+    super(message);
+  }
 }

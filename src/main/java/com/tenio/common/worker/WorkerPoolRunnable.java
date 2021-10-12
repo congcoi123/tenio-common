@@ -21,53 +21,66 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package com.tenio.common.worker;
 
+import com.tenio.common.logger.AbstractLogger;
 import java.util.concurrent.BlockingQueue;
 
-import com.tenio.common.logger.AbstractLogger;
-
 /**
- * @author kong
+ * Worker Poll management class.
  */
-// TODO: Add description
 public final class WorkerPoolRunnable extends AbstractLogger implements Runnable {
 
-	private Thread __thread;
-	private final BlockingQueue<Runnable> __taskQueue;
-	private final String __name;
-	private final int __index;
-	private boolean __isStopped;
+  private final BlockingQueue<Runnable> taskQueue;
+  private final String name;
+  private final int index;
+  private Thread thread;
+  private boolean isStopped;
 
-	public WorkerPoolRunnable(String name, int index, BlockingQueue<Runnable> taskQueue) {
-		__taskQueue = taskQueue;
-		__name = name;
-		__index = index;
-		__isStopped = false;
-	}
+  /**
+   * Create a worker pool management.
+   *
+   * @param name      the pool's name
+   * @param index     the index set to differentiate threads
+   * @param taskQueue a queue of tasks
+   */
+  public WorkerPoolRunnable(String name, int index, BlockingQueue<Runnable> taskQueue) {
+    this.taskQueue = taskQueue;
+    this.name = name;
+    this.index = index;
+    isStopped = false;
+  }
 
-	public void run() {
-		__thread = Thread.currentThread();
-		__thread.setName(String.format("worker-%s-%d", __name, __index));
-		while (!isStopped()) {
-			try {
-				Runnable runnable = (Runnable) __taskQueue.take();
-				runnable.run();
-			} catch (Exception e) {
-				// log or otherwise report exception,
-				// but keep pool thread alive.
-				error(e);
-			}
-		}
-	}
+  /**
+   * Start a new thread for a worker pool.
+   */
+  public void run() {
+    thread = Thread.currentThread();
+    thread.setName(String.format("worker-%s-%d", name, index));
 
-	public synchronized void doStop() {
-		__isStopped = true;
-		// break pool thread out of dequeue() call.
-		__thread.interrupt();
-	}
+    while (!isStopped()) {
+      try {
+        Runnable runnable = taskQueue.take();
+        runnable.run();
+      } catch (Exception e) {
+        // log or otherwise report exception,
+        // but keep pool thread alive.
+        error(e);
+      }
+    }
+  }
 
-	public synchronized boolean isStopped() {
-		return __isStopped;
-	}
+  /**
+   * Stop the current worker pool.
+   */
+  public synchronized void doStop() {
+    isStopped = true;
+    // break pool thread out of dequeue() call.
+    thread.interrupt();
+  }
+
+  public synchronized boolean isStopped() {
+    return isStopped;
+  }
 }
