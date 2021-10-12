@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import org.reflections.Reflections;
 
@@ -163,7 +162,6 @@ public final class Injector {
    * @param <T>   the returned type of interface
    * @return a bean (an instance of the interface
    */
-  @Nullable
   public <T> T getBean(Class<T> clazz) {
     var optional = classesMap.entrySet().stream()
         .filter(entry -> entry.getValue() == clazz).findFirst();
@@ -208,7 +206,6 @@ public final class Injector {
     }
   }
 
-  @Nullable
   private Class<?> getImplementedClass(Class<?> classInterface, String fieldName,
                                        String qualifier) throws ClassNotFoundException {
     var implementedClasses = classesMap.entrySet().stream()

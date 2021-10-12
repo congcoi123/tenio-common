@@ -64,7 +64,14 @@ public final class WorkerPool extends SystemLogger {
     }
   }
 
-  public synchronized void execute(Runnable task, String debugText) throws Exception {
+  /**
+   * Executes a task.
+   *
+   * @param task      a runnable to do a particular job
+   * @param debugText a supported text using for debugging or logging
+   * @throws IllegalStateException when you try to execute an unstopped task
+   */
+  public synchronized void execute(Runnable task, String debugText) throws IllegalStateException {
     if (isStopped) {
       throw new IllegalStateException("WorkersPool is stopped");
     }
@@ -73,13 +80,19 @@ public final class WorkerPool extends SystemLogger {
     taskQueue.offer(task);
   }
 
+  /**
+   * Stop a task.
+   */
   public synchronized void stop() {
     isStopped = true;
-    for (WorkerPoolRunnable runnable : runnableWorkerPools) {
+    for (var runnable : runnableWorkerPools) {
       runnable.doStop();
     }
   }
 
+  /**
+   * Wait until all tasks are finished.
+   */
   public synchronized void waitUntilAllTasksFinished() {
     while (taskQueue.size() > 0) {
       try {
