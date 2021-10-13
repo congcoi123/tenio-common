@@ -34,7 +34,8 @@
 [`TenIO`](https://github.com/congcoi123/tenio) is an open-source project to create multiplayer online games that includes a java NIO (Non-blocking I/O) 
 based server specifically designed for multiplayer games, which supports UDP, TCP, Websocket, HTTP transports, and available simple client projects for quick development.
 
-This module provides common methods, classes for other modules to use. It supports the simple dependency injection mechanism and supplies the self-defined serialized and deserialized classes for transferring data through the network.
+This module provides common methods, classes for other modules to use. It supports the simple dependency injection 
+mechanism and supplies the self-defined serialized and deserialized processes for transferring data through the network.
 
 ## Dependencies
 ```txt
@@ -47,7 +48,7 @@ This module provides common methods, classes for other modules to use. It suppor
 - Java 11
 
 ## License
-The `TenIO` project is currently available under the [MIT](LICENSE) License.
+The [`TenIO`](https://github.com/congcoi123/tenio) project is currently available under the [MIT](LICENSE) License.
 
 ## Changelog
 Please check out the [changelog](CHANGELOG.md) for more details.
