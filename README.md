@@ -13,9 +13,12 @@
     <a href="LICENSE">
         <img src="https://img.shields.io/badge/license-MIT-blue.svg">
     </a>
+    <a href="https://github.com/congcoi123/tenio-common/actions">
+        <img src="https://github.com/congcoi123/tenio-common/actions/workflows/maven.yml/badge.svg">
+    </a>    
     <a href="https://coveralls.io/github/congcoi123/tenio-common">
         <img src="https://coveralls.io/repos/github/congcoi123/tenio-common/badge.svg?branch=master">
-    </a>   
+    </a>
     <a href="#">
         <img src="https://img.shields.io/github/last-commit/congcoi123/tenio-common">
     </a>
