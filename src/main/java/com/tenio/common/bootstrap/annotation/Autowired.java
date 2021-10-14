@@ -24,9 +24,7 @@ THE SOFTWARE.
 
 package com.tenio.common.bootstrap.annotation;
 
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
 import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -40,7 +38,7 @@ import java.lang.annotation.Target;
  * <b>Autowiring</b> can't be used to inject <b>primitive</b> and <b>string values</b> because it
  * works with reference only.
  */
-@Target({METHOD, CONSTRUCTOR, FIELD})
+@Target({FIELD})
 @Retention(RUNTIME)
 @Documented
 public @interface Autowired {
