@@ -24,9 +24,7 @@ THE SOFTWARE.
 
 package com.tenio.common.bootstrap.annotation;
 
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
 import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.tenio.common.exception.NoImplementedClassFoundException;
@@ -42,7 +40,7 @@ import java.lang.annotation.Target;
  * <br>
  * Using this annotation will never throw {@link NoImplementedClassFoundException} exception.
  */
-@Target({METHOD, CONSTRUCTOR, FIELD})
+@Target({FIELD})
 @Retention(RUNTIME)
 @Documented
 public @interface AutowiredAcceptNull {

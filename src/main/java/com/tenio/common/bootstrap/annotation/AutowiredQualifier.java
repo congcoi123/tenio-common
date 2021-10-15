@@ -24,11 +24,7 @@ THE SOFTWARE.
 
 package com.tenio.common.bootstrap.annotation;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -42,7 +38,7 @@ import java.lang.annotation.Target;
  * This annotation can be used to avoid conflict if there are multiple
  * implementations of the same interface.
  */
-@Target({FIELD, METHOD, PARAMETER, TYPE, ANNOTATION_TYPE})
+@Target({FIELD})
 @Retention(RUNTIME)
 @Inherited
 @Documented
