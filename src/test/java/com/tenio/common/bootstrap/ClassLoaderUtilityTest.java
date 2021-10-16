@@ -57,4 +57,11 @@ public final class ClassLoaderUtilityTest {
     var listClasses = ClassLoaderUtility.getClasses("com.tenio.common.bootstrap.null");
     assertTrue(listClasses.isEmpty());
   }
+
+  @Test
+  public void scanExternalLibraryShouldReturnListOfClasses()
+      throws IOException, ClassNotFoundException {
+    var listClasses = ClassLoaderUtility.getClasses("com.google.common.annotations");
+    assertTrue(listClasses.size() > 0);
+  }
 }

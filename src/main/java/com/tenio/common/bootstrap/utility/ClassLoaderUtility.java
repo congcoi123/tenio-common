@@ -24,11 +24,15 @@ THE SOFTWARE.
 
 package com.tenio.common.bootstrap.utility;
 
-import com.tenio.common.utility.StringUtility;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.jar.JarEntry;
 
 /**
  * This utility class helps you retrieve all classes from a java package.
@@ -41,57 +45,121 @@ public final class ClassLoaderUtility {
   }
 
   /**
-   * Scans a package to retrieve all classes inside it.
+   * Check classes in directory located in the project.
    *
-   * @param packageName the package which contains loading classes
-   * @return a set of classes or an empty array
-   * @throws IOException when the class loader could not get the resources
-   * @throws ClassNotFoundException when the target class was not found
+   * @param directory The directory to start with
+   * @param packages  The package name to search for. Will be needed for getting the
+   *                  Class object.
+   * @param classes   if a file isn't loaded but still is in the directory
+   * @throws ClassNotFoundException if something went wrong
    */
-  public static HashSet<Class<?>> getClasses(String packageName)
-      throws ClassNotFoundException, IOException {
-    var classLoader = Thread.currentThread().getContextClassLoader();
+  private static void checkDirectory(File directory, String packages,
+                                     HashSet<Class<?>> classes) throws ClassNotFoundException {
+    File tmpDirectory = null;
 
-    if (classLoader == null) {
-      throw new NullPointerException("Could not find class loader");
-    }
+    if (directory.exists() && directory.isDirectory()) {
+      final var files = directory.list();
 
-    var path = packageName.replace('.', '/');
-    var resources = classLoader.getResources(path);
-    var directories = new ArrayList<File>();
-
-    while (resources.hasMoreElements()) {
-      var resource = resources.nextElement();
-      directories.add(new File(resource.getFile()));
-    }
-
-    var classes = new HashSet<Class<?>>();
-    for (var file : directories) {
-      classes.addAll(findClasses(file, packageName));
-    }
-
-    return classes;
-  }
-
-  private static HashSet<Class<?>> findClasses(File directory, String packageName)
-      throws ClassNotFoundException {
-    var classes = new HashSet<Class<?>>();
-
-    if (!directory.exists()) {
-      throw new ClassNotFoundException(String.format("The directory [%s] was not found",
-          directory));
-    }
-
-    var files = directory.listFiles();
-    for (var file : files) {
-      if (file.isDirectory()) {
-        classes.addAll(findClasses(file, StringUtility.strgen(packageName, ".", file.getName())));
-      } else if (file.getName().endsWith(".class")) {
-        var className = StringUtility.strgen(packageName, ".",
-            file.getName().substring(0, file.getName().length() - 6));
-        classes.add(Class.forName(className));
+      for (final var file : files) {
+        if (file.endsWith(".class")) {
+          try {
+            classes.add(Class.forName(packages + '.'
+                + file.substring(0, file.length() - 6)));
+          } catch (final NoClassDefFoundError e) {
+            // do nothing. this class hasn't been found by the
+            // loader, and we don't care.
+          }
+        } else if ((tmpDirectory = new File(directory, file)).isDirectory()) {
+          checkDirectory(tmpDirectory, packages + "." + file, classes);
+        }
       }
     }
+  }
+
+  /**
+   * Check classes in a jar file.
+   *
+   * @param connection the connection to the jar
+   * @param packages   the package name to search for
+   * @param classes    the current ArrayList of all classes. This method will simply
+   *                   add new classes.
+   * @throws ClassNotFoundException if a file isn't loaded but still is in the jar file
+   * @throws IOException            if it can't correctly read from the jar file.
+   */
+  private static void checkJarFile(JarURLConnection connection,
+                                   String packages, HashSet<Class<?>> classes)
+      throws ClassNotFoundException, IOException {
+    final var jarFile = connection.getJarFile();
+    final var entries = jarFile.entries();
+    String name = null;
+
+    for (JarEntry jarEntry = null; entries.hasMoreElements()
+        && ((jarEntry = entries.nextElement()) != null); ) {
+      name = jarEntry.getName();
+
+      if (name.contains(".class")) {
+        name = name.substring(0, name.length() - 6).replace('/', '.');
+
+        if (name.contains(packages)) {
+          classes.add(Class.forName(name));
+        }
+      }
+    }
+  }
+
+  /**
+   * Attempts to list all the classes in the specified package as determined
+   * by the context class loader.
+   *
+   * @param packages the package name to search
+   * @return a list of classes that exist within that package
+   * @throws ClassNotFoundException if something went wrong
+   */
+  public static HashSet<Class<?>> getClasses(String packages)
+      throws ClassNotFoundException {
+    final var classes = new HashSet<Class<?>>();
+
+    try {
+      final var classLoader = Thread.currentThread().getContextClassLoader();
+
+      if (classLoader == null) {
+        throw new ClassNotFoundException("Can't get class loader.");
+      }
+
+      final var resources = classLoader.getResources(packages
+          .replace('.', '/'));
+      URLConnection connection = null;
+
+      for (URL url = null; resources.hasMoreElements()
+          && ((url = resources.nextElement()) != null); ) {
+        try {
+          connection = url.openConnection();
+
+          if (connection instanceof JarURLConnection) {
+            checkJarFile((JarURLConnection) connection, packages,
+                classes);
+          } else {
+            checkDirectory(
+                new File(URLDecoder.decode(url.getPath(),
+                    StandardCharsets.UTF_8)), packages, classes);
+          }
+        } catch (final IOException ioException) {
+          throw new ClassNotFoundException(
+              "IOException was thrown when trying to get all resources for "
+                  + packages, ioException);
+        }
+      }
+    } catch (final NullPointerException nullPointerException) {
+      throw new ClassNotFoundException(
+          packages
+              + " does not appear to be a valid package (Null pointer exception)",
+          nullPointerException);
+    } catch (final IOException ioException) {
+      throw new ClassNotFoundException(
+          "IOException was thrown when trying to get all resources for "
+              + packages, ioException);
+    }
+
     return classes;
   }
 }
