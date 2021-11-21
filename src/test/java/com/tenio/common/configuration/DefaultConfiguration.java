@@ -22,15 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common;
+package com.tenio.common.configuration;
 
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.platform.suite.api.SelectPackages;
-import org.junit.platform.suite.api.SuiteDisplayName;
-import org.junit.runner.RunWith;
+import java.util.Map;
 
-@RunWith(JUnitPlatform.class)
-@SuiteDisplayName("Test all unit test cases for tenio-common module")
-@SelectPackages("com.tenio")
-public final class TenIOCommonTest {
+public class DefaultConfiguration extends CommonConfiguration{
+
+  @Override
+  protected void extend(Map<String, String> extProperties) {
+
+  }
+
+  @Override
+  public void load(String file) throws Exception {
+
+  }
 }

@@ -42,12 +42,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Test;
 
-public final class InjectorTest {
+class InjectorTest {
 
   private final Injector injector = Injector.newInstance();
 
   @Test
-  public void scanPackageShouldRetrieveInstanceOfA()
+  void scanPackageShouldRetrieveInstanceOfA()
       throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException,
       IllegalAccessException, NoSuchMethodException {
     injector.scanPackages(BootstrapComponent.class, null);
@@ -60,7 +60,7 @@ public final class InjectorTest {
   }
 
   @Test
-  public void scanPackageShouldRetrieveNullInstanceOfB()
+  void scanPackageShouldRetrieveNullInstanceOfB()
       throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException,
       IllegalAccessException, NoSuchMethodException {
     injector.scanPackages(BootstrapComponent.class, null);
@@ -70,7 +70,7 @@ public final class InjectorTest {
   }
 
   @Test
-  public void scanPackageShouldRetrieveInstanceOfC()
+  void scanPackageShouldRetrieveInstanceOfC()
       throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException,
       IllegalAccessException, NoSuchMethodException {
     injector.scanPackages(BootstrapComponent.class, null);
@@ -83,7 +83,7 @@ public final class InjectorTest {
   }
 
   @Test
-  public void scanPackageShouldRetrieveInstanceOfAlone()
+  void scanPackageShouldRetrieveInstanceOfAlone()
       throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException,
       IllegalAccessException, NoSuchMethodException {
     injector.scanPackages(BootstrapComponent.class, null);
@@ -93,7 +93,7 @@ public final class InjectorTest {
   }
 
   @Test
-  public void scanPackageShouldThrowExceptionInInstanceOfD() {
+  void scanPackageShouldThrowExceptionInInstanceOfD() {
     assertThrows(MultipleImplementedClassForInterfaceException.class, () -> {
       injector.scanPackages(null, "com.tenio.common.bootstrap.test.impl", "com.tenio.common" +
           ".bootstrap.test.inf", "com.tenio.common.bootstrap.exception.one");
@@ -101,7 +101,7 @@ public final class InjectorTest {
   }
 
   @Test
-  public void scanPackageShouldThrowExceptionInInstanceOfE() {
+  void scanPackageShouldThrowExceptionInInstanceOfE() {
     assertThrows(NoImplementedClassFoundException.class, () -> {
       injector.scanPackages(null, "com.tenio.common.bootstrap.test.impl", "com.tenio.common" +
           ".bootstrap.test.inf", "com.tenio.common.bootstrap.exception.two");
