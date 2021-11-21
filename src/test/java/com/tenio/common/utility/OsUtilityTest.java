@@ -24,5 +24,14 @@ THE SOFTWARE.
 
 package com.tenio.common.utility;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
 public final class OsUtilityTest {
+
+  @Test
+  void testGetOperatingSystemType() {
+    assertEquals(OsUtility.OsType.MacOS, OsUtility.getOperatingSystemType());
+  }
 }

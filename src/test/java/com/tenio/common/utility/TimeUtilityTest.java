@@ -24,5 +24,26 @@ THE SOFTWARE.
 
 package com.tenio.common.utility;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
 public final class TimeUtilityTest {
+
+  @Test
+  void testCurrentTimeSeconds() {
+    assertEquals(1637461430L, TimeUtility.currentTimeSeconds());
+  }
+
+  @Test
+  void testCurrentTimeMillis() {
+    // TODO: This test is incomplete.
+    //   Reason: R004 No meaningful assertions found.
+    //   Diffblue Cover was unable to create an assertion.
+    //   Make sure that fields modified by currentTimeMillis()
+    //   have package-private, protected, or public getters.
+    //   See https://diff.blue/R004 to resolve this issue.
+
+    TimeUtility.currentTimeMillis();
+  }
 }
