@@ -24,21 +24,42 @@ THE SOFTWARE.
 
 package com.tenio.common.configuration;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import java.util.HashMap;
+import java.util.Map;
 
-class ConfigurationTest {
+enum DefaultConfigurationType implements ConfigurationType {
+  BOOLEAN("BOOLEAN"),
+  INTEGER("INTEGER"),
+  FLOAT("FLOAT"),
+  STRING("STRING"),
+  OBJECT("OBJECT");
 
-  private DefaultConfiguration configuration;
+  // Reverse-lookup map for getting a type from a value
+  private static final Map<String, DefaultConfigurationType> lookup =
+      new HashMap<String, DefaultConfigurationType>();
 
-  @BeforeEach
-  void initialization() {
-    configuration = new DefaultConfiguration();
-    configuration.load("dummy");
+  static {
+    for (var configurationType : DefaultConfigurationType.values()) {
+      lookup.put(configurationType.getValue(), configurationType);
+    }
   }
 
-  @Test
-  void shouldRetrieveImportedData() {
-    
+  private final String value;
+
+  DefaultConfigurationType(final String value) {
+    this.value = value;
+  }
+
+  public static DefaultConfigurationType getByValue(String value) {
+    return lookup.get(value);
+  }
+
+  public final String getValue() {
+    return value;
+  }
+
+  @Override
+  public final String toString() {
+    return name();
   }
 }

@@ -25,7 +25,7 @@ THE SOFTWARE.
 package com.tenio.common.logger.pool;
 
 import com.google.common.base.Throwables;
-import com.tenio.common.configuration.constant.CommonConstant;
+import com.tenio.common.constant.CommonConstant;
 import com.tenio.common.exception.NullElementPoolException;
 import com.tenio.common.pool.ElementPool;
 import javax.annotation.concurrent.GuardedBy;

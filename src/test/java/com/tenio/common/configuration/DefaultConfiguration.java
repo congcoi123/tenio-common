@@ -26,7 +26,7 @@ package com.tenio.common.configuration;
 
 import java.util.Map;
 
-public class DefaultConfiguration extends CommonConfiguration{
+class DefaultConfiguration extends CommonConfiguration {
 
   @Override
   protected void extend(Map<String, String> extProperties) {
@@ -34,7 +34,12 @@ public class DefaultConfiguration extends CommonConfiguration{
   }
 
   @Override
-  public void load(String file) throws Exception {
-
+  public void load(String file) {
+    // import data
+    push(DefaultConfigurationType.BOOLEAN, true);
+    push(DefaultConfigurationType.FLOAT, 100F);
+    push(DefaultConfigurationType.INTEGER, 99);
+    push(DefaultConfigurationType.STRING, "test");
+    push(DefaultConfigurationType.OBJECT, new DummyObject());
   }
 }

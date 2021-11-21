@@ -24,21 +24,10 @@ THE SOFTWARE.
 
 package com.tenio.common.configuration;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+class DummyObject {
 
-class ConfigurationTest {
-
-  private DefaultConfiguration configuration;
-
-  @BeforeEach
-  void initialization() {
-    configuration = new DefaultConfiguration();
-    configuration.load("dummy");
-  }
-
-  @Test
-  void shouldRetrieveImportedData() {
-    
+  @Override
+  public String toString() {
+    return "Dummy Object";
   }
 }

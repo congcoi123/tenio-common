@@ -31,22 +31,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.tenio.common.bootstrap.injector.Injector;
 import com.tenio.common.bootstrap.test.BootstrapComponent;
-import com.tenio.common.bootstrap.test.impl.TestClassAlone;
 import com.tenio.common.bootstrap.test.impl.TestClassA;
+import com.tenio.common.bootstrap.test.impl.TestClassAlone;
 import com.tenio.common.bootstrap.test.impl.TestClassCCopy;
 import com.tenio.common.bootstrap.test.inf.TestInterfaceA;
 import com.tenio.common.bootstrap.test.inf.TestInterfaceC;
+import com.tenio.common.custom.DisabledTestFindingSolution;
 import com.tenio.common.exception.MultipleImplementedClassForInterfaceException;
 import com.tenio.common.exception.NoImplementedClassFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("Unit Test Cases For Injector")
 class InjectorTest {
 
   private final Injector injector = Injector.newInstance();
 
   @Test
+  @DisplayName("After scanning the package should retrieve an instance of A")
   void scanPackageShouldRetrieveInstanceOfA()
       throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException,
       IllegalAccessException, NoSuchMethodException {
@@ -60,6 +64,7 @@ class InjectorTest {
   }
 
   @Test
+  @DisplayName("After scanning the package should not retrieve an instance of B (null)")
   void scanPackageShouldRetrieveNullInstanceOfB()
       throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException,
       IllegalAccessException, NoSuchMethodException {
@@ -70,6 +75,8 @@ class InjectorTest {
   }
 
   @Test
+  @DisplayName("After scanning the package should retrieve an instance of C because of using " +
+      "@AutowiredQualifier in BootstrapComponent class")
   void scanPackageShouldRetrieveInstanceOfC()
       throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException,
       IllegalAccessException, NoSuchMethodException {
@@ -83,6 +90,8 @@ class InjectorTest {
   }
 
   @Test
+  @DisplayName("After scanning the package should retrieve an instance of alone - a class with " +
+      "@Component and without implementing any interface")
   void scanPackageShouldRetrieveInstanceOfAlone()
       throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException,
       IllegalAccessException, NoSuchMethodException {
@@ -93,6 +102,8 @@ class InjectorTest {
   }
 
   @Test
+  @DisplayName("After scanning the package should throw an exception because there are more than " +
+      "2 classes implement same interface without @AutowiredQualifier declaration")
   void scanPackageShouldThrowExceptionInInstanceOfD() {
     assertThrows(MultipleImplementedClassForInterfaceException.class, () -> {
       injector.scanPackages(null, "com.tenio.common.bootstrap.test.impl", "com.tenio.common" +
@@ -101,10 +112,17 @@ class InjectorTest {
   }
 
   @Test
+  @DisplayName("After scanning the package should throw an exception because there is no class " +
+      "implement declared interface")
   void scanPackageShouldThrowExceptionInInstanceOfE() {
     assertThrows(NoImplementedClassFoundException.class, () -> {
       injector.scanPackages(null, "com.tenio.common.bootstrap.test.impl", "com.tenio.common" +
           ".bootstrap.test.inf", "com.tenio.common.bootstrap.exception.two");
     });
+  }
+
+  @DisabledTestFindingSolution
+  @DisplayName("Attempt fetching null bean should return null")
+  void getNullBeanShouldReturnNull() {
   }
 }
