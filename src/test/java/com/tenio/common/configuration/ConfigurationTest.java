@@ -24,9 +24,16 @@ THE SOFTWARE.
 
 package com.tenio.common.configuration;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("Unit Test Cases For Configuration")
 class ConfigurationTest {
 
   private DefaultConfiguration configuration;
@@ -38,7 +45,30 @@ class ConfigurationTest {
   }
 
   @Test
+  @DisplayName("It should retrieve all imported data")
   void shouldRetrieveImportedData() {
-    
+    assertAll("shouldRetrieveImportedData",
+        () -> assertTrue(configuration.getBoolean(DefaultConfigurationType.BOOLEAN)),
+        () -> assertEquals(configuration.getFloat(DefaultConfigurationType.FLOAT), 100F),
+        () -> assertEquals(configuration.getInt(DefaultConfigurationType.INTEGER), 99),
+        () -> assertEquals(configuration.getString(DefaultConfigurationType.STRING), "test"),
+        () -> assertEquals(configuration.get(DefaultConfigurationType.OBJECT),
+            configuration.dummyObject)
+    );
+  }
+
+  @Test
+  @DisplayName("Not imported data could not be fetched")
+  void checkNonDefinedConfiguredTypeShouldReturnTrue() {
+    assertAll("checkNonDefinedConfiguredTypeShouldReturnTrue",
+        () -> assertFalse(configuration.isDefined(DefaultConfigurationType.NOT_DEFINED)),
+        () -> assertFalse(configuration.isDefined(DefaultConfigurationType.NULL_DEFINED)));
+  }
+
+  @Test
+  @DisplayName("To be able to clear all configuration data")
+  void clearAllConfigurationsShouldWork() {
+    configuration.clear();
+    assertEquals(configuration.toString(), "{}");
   }
 }

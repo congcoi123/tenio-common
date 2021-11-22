@@ -28,18 +28,22 @@ import java.util.Map;
 
 class DefaultConfiguration extends CommonConfiguration {
 
+  public DummyObject dummyObject = new DummyObject();
+
   @Override
   protected void extend(Map<String, String> extProperties) {
-
+    // do nothing
   }
 
   @Override
   public void load(String file) {
     // import data
-    push(DefaultConfigurationType.BOOLEAN, true);
-    push(DefaultConfigurationType.FLOAT, 100F);
-    push(DefaultConfigurationType.INTEGER, 99);
+    push(DefaultConfigurationType.BOOLEAN, "true");
+    push(DefaultConfigurationType.FLOAT, "100F");
+    push(DefaultConfigurationType.INTEGER, "99");
     push(DefaultConfigurationType.STRING, "test");
-    push(DefaultConfigurationType.OBJECT, new DummyObject());
+    push(DefaultConfigurationType.STRING, "test overridden");
+    push(DefaultConfigurationType.NOT_DEFINED, "-1");
+    push(DefaultConfigurationType.OBJECT, dummyObject);
   }
 }

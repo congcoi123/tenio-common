@@ -32,7 +32,9 @@ enum DefaultConfigurationType implements ConfigurationType {
   INTEGER("INTEGER"),
   FLOAT("FLOAT"),
   STRING("STRING"),
-  OBJECT("OBJECT");
+  OBJECT("OBJECT"),
+  NOT_DEFINED("NOT_DEFINED"),
+  NULL_DEFINED("NULL_DEFINED");
 
   // Reverse-lookup map for getting a type from a value
   private static final Map<String, DefaultConfigurationType> lookup =
