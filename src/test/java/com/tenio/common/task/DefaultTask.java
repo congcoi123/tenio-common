@@ -22,45 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.utility;
+package com.tenio.common.task;
 
-import java.util.Locale;
+import com.tenio.common.task.schedule.Task;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
-/**
- * This class provides some utility methods to work with OS.
- */
-public final class OsUtility {
+class DefaultTask implements Task {
 
-  private OsUtility() {
-    throw new UnsupportedOperationException("This class does not support to create a new instance");
-  }
+  public static final int DELAY_SECOND = 10;
 
-  /**
-   * Detect the operating system from the os.name System property and cache the
-   * result.
-   *
-   * @return The operating system detected
-   */
-  public static OsType getOperatingSystemType() {
-    var osName = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-    if ((osName.indexOf("mac") >= 0) || (osName.indexOf("darwin") >= 0)) {
-      return OsType.MAC;
-    } else if (osName.indexOf("win") >= 0) {
-      return OsType.WINDOWS;
-    } else if (osName.indexOf("nux") >= 0) {
-      return OsType.LINUX;
-    } else {
-      return OsType.OTHER;
-    }
-  }
-
-  /**
-   * Types of Operating Systems.
-   */
-  public enum OsType {
-    WINDOWS,
-    MAC,
-    LINUX,
-    OTHER
+  @Override
+  public ScheduledFuture<?> run() {
+    return Executors.newSingleThreadScheduledExecutor().schedule(() -> {
+      System.out.println("test task");
+    }, DELAY_SECOND, TimeUnit.SECONDS);
   }
 }

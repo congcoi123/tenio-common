@@ -27,32 +27,37 @@ package com.tenio.common.task;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class TaskManagerTest {
+@DisplayName("Unit Test Cases For Task Manager")
+class TaskManagerTest {
 
   @Test
-  public void createNewTaskShouldWork() {
+  @DisplayName("Allow creating a new task")
+  void createNewTaskShouldWork() {
     var taskManager = TaskManagerImpl.newInstance();
-    taskManager.create("test-task", new TestTask().run());
+    taskManager.create("test-task", new DefaultTask().run());
 
-    assertEquals(taskManager.getRemainTime("test-task"), TestTask.DELAY_SECOND - 1);
+    assertEquals(taskManager.getRemainTime("test-task"), DefaultTask.DELAY_SECOND - 1);
   }
 
   @Test
-  public void killATaskShouldWork() {
+  @DisplayName("Allow killing a task")
+  void killATaskShouldWork() {
     var taskManager = TaskManagerImpl.newInstance();
-    taskManager.create("test-task", new TestTask().run());
+    taskManager.create("test-task", new DefaultTask().run());
     taskManager.kill("test-task");
 
     assertEquals(taskManager.getRemainTime("test-task"), -1);
   }
 
   @Test
-  public void startARunningTaskShouldNotThrowException() {
+  @DisplayName("Starting a running task should not throw any exception")
+  void startARunningTaskShouldNotThrowException() {
     var taskManager = TaskManagerImpl.newInstance();
-    taskManager.create("test-task", new TestTask().run());
-    taskManager.create("test-task", new TestTask().run());
+    taskManager.create("test-task", new DefaultTask().run());
+    taskManager.create("test-task", new DefaultTask().run());
 
     assertTrue(true);
   }

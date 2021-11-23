@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.UnsupportedEncodingException;
 import org.junit.jupiter.api.Test;
 
-public final class ByteUtilityTest {
+class ByteUtilityTest {
 
   @Test
   void testIntToBytes() {
