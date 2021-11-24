@@ -27,19 +27,29 @@ package com.tenio.common.utility;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.tenio.common.custom.StringArrayConverter;
 import java.io.UnsupportedEncodingException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.converter.ConvertWith;
+import org.junit.jupiter.params.provider.CsvSource;
 
+@DisplayName("Unit Test Cases For Byte Utility")
 class ByteUtilityTest {
 
-  @Test
-  void testIntToBytes() {
-    byte[] actualIntToBytesResult = ByteUtility.intToBytes(42);
-    assertEquals(4, actualIntToBytesResult.length);
-    assertEquals((byte) 0, actualIntToBytesResult[0]);
-    assertEquals((byte) 0, actualIntToBytesResult[1]);
-    assertEquals((byte) 0, actualIntToBytesResult[2]);
-    assertEquals('*', actualIntToBytesResult[3]);
+  @ParameterizedTest
+  @CsvSource({
+      "1695609641, '101, 16, -13, 41'",
+      "66320, '0, 1, 3, 16'"
+  })
+  void testIntToBytes(int intValue, @ConvertWith(StringArrayConverter.class) String[] binary) {
+    byte[] byteArray = ByteUtility.intToBytes(intValue);
+    assertEquals(binary.length, byteArray.length);
+    assertEquals(binary[0], String.valueOf(byteArray[0]));
+    assertEquals(binary[1], String.valueOf(byteArray[1]));
+    assertEquals(binary[2], String.valueOf(byteArray[2]));
+    assertEquals(binary[3], String.valueOf(byteArray[3]));
   }
 
   @Test

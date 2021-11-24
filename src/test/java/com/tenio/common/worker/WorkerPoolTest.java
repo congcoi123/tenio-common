@@ -1,3 +1,27 @@
+/*
+The MIT License
+
+Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
 package com.tenio.common.worker;
 
 import static org.mockito.Mockito.mock;
@@ -77,81 +101,6 @@ class WorkerPoolTest {
     (new WorkerPool("com.tenio.common.worker.WorkerPoolRunnable", 1, 3)).execute(
         mock(Runnable.class),
         "EXECUTED A TASK");
-  }
-
-  @Test
-  void testStop() {
-    // TODO: This test is incomplete.
-    //   Reason: R002 Missing observers.
-    //   Diffblue Cover was unable to create an assertion.
-    //   Add getters for the following fields or make them package-private:
-    //     AbstractLogger.logger
-    //     WorkerPool.isStopped
-    //     WorkerPool.name
-    //     WorkerPool.runnableWorkerPools
-    //     WorkerPool.taskQueue
-
-    (new WorkerPool("Name", 1, 3)).stop();
-  }
-
-  @Test
-  void testStop2() {
-    // TODO: This test is incomplete.
-    //   Reason: R002 Missing observers.
-    //   Diffblue Cover was unable to create an assertion.
-    //   Add getters for the following fields or make them package-private:
-    //     AbstractLogger.logger
-    //     WorkerPool.isStopped
-    //     WorkerPool.name
-    //     WorkerPool.runnableWorkerPools
-    //     WorkerPool.taskQueue
-
-    (new WorkerPool("42", 1, 3)).stop();
-  }
-
-  @Test
-  void testStop3() {
-    // TODO: This test is incomplete.
-    //   Reason: R002 Missing observers.
-    //   Diffblue Cover was unable to create an assertion.
-    //   Add getters for the following fields or make them package-private:
-    //     AbstractLogger.logger
-    //     WorkerPool.isStopped
-    //     WorkerPool.name
-    //     WorkerPool.runnableWorkerPools
-    //     WorkerPool.taskQueue
-
-    (new WorkerPool("com.tenio.common.worker.WorkerPoolRunnable", 1, 1)).stop();
-  }
-
-  @Test
-  void testStop4() {
-    // TODO: This test is incomplete.
-    //   Reason: R002 Missing observers.
-    //   Diffblue Cover was unable to create an assertion.
-    //   Add getters for the following fields or make them package-private:
-    //     AbstractLogger.logger
-    //     WorkerPool.isStopped
-    //     WorkerPool.name
-    //     WorkerPool.runnableWorkerPools
-    //     WorkerPool.taskQueue
-
-    (new WorkerPool("com.tenio.common.worker.WorkerPoolRunnable", 2, 1)).stop();
-  }
-
-  @Test
-  void testStop5() {
-    // TODO: This test is incomplete.
-    //   Reason: R002 Missing observers.
-    //   Diffblue Cover was unable to create an assertion.
-    //   Add getters for the following fields or make them package-private:
-    //     AbstractLogger.logger
-    //     WorkerPool.isStopped
-    //     WorkerPool.name
-    //     WorkerPool.runnableWorkerPools
-    //     WorkerPool.taskQueue
-
-    (new WorkerPool("com.tenio.common.worker.WorkerPoolRunnable", 3, 1)).stop();
   }
 
   @Test
