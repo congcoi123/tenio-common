@@ -26,6 +26,7 @@ package com.tenio.common.worker;
 
 import static org.mockito.Mockito.mock;
 
+import com.tenio.common.custom.DisabledTestFindingSolution;
 import org.junit.jupiter.api.Test;
 
 class WorkerPoolTest {
@@ -104,7 +105,8 @@ class WorkerPoolTest {
   }
 
   @Test
-  void testStop6() {
+  @DisabledTestFindingSolution
+  void testStop() {
     // TODO: This test is incomplete.
     //   Reason: R002 Missing observers.
     //   Diffblue Cover was unable to create an assertion.

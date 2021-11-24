@@ -108,13 +108,7 @@
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-runner</artifactId>
-            <version>${org.junit.platform.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-launcher</artifactId>
+            <artifactId>junit-platform-suite-engine</artifactId>
             <version>${org.junit.platform.version}</version>
             <scope>test</scope>
         </dependency>
