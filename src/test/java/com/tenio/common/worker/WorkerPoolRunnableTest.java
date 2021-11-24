@@ -22,15 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common;
+package com.tenio.common.worker;
 
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.platform.suite.api.SelectPackages;
-import org.junit.platform.suite.api.SuiteDisplayName;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@RunWith(JUnitPlatform.class)
-@SuiteDisplayName("Test all unit test cases for tenio-common module")
-@SelectPackages("com.tenio")
-public final class TenIOCommonTest {
+import java.util.concurrent.ArrayBlockingQueue;
+import org.junit.jupiter.api.Test;
+
+class WorkerPoolRunnableTest {
+  @Test
+  void testConstructor() {
+    assertFalse(
+        (new WorkerPoolRunnable("Name", 1, new ArrayBlockingQueue<Runnable>(3))).isStopped());
+    assertFalse(
+        (new WorkerPoolRunnable("Name", 1, new ArrayBlockingQueue<Runnable>(3))).isStopped());
+  }
 }
+
