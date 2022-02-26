@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.bootstrap.test;
+package com.tenio.common.bootstrap.annotation;
 
-import com.tenio.common.bootstrap.annotation.Autowired;
-import com.tenio.common.bootstrap.annotation.AutowiredAcceptNull;
-import com.tenio.common.bootstrap.annotation.AutowiredQualifier;
-import com.tenio.common.bootstrap.annotation.Component;
-import com.tenio.common.bootstrap.bean.TestBeanClass;
-import com.tenio.common.bootstrap.test.impl.TestClassAlone;
-import com.tenio.common.bootstrap.test.inf.TestInterfaceA;
-import com.tenio.common.bootstrap.test.inf.TestInterfaceB;
-import com.tenio.common.bootstrap.test.inf.TestInterfaceC;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Component
-public class BootstrapComponent {
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-  @Autowired
-  public TestInterfaceA a;
-  /**
-   * This declaration should not throw any exceptions while scanning packages
-   */
-  @AutowiredAcceptNull
-  public TestInterfaceB b;
-  @Autowired
-  @AutowiredQualifier(
-      value = "TestClassCCopy"
-  )
-  public TestInterfaceC c;
-  @Autowired
-  public TestClassAlone alone;
-  @Autowired
-  public TestBeanClass bean;
+@Retention(RUNTIME)
+@Target(TYPE)
+@Documented
+public @interface Configuration {
 }

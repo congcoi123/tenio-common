@@ -27,13 +27,18 @@ package com.tenio.common.bootstrap.injector;
 import com.tenio.common.bootstrap.annotation.Autowired;
 import com.tenio.common.bootstrap.annotation.AutowiredAcceptNull;
 import com.tenio.common.bootstrap.annotation.AutowiredQualifier;
+import com.tenio.common.bootstrap.annotation.Bean;
 import com.tenio.common.bootstrap.annotation.Component;
+import com.tenio.common.bootstrap.annotation.Configuration;
 import com.tenio.common.bootstrap.utility.ClassLoaderUtility;
+import com.tenio.common.exception.IllegalDefinedAccessControlException;
+import com.tenio.common.exception.IllegalReturnTypeException;
 import com.tenio.common.exception.MultipleImplementedClassForInterfaceException;
 import com.tenio.common.exception.NoImplementedClassFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -125,6 +130,27 @@ public final class Injector {
     // in here
     var implementedClasses = reflections.getTypesAnnotatedWith(Component.class);
 
+    // retrieves all classes those are declared by the @Bean annotation
+    var configurationClasses = reflections.getTypesAnnotatedWith(Configuration.class);
+    for (var configurationClass : configurationClasses) {
+      for (var method : configurationClass.getMethods()) {
+        if (method.isAnnotationPresent(Bean.class)) {
+          if (Modifier.isPublic(method.getModifiers())) {
+            Class clazz = method.getReturnType();
+            if (clazz.isPrimitive()) {
+              throw new IllegalReturnTypeException();
+            } else if (clazz.equals(Void.TYPE)) {
+              throw new IllegalReturnTypeException();
+            } else {
+              implementedClasses.add(clazz);
+            }
+          } else {
+            throw new IllegalDefinedAccessControlException();
+          }
+        }
+      }
+    }
+
     // scans all interfaces with their implemented classes
     for (var implementedClass : implementedClasses) {
       var classInterfaces = implementedClass.getInterfaces();
@@ -151,6 +177,29 @@ public final class Injector {
         classBeansMap.put(clazz, bean);
         // recursively create field instance for this class instance
         autowire(clazz, bean);
+      }
+      // fetches all bean instances and save them to classes map
+      if (clazz.isAnnotationPresent(Configuration.class)) {
+        var configurationBean = clazz.getDeclaredConstructor().newInstance();
+        for (var method : clazz.getMethods()) {
+          if (method.isAnnotationPresent(Bean.class)) {
+            if (Modifier.isPublic(method.getModifiers())) {
+              Class methodClazz = method.getReturnType();
+              if (methodClazz.isPrimitive()) {
+                throw new IllegalReturnTypeException();
+              } else if (methodClazz.equals(Void.TYPE)) {
+                throw new IllegalReturnTypeException();
+              } else {
+                var bean = method.invoke(configurationBean);
+                classBeansMap.put(methodClazz, bean);
+                // recursively create field instance for this class instance
+                autowire(methodClazz, bean);
+              }
+            } else {
+              throw new IllegalDefinedAccessControlException();
+            }
+          }
+        }
       }
     }
   }
