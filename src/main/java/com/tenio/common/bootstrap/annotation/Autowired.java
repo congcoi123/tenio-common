@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 /**
  * <b>Autowiring</b> feature enables you to inject the object dependency implicitly, and it
  * internally uses <b>setter</b> or <b>constructor</b> injection.
- * <br>
+ * <p>
  * <b>Autowiring</b> cannot be used to inject <b>primitive</b> and <b>string values</b> because it
  * works with <b>reference</b> only.
  */

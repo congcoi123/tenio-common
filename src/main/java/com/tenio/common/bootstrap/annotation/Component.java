@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 /**
  * A class annotated by this annotation is considered as a candidate for the <b>auto-detection</b> when
  * using <b>annotation-based</b> configuration and <b>classpath scanning</b>.
- * <br>
+ * <p>
  * An instance of the class can be retrieved by using the annotation {@link Autowired}.
  */
 @Retention(RUNTIME)

@@ -34,10 +34,10 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation can be only used inside a class annotated by {@link Configuration}.
- * <br>
+ * <p>
  * Using this on method level, the method should return an instance of an object that can be
  * autowired by {@link Autowired}.
- * <br>
+ * <p>
  * A method annotated by this annotation must not return any types of <b>primitive</b> or <b>void</b>,
  * otherwise an exception {@link IllegalReturnTypeException} will be thrown.
  */

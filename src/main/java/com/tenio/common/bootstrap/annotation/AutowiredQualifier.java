@@ -32,8 +32,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Using this with {@link Autowired} or {@link AutowiredAcceptNull} annotation.
- * <br>
+ * Using <code>AutowiredQualifier</code> annotation with {@link Autowired} or {@link AutowiredAcceptNull}
+ * annotation.
+ * <p>
  * This annotation can be used to avoid conflict if there are multiple
  * implementations of a same interface.
  */
