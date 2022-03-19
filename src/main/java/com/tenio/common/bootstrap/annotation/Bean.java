@@ -27,10 +27,20 @@ package com.tenio.common.bootstrap.annotation;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import com.tenio.common.exception.IllegalReturnTypeException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * This annotation can be only used inside a class annotated by {@link Configuration}.
+ * <br>
+ * Using this on method level, the method should return an instance of an object that can be
+ * autowired by {@link Autowired}.
+ * <br>
+ * A method annotated by this annotation must not return any types of <b>primitive</b> or <b>void</b>,
+ * otherwise an exception {@link IllegalReturnTypeException} will be thrown.
+ */
 @Target({METHOD})
 @Retention(RUNTIME)
 @Documented

@@ -31,6 +31,10 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Declares this annotation for a class which contains configurations, such as {@link Bean}
+ * annotated methods.
+ */
 @Retention(RUNTIME)
 @Target(TYPE)
 @Documented

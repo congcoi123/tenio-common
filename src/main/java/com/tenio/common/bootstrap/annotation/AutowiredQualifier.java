@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,19 +28,17 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Using with {@link Autowired} or {@link AutowiredAcceptNull}
+ * Using this with {@link Autowired} or {@link AutowiredAcceptNull} annotation.
  * <br>
  * This annotation can be used to avoid conflict if there are multiple
- * implementations of the same interface.
+ * implementations of a same interface.
  */
 @Target({FIELD})
 @Retention(RUNTIME)
-@Inherited
 @Documented
 public @interface AutowiredQualifier {
 
