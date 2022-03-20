@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * This is an element object in your server. You can use it for holding array
- * data and make it serialize to send through the network.
+ * This is an element array class holds data in a map. All message comes from other services
+ * will be converted to this object. That helps normalize the way to communicate and easy to use.
  */
 public final class CommonObjectArray extends ArrayList<Object> implements Serializable {
 

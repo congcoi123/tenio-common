@@ -42,7 +42,7 @@ public final class ZeroArrayImpl implements ZeroArray {
   private final List<ZeroData> data;
 
   private ZeroArrayImpl() {
-    data = new ArrayList<ZeroData>();
+    data = new ArrayList<>();
   }
 
   public static ZeroArray newInstance() {
@@ -318,8 +318,8 @@ public final class ZeroArrayImpl implements ZeroArray {
     var builder = new StringBuilder();
     builder.append('{');
 
-    Object toString = null;
-    ZeroData zeroData = null;
+    Object toString;
+    ZeroData zeroData;
     for (var iterator = iterator(); iterator.hasNext(); builder.append(" (")
         .append(zeroData.getType().toString().toLowerCase()).append(") ").append(toString)
         .append(';')) {

@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,9 +28,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * This is an element object in your server. It can be used to hold your map
- * data. All message comes from a client will be converted to this object. That
- * helps us normalize the way to communicate and easy to use.
+ * This is an element object class holds data in a map. All message comes from other services
+ * will be converted to this object. That helps normalize the way to communicate and easy to use.
  */
 public final class CommonObject extends HashMap<String, Object> implements Serializable {
 

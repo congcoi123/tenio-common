@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ THE SOFTWARE.
 package com.tenio.common.data.element;
 
 import com.tenio.common.data.ZeroDataType;
+import java.util.Objects;
 
 /**
  * This class holds a relationship between the self-definition data type and its value.
@@ -49,6 +50,23 @@ public final class ZeroData {
 
   public Object getElement() {
     return element;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ZeroData zeroData = (ZeroData) o;
+    return type == zeroData.type && Objects.equals(element, zeroData.element);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(type, element);
   }
 
   @Override

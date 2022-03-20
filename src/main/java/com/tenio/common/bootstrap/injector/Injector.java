@@ -47,11 +47,15 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 import org.reflections.Reflections;
 
 /**
  * The Injector class supports creating the mechanism for autowiring.
+ *
+ * @see ClassLoaderUtility
  */
+@ThreadSafe
 public final class Injector {
 
   private static final Injector instance = new Injector();
