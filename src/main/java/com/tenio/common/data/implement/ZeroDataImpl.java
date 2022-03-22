@@ -24,13 +24,14 @@ THE SOFTWARE.
 
 package com.tenio.common.data.implement;
 
+import com.tenio.common.data.ZeroData;
 import com.tenio.common.data.ZeroDataType;
 import java.util.Objects;
 
 /**
  * This class holds a relationship between a self-definition data type and its value.
  */
-public final class ZeroDataImpl implements com.tenio.common.data.ZeroData {
+public final class ZeroDataImpl implements ZeroData {
 
   private final ZeroDataType type;
   private final Object element;

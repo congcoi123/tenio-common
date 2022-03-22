@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,37 +30,9 @@ import java.util.Collection;
 /**
  * This class holds sequence elements.
  */
-public interface ZeroArray extends ZeroCollection, Iterable<ZeroDataImpl> {
-
-  boolean contains(Object element);
-
-  Object getElementAt(int index);
+public interface ZeroArray extends ReadonlyZeroArray, Iterable<ZeroData> {
 
   void removeElementAt(int index);
-
-  boolean isNull(int index);
-
-  Boolean getBoolean(int index);
-
-  Byte getByte(int index);
-
-  Short getShort(int index);
-
-  Integer getInteger(int index);
-
-  Long getLong(int index);
-
-  Float getFloat(int index);
-
-  Double getDouble(int index);
-
-  String getString(int index);
-
-  ZeroArray getZeroArray(int index);
-
-  ZeroMap getZeroObject(int index);
-
-  ZeroDataImpl getZeroData(int index);
 
   ZeroArray addNull();
 
@@ -86,22 +58,6 @@ public interface ZeroArray extends ZeroCollection, Iterable<ZeroDataImpl> {
 
   ZeroArray addZeroData(ZeroDataImpl data);
 
-  Collection<Boolean> getBooleanArray(int index);
-
-  byte[] getByteArray(int index);
-
-  Collection<Short> getShortArray(int index);
-
-  Collection<Integer> getIntegerArray(int index);
-
-  Collection<Long> getLongArray(int index);
-
-  Collection<Float> getFloatArray(int index);
-
-  Collection<Double> getDoubleArray(int index);
-
-  Collection<String> getStringArray(int index);
-
   ZeroArray addBooleanArray(Collection<Boolean> element);
 
   ZeroArray addByteArray(byte[] element);
@@ -117,4 +73,6 @@ public interface ZeroArray extends ZeroCollection, Iterable<ZeroDataImpl> {
   ZeroArray addDoubleArray(Collection<Double> element);
 
   ZeroArray addStringArray(Collection<String> element);
+
+  ReadonlyZeroArray getReadonlyZeroArray();
 }

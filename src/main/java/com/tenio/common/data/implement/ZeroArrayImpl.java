@@ -24,7 +24,9 @@ THE SOFTWARE.
 
 package com.tenio.common.data.implement;
 
+import com.tenio.common.data.ReadonlyZeroArray;
 import com.tenio.common.data.ZeroArray;
+import com.tenio.common.data.ZeroData;
 import com.tenio.common.data.ZeroDataType;
 import com.tenio.common.data.ZeroMap;
 import com.tenio.common.data.utility.ZeroDataUtility;
@@ -40,7 +42,7 @@ import java.util.List;
  */
 public final class ZeroArrayImpl implements ZeroArray {
 
-  private final List<ZeroDataImpl> data;
+  private final List<ZeroData> data;
 
   private ZeroArrayImpl() {
     data = new ArrayList<>();
@@ -67,7 +69,7 @@ public final class ZeroArrayImpl implements ZeroArray {
   }
 
   @Override
-  public Iterator<ZeroDataImpl> iterator() {
+  public Iterator<ZeroData> iterator() {
     return data.iterator();
   }
 
@@ -148,13 +150,13 @@ public final class ZeroArrayImpl implements ZeroArray {
   }
 
   @Override
-  public ZeroMap getZeroObject(int index) {
+  public ZeroMap getZeroMap(int index) {
     var data = getZeroData(index);
     return data == null ? null : (ZeroMap) data.getData();
   }
 
   @Override
-  public ZeroDataImpl getZeroData(int index) {
+  public ZeroData getZeroData(int index) {
     return data.get(index);
   }
 
@@ -315,24 +317,29 @@ public final class ZeroArrayImpl implements ZeroArray {
   }
 
   @Override
+  public ReadonlyZeroArray getReadonlyZeroArray() {
+    return this;
+  }
+
+  @Override
   public String toString() {
     var builder = new StringBuilder();
     builder.append('{');
 
     Object toString;
-    ZeroDataImpl zeroDataImpl;
+    ZeroData zeroData;
     for (var iterator = iterator(); iterator.hasNext(); builder.append(" (")
-        .append(zeroDataImpl.getType().toString().toLowerCase()).append(") ").append(toString)
+        .append(zeroData.getType().toString().toLowerCase()).append(") ").append(toString)
         .append(';')) {
-      zeroDataImpl = iterator.next();
-      if (zeroDataImpl.getType() == ZeroDataType.ZERO_OBJECT) {
-        toString = zeroDataImpl.getData().toString();
-      } else if (zeroDataImpl.getType() == ZeroDataType.ZERO_ARRAY) {
-        toString = zeroDataImpl.getData().toString();
-      } else if (zeroDataImpl.getType() == ZeroDataType.BYTE_ARRAY) {
-        toString = String.format("byte[%d]", ((byte[]) zeroDataImpl.getData()).length);
+      zeroData = iterator.next();
+      if (zeroData.getType() == ZeroDataType.ZERO_OBJECT) {
+        toString = zeroData.getData().toString();
+      } else if (zeroData.getType() == ZeroDataType.ZERO_ARRAY) {
+        toString = zeroData.getData().toString();
+      } else if (zeroData.getType() == ZeroDataType.BYTE_ARRAY) {
+        toString = String.format("byte[%d]", ((byte[]) zeroData.getData()).length);
       } else {
-        toString = zeroDataImpl.getData().toString();
+        toString = zeroData.getData().toString();
       }
     }
 

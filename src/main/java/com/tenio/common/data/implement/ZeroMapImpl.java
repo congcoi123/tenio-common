@@ -24,7 +24,9 @@ THE SOFTWARE.
 
 package com.tenio.common.data.implement;
 
+import com.tenio.common.data.ReadonlyZeroMap;
 import com.tenio.common.data.ZeroArray;
+import com.tenio.common.data.ZeroData;
 import com.tenio.common.data.ZeroDataType;
 import com.tenio.common.data.ZeroMap;
 import com.tenio.common.data.utility.ZeroDataUtility;
@@ -40,10 +42,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class ZeroMapImpl implements ZeroMap {
 
-  private final Map<String, ZeroDataImpl> data;
+  private final Map<String, ZeroData> data;
 
   private ZeroMapImpl() {
-    data = new ConcurrentHashMap<String, ZeroDataImpl>();
+    data = new ConcurrentHashMap<>();
   }
 
   public static ZeroMap newInstance() {
@@ -77,7 +79,7 @@ public final class ZeroMapImpl implements ZeroMap {
 
   @Override
   public Set<String> getKeys() {
-    return data.keySet();
+    return Set.copyOf(data.keySet());
   }
 
   @Override
@@ -86,7 +88,7 @@ public final class ZeroMapImpl implements ZeroMap {
   }
 
   @Override
-  public Iterator<Entry<String, ZeroDataImpl>> iterator() {
+  public Iterator<Entry<String, ZeroData>> iterator() {
     return data.entrySet().iterator();
   }
 
@@ -145,13 +147,13 @@ public final class ZeroMapImpl implements ZeroMap {
   }
 
   @Override
-  public ZeroMap getZeroObject(String key) {
+  public ZeroMap getZeroMap(String key) {
     var data = getZeroData(key);
     return data == null ? null : (ZeroMap) data.getData();
   }
 
   @Override
-  public ZeroDataImpl getZeroData(String key) {
+  public ZeroData getZeroData(String key) {
     return data.get(key);
   }
 
@@ -206,7 +208,7 @@ public final class ZeroMapImpl implements ZeroMap {
   }
 
   @Override
-  public ZeroMap putZeroObject(String key, ZeroMap element) {
+  public ZeroMap putZeroMap(String key, ZeroMap element) {
     return putData(key, ZeroDataType.ZERO_OBJECT, element);
   }
 
@@ -309,6 +311,11 @@ public final class ZeroMapImpl implements ZeroMap {
   @Override
   public ZeroMap putStringArray(String key, Collection<String> element) {
     return putData(key, ZeroDataType.STRING_ARRAY, element);
+  }
+
+  @Override
+  public ReadonlyZeroMap getReadonlyZeroMap() {
+    return this;
   }
 
   @Override

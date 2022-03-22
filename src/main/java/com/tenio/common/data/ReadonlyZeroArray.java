@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,54 @@ THE SOFTWARE.
 
 package com.tenio.common.data;
 
+import java.util.Collection;
+
 /**
- * The basic collection interface for the self-definition map and array type.
+ * This class holds sequence elements in read-only mode.
  */
-public interface ZeroCollection {
+public interface ReadonlyZeroArray extends ZeroCollection {
 
-  byte[] toBinary();
+  boolean contains(Object element);
 
-  int size();
+  Object getElementAt(int index);
+
+  boolean isNull(int index);
+
+  Boolean getBoolean(int index);
+
+  Byte getByte(int index);
+
+  Short getShort(int index);
+
+  Integer getInteger(int index);
+
+  Long getLong(int index);
+
+  Float getFloat(int index);
+
+  Double getDouble(int index);
+
+  String getString(int index);
+
+  ZeroArray getZeroArray(int index);
+
+  ZeroMap getZeroMap(int index);
+
+  ZeroData getZeroData(int index);
+
+  Collection<Boolean> getBooleanArray(int index);
+
+  byte[] getByteArray(int index);
+
+  Collection<Short> getShortArray(int index);
+
+  Collection<Integer> getIntegerArray(int index);
+
+  Collection<Long> getLongArray(int index);
+
+  Collection<Float> getFloatArray(int index);
+
+  Collection<Double> getDoubleArray(int index);
+
+  Collection<String> getStringArray(int index);
 }

@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,55 @@ THE SOFTWARE.
 
 package com.tenio.common.data;
 
+import java.util.Collection;
+import java.util.Set;
+
 /**
- * The basic collection interface for the self-definition map and array type.
+ * This class holds data by pairs of key and value, works like a map in read-only mode.
  */
-public interface ZeroCollection {
+public interface ReadonlyZeroMap extends ZeroCollection {
 
-  byte[] toBinary();
+  boolean isNull(String key);
 
-  int size();
+  boolean containsKey(String key);
+
+  Set<String> getKeys();
+
+  Boolean getBoolean(String key);
+
+  Byte getByte(String key);
+
+  Short getShort(String key);
+
+  Integer getInteger(String key);
+
+  Long getLong(String key);
+
+  Float getFloat(String key);
+
+  Double getDouble(String key);
+
+  String getString(String key);
+
+  ZeroArray getZeroArray(String key);
+
+  ZeroMap getZeroMap(String key);
+
+  ZeroData getZeroData(String key);
+
+  Collection<Boolean> getBooleanArray(String key);
+
+  byte[] getByteArray(String key);
+
+  Collection<Short> getShortArray(String key);
+
+  Collection<Integer> getIntegerArray(String key);
+
+  Collection<Long> getLongArray(String key);
+
+  Collection<Float> getFloatArray(String key);
+
+  Collection<Double> getDoubleArray(String key);
+
+  Collection<String> getStringArray(String key);
 }
