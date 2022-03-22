@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("Unit Test Cases For Zero Data Utility")
+@DisplayName("Unit Test Cases For Zero Utility")
 class ZeroUtilityTest {
 
   private static Collection<Boolean> booleans;
@@ -183,7 +183,7 @@ class ZeroUtilityTest {
 
   @Test
   @DisplayName("Allow adding and fetching ZeroMap data to/from ZeroArray")
-  void zeroObjectInArrayShouldMatch() {
+  void zeroMapInArrayShouldMatch() {
     var origin = ZeroArrayImpl.newInstance();
     var zeroObject = ZeroMapImpl.newInstance();
     zeroObject.putBoolean("b", true)
@@ -199,7 +199,7 @@ class ZeroUtilityTest {
 
   @Test
   @DisplayName("Allow adding and fetching primitive data to/from ZeroMap")
-  void primitiveDataInObjectShouldMatch() {
+  void primitiveDataInMapShouldMatch() {
     var origin = ZeroMapImpl.newInstance();
     origin.putBoolean("b", true)
         .putShort("s", (short) 11)
@@ -209,7 +209,7 @@ class ZeroUtilityTest {
         .putDouble("d", 1010101.101)
         .putZeroArray("za", ZeroArrayImpl.newInstance().addDoubleArray(doubles));
     var binary = origin.toBinary();
-    var newOne = ZeroUtility.binaryToObject(binary);
+    var newOne = ZeroUtility.binaryToMap(binary);
 
     assertAll("primitiveDataInObjectShouldMatch",
         () -> assertTrue(newOne.getBoolean("b")),
@@ -223,13 +223,13 @@ class ZeroUtilityTest {
 
   @Test
   @DisplayName("Allow adding and fetching nested ZeroMap data to/from ZeroMap")
-  void instanceDataInObjectShouldMatch() {
+  void instanceDataInMapShouldMatch() {
     var origin = ZeroMapImpl.newInstance();
     origin.putNull("n")
         .putZeroElement("z", ZeroElementImpl.newInstance(ZeroType.BOOLEAN, false))
         .putString("s", "test");
     var binary = origin.toBinary();
-    var newOne = ZeroUtility.binaryToObject(binary);
+    var newOne = ZeroUtility.binaryToMap(binary);
 
     assertAll("instanceDataInObjectShouldMatch",
         () -> assertTrue(newOne.isNull("n")),
@@ -243,7 +243,7 @@ class ZeroUtilityTest {
 
   @Test
   @DisplayName("Allow adding and fetching arrays of primitive data to/from ZeroMap")
-  void collectionDataInObjectShouldMatch() {
+  void collectionDataInMapShouldMatch() {
     var origin = ZeroMapImpl.newInstance();
     origin.putBooleanArray("b", booleans)
         .putShortArray("s", shorts)
@@ -253,7 +253,7 @@ class ZeroUtilityTest {
         .putDoubleArray("d", doubles)
         .putStringArray("ss", strings);
     var binary = origin.toBinary();
-    var newOne = ZeroUtility.binaryToObject(binary);
+    var newOne = ZeroUtility.binaryToMap(binary);
 
     assertAll("collectionDataInObjectShouldMatch",
         () -> assertEquals(newOne.getBooleanArray("b").toString(), booleans.toString()),
@@ -268,12 +268,12 @@ class ZeroUtilityTest {
 
   @Test
   @DisplayName("Allow adding and fetching duplicated arrays of primitive data to/from ZeroMap")
-  void duplicatedValueInObjectShouldWork() {
+  void duplicatedValueInMapShouldWork() {
     var origin = ZeroMapImpl.newInstance();
     origin.putBooleanArray("b1", booleans).putShortArray("s1", shorts)
         .putBooleanArray("b2", booleans).putShortArray("s2", shorts);
     var binary = origin.toBinary();
-    var newOne = ZeroUtility.binaryToObject(binary);
+    var newOne = ZeroUtility.binaryToMap(binary);
 
     assertAll("duplicatedValueInObjectShouldWork",
         () -> assertEquals(newOne.getBooleanArray("b1").toString(), booleans.toString()),
@@ -285,7 +285,7 @@ class ZeroUtilityTest {
 
   @Test
   @DisplayName("Allow adding and fetching nested ZeroMap data to/from ZeroMap")
-  void zeroObjectInObjectShouldMatch() {
+  void zeroMapInMapShouldMatch() {
     var origin = ZeroMapImpl.newInstance();
     var zeroObject = ZeroMapImpl.newInstance();
     zeroObject.putBoolean("b", true)
@@ -295,7 +295,7 @@ class ZeroUtilityTest {
         .putZeroArray("za", ZeroArrayImpl.newInstance().addDoubleArray(doubles));
     origin.putZeroMap("z", zeroObject);
     var binary = origin.toBinary();
-    var newOne = ZeroUtility.binaryToObject(binary);
+    var newOne = ZeroUtility.binaryToMap(binary);
 
     assertEquals(zeroObject.toString(), newOne.getZeroMap("z").toString());
   }

@@ -42,10 +42,10 @@ import java.util.Set;
  */
 public final class ZeroMapImpl implements ZeroMap {
 
-  private final Map<String, ZeroElement> data;
+  private final Map<String, ZeroElement> map;
 
   private ZeroMapImpl() {
-    data = new HashMap<>();
+    map = new HashMap<>();
   }
 
   public static ZeroMap newInstance() {
@@ -53,12 +53,12 @@ public final class ZeroMapImpl implements ZeroMap {
   }
 
   public static ZeroMap newInstance(byte[] binary) {
-    return ZeroUtility.binaryToObject(binary);
+    return ZeroUtility.binaryToMap(binary);
   }
 
   @Override
   public byte[] toBinary() {
-    return ZeroUtility.objectToBinary(this);
+    return ZeroUtility.mapToBinary(this);
   }
 
   @Override
@@ -69,32 +69,32 @@ public final class ZeroMapImpl implements ZeroMap {
 
   @Override
   public boolean containsKey(String key) {
-    return data.containsKey(key);
+    return map.containsKey(key);
   }
 
   @Override
   public boolean removeElement(String key) {
-    return data.remove(key) != null;
+    return map.remove(key) != null;
   }
 
   @Override
   public Set<String> getKeys() {
-    return data.keySet();
+    return map.keySet();
   }
 
   @Override
   public Set<String> getReadonlyKeys() {
-    return Set.copyOf(data.keySet());
+    return Set.copyOf(map.keySet());
   }
 
   @Override
   public int size() {
-    return data.size();
+    return map.size();
   }
 
   @Override
   public Iterator<Entry<String, ZeroElement>> iterator() {
-    return data.entrySet().iterator();
+    return map.entrySet().iterator();
   }
 
   @Override
@@ -159,67 +159,67 @@ public final class ZeroMapImpl implements ZeroMap {
 
   @Override
   public ZeroElement getZeroElement(String key) {
-    return data.get(key);
+    return map.get(key);
   }
 
   @Override
   public ZeroMap putNull(String key) {
-    return putData(key, ZeroType.NULL, null);
+    return putElement(key, ZeroType.NULL, null);
   }
 
   @Override
-  public ZeroMap putBoolean(String key, boolean element) {
-    return putData(key, ZeroType.BOOLEAN, element);
+  public ZeroMap putBoolean(String key, boolean data) {
+    return putElement(key, ZeroType.BOOLEAN, data);
   }
 
   @Override
-  public ZeroMap putByte(String key, byte element) {
-    return putData(key, ZeroType.BYTE, element);
+  public ZeroMap putByte(String key, byte data) {
+    return putElement(key, ZeroType.BYTE, data);
   }
 
   @Override
-  public ZeroMap putShort(String key, short element) {
-    return putData(key, ZeroType.SHORT, element);
+  public ZeroMap putShort(String key, short data) {
+    return putElement(key, ZeroType.SHORT, data);
   }
 
   @Override
-  public ZeroMap putInteger(String key, int element) {
-    return putData(key, ZeroType.INTEGER, element);
+  public ZeroMap putInteger(String key, int data) {
+    return putElement(key, ZeroType.INTEGER, data);
   }
 
   @Override
-  public ZeroMap putLong(String key, long element) {
-    return putData(key, ZeroType.LONG, element);
+  public ZeroMap putLong(String key, long data) {
+    return putElement(key, ZeroType.LONG, data);
   }
 
   @Override
-  public ZeroMap putFloat(String key, float element) {
-    return putData(key, ZeroType.FLOAT, element);
+  public ZeroMap putFloat(String key, float data) {
+    return putElement(key, ZeroType.FLOAT, data);
   }
 
   @Override
-  public ZeroMap putDouble(String key, double element) {
-    return putData(key, ZeroType.DOUBLE, element);
+  public ZeroMap putDouble(String key, double data) {
+    return putElement(key, ZeroType.DOUBLE, data);
   }
 
   @Override
-  public ZeroMap putString(String key, String element) {
-    return putData(key, ZeroType.STRING, element);
+  public ZeroMap putString(String key, String data) {
+    return putElement(key, ZeroType.STRING, data);
   }
 
   @Override
-  public ZeroMap putZeroArray(String key, ZeroArray element) {
-    return putData(key, ZeroType.ZERO_ARRAY, element);
+  public ZeroMap putZeroArray(String key, ZeroArray data) {
+    return putElement(key, ZeroType.ZERO_ARRAY, data);
   }
 
   @Override
-  public ZeroMap putZeroMap(String key, ZeroMap element) {
-    return putData(key, ZeroType.ZERO_OBJECT, element);
+  public ZeroMap putZeroMap(String key, ZeroMap data) {
+    return putElement(key, ZeroType.ZERO_MAP, data);
   }
 
   @Override
   public ZeroMap putZeroElement(String key, ZeroElement element) {
-    this.data.put(key, element);
+    map.put(key, element);
     return this;
   }
 
@@ -279,43 +279,43 @@ public final class ZeroMapImpl implements ZeroMap {
   }
 
   @Override
-  public ZeroMap putBooleanArray(String key, Collection<Boolean> element) {
-    return putData(key, ZeroType.BOOLEAN_ARRAY, element);
+  public ZeroMap putBooleanArray(String key, Collection<Boolean> data) {
+    return putElement(key, ZeroType.BOOLEAN_ARRAY, data);
   }
 
   @Override
-  public ZeroMap putByteArray(String key, byte[] element) {
-    return putData(key, ZeroType.BYTE_ARRAY, element);
+  public ZeroMap putByteArray(String key, byte[] data) {
+    return putElement(key, ZeroType.BYTE_ARRAY, data);
   }
 
   @Override
-  public ZeroMap putShortArray(String key, Collection<Short> element) {
-    return putData(key, ZeroType.SHORT_ARRAY, element);
+  public ZeroMap putShortArray(String key, Collection<Short> data) {
+    return putElement(key, ZeroType.SHORT_ARRAY, data);
   }
 
   @Override
-  public ZeroMap putIntegerArray(String key, Collection<Integer> element) {
-    return putData(key, ZeroType.INTEGER_ARRAY, element);
+  public ZeroMap putIntegerArray(String key, Collection<Integer> data) {
+    return putElement(key, ZeroType.INTEGER_ARRAY, data);
   }
 
   @Override
-  public ZeroMap putLongArray(String key, Collection<Long> element) {
-    return putData(key, ZeroType.LONG_ARRAY, element);
+  public ZeroMap putLongArray(String key, Collection<Long> data) {
+    return putElement(key, ZeroType.LONG_ARRAY, data);
   }
 
   @Override
-  public ZeroMap putFloatArray(String key, Collection<Float> element) {
-    return putData(key, ZeroType.FLOAT_ARRAY, element);
+  public ZeroMap putFloatArray(String key, Collection<Float> data) {
+    return putElement(key, ZeroType.FLOAT_ARRAY, data);
   }
 
   @Override
-  public ZeroMap putDoubleArray(String key, Collection<Double> element) {
-    return putData(key, ZeroType.DOUBLE_ARRAY, element);
+  public ZeroMap putDoubleArray(String key, Collection<Double> data) {
+    return putElement(key, ZeroType.DOUBLE_ARRAY, data);
   }
 
   @Override
-  public ZeroMap putStringArray(String key, Collection<String> element) {
-    return putData(key, ZeroType.STRING_ARRAY, element);
+  public ZeroMap putStringArray(String key, Collection<String> data) {
+    return putElement(key, ZeroType.STRING_ARRAY, data);
   }
 
   @Override
@@ -334,7 +334,7 @@ public final class ZeroMapImpl implements ZeroMap {
       builder.append(" (").append(zeroElement.getType().toString().toLowerCase()).append(") ")
           .append(key)
           .append(": ");
-      if (zeroElement.getType() == ZeroType.ZERO_OBJECT) {
+      if (zeroElement.getType() == ZeroType.ZERO_MAP) {
         builder.append(zeroElement.getData().toString());
       } else if (zeroElement.getType() == ZeroType.ZERO_ARRAY) {
         builder.append(zeroElement.getData().toString());
@@ -353,8 +353,8 @@ public final class ZeroMapImpl implements ZeroMap {
     return builder.toString();
   }
 
-  private ZeroMap putData(String key, ZeroType type, Object element) {
-    data.put(key, ZeroElementImpl.newInstance(type, element));
+  private ZeroMap putElement(String key, ZeroType type, Object data) {
+    map.put(key, ZeroUtility.newZeroElement(type, data));
     return this;
   }
 }

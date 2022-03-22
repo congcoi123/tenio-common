@@ -36,43 +36,43 @@ public interface ZeroMap extends ReadonlyZeroMap, Iterable<Map.Entry<String, Zer
 
   ZeroMap putNull(String key);
 
-  ZeroMap putBoolean(String key, boolean element);
+  ZeroMap putBoolean(String key, boolean data);
 
-  ZeroMap putByte(String key, byte element);
+  ZeroMap putByte(String key, byte data);
 
-  ZeroMap putShort(String key, short element);
+  ZeroMap putShort(String key, short data);
 
-  ZeroMap putInteger(String key, int element);
+  ZeroMap putInteger(String key, int data);
 
-  ZeroMap putLong(String key, long element);
+  ZeroMap putLong(String key, long data);
 
-  ZeroMap putFloat(String key, float element);
+  ZeroMap putFloat(String key, float data);
 
-  ZeroMap putDouble(String key, double element);
+  ZeroMap putDouble(String key, double data);
 
-  ZeroMap putString(String key, String element);
+  ZeroMap putString(String key, String data);
 
-  ZeroMap putZeroArray(String key, ZeroArray element);
+  ZeroMap putZeroArray(String key, ZeroArray data);
 
-  ZeroMap putZeroMap(String key, ZeroMap element);
+  ZeroMap putZeroMap(String key, ZeroMap data);
 
   ZeroMap putZeroElement(String key, ZeroElement element);
 
-  ZeroMap putBooleanArray(String key, Collection<Boolean> element);
+  ZeroMap putBooleanArray(String key, Collection<Boolean> data);
 
-  ZeroMap putByteArray(String key, byte[] element);
+  ZeroMap putByteArray(String key, byte[] data);
 
-  ZeroMap putShortArray(String key, Collection<Short> element);
+  ZeroMap putShortArray(String key, Collection<Short> data);
 
-  ZeroMap putIntegerArray(String key, Collection<Integer> element);
+  ZeroMap putIntegerArray(String key, Collection<Integer> data);
 
-  ZeroMap putLongArray(String key, Collection<Long> element);
+  ZeroMap putLongArray(String key, Collection<Long> data);
 
-  ZeroMap putFloatArray(String key, Collection<Float> element);
+  ZeroMap putFloatArray(String key, Collection<Float> data);
 
-  ZeroMap putDoubleArray(String key, Collection<Double> element);
+  ZeroMap putDoubleArray(String key, Collection<Double> data);
 
-  ZeroMap putStringArray(String key, Collection<String> element);
+  ZeroMap putStringArray(String key, Collection<String> data);
 
   ReadonlyZeroMap getReadonlyZeroMap();
 }

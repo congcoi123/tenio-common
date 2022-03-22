@@ -27,8 +27,8 @@ package com.tenio.common.data.implement;
 import com.tenio.common.data.ReadonlyZeroArray;
 import com.tenio.common.data.ZeroArray;
 import com.tenio.common.data.ZeroElement;
-import com.tenio.common.data.ZeroType;
 import com.tenio.common.data.ZeroMap;
+import com.tenio.common.data.ZeroType;
 import com.tenio.common.data.utility.ZeroUtility;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,10 +42,10 @@ import java.util.List;
  */
 public final class ZeroArrayImpl implements ZeroArray {
 
-  private final List<ZeroElement> data;
+  private final List<ZeroElement> array;
 
   private ZeroArrayImpl() {
-    data = new ArrayList<>();
+    array = new ArrayList<>();
   }
 
   public static ZeroArray newInstance() {
@@ -62,15 +62,15 @@ public final class ZeroArrayImpl implements ZeroArray {
   }
 
   @Override
-  public boolean contains(Object element) {
+  public boolean contains(Object data) {
     var match =
-        data.stream().filter(data -> data.getData().equals(element)).findFirst();
+        array.stream().filter(element -> element.getData().equals(data)).findFirst();
     return match.orElse(null) != null;
   }
 
   @Override
   public Iterator<ZeroElement> iterator() {
-    return data.iterator();
+    return array.iterator();
   }
 
   @Override
@@ -81,12 +81,12 @@ public final class ZeroArrayImpl implements ZeroArray {
 
   @Override
   public void removeElementAt(int index) {
-    data.remove(index);
+    array.remove(index);
   }
 
   @Override
   public int size() {
-    return data.size();
+    return array.size();
   }
 
   @Override
@@ -157,67 +157,67 @@ public final class ZeroArrayImpl implements ZeroArray {
 
   @Override
   public ZeroElement getZeroElement(int index) {
-    return data.get(index);
+    return array.get(index);
   }
 
   @Override
   public ZeroArray addNull() {
-    return addData(ZeroType.NULL, null);
+    return addElement(ZeroType.NULL, null);
   }
 
   @Override
-  public ZeroArray addBoolean(boolean element) {
-    return addData(ZeroType.BOOLEAN, element);
+  public ZeroArray addBoolean(boolean data) {
+    return addElement(ZeroType.BOOLEAN, data);
   }
 
   @Override
-  public ZeroArray addByte(byte element) {
-    return addData(ZeroType.BYTE, element);
+  public ZeroArray addByte(byte data) {
+    return addElement(ZeroType.BYTE, data);
   }
 
   @Override
-  public ZeroArray addShort(short element) {
-    return addData(ZeroType.SHORT, element);
+  public ZeroArray addShort(short data) {
+    return addElement(ZeroType.SHORT, data);
   }
 
   @Override
-  public ZeroArray addInteger(int element) {
-    return addData(ZeroType.INTEGER, element);
+  public ZeroArray addInteger(int data) {
+    return addElement(ZeroType.INTEGER, data);
   }
 
   @Override
-  public ZeroArray addLong(long element) {
-    return addData(ZeroType.LONG, element);
+  public ZeroArray addLong(long data) {
+    return addElement(ZeroType.LONG, data);
   }
 
   @Override
-  public ZeroArray addFloat(float element) {
-    return addData(ZeroType.FLOAT, element);
+  public ZeroArray addFloat(float data) {
+    return addElement(ZeroType.FLOAT, data);
   }
 
   @Override
-  public ZeroArray addDouble(double element) {
-    return addData(ZeroType.DOUBLE, element);
+  public ZeroArray addDouble(double data) {
+    return addElement(ZeroType.DOUBLE, data);
   }
 
   @Override
-  public ZeroArray addString(String element) {
-    return addData(ZeroType.STRING, element);
+  public ZeroArray addString(String data) {
+    return addElement(ZeroType.STRING, data);
   }
 
   @Override
-  public ZeroArray addZeroArray(ZeroArray element) {
-    return addData(ZeroType.ZERO_ARRAY, element);
+  public ZeroArray addZeroArray(ZeroArray data) {
+    return addElement(ZeroType.ZERO_ARRAY, data);
   }
 
   @Override
-  public ZeroArray addZeroMap(ZeroMap element) {
-    return addData(ZeroType.ZERO_OBJECT, element);
+  public ZeroArray addZeroMap(ZeroMap data) {
+    return addElement(ZeroType.ZERO_MAP, data);
   }
 
   @Override
   public ZeroArray addZeroElement(ZeroElement element) {
-    this.data.add(element);
+    array.add(element);
     return this;
   }
 
@@ -277,43 +277,43 @@ public final class ZeroArrayImpl implements ZeroArray {
   }
 
   @Override
-  public ZeroArray addBooleanArray(Collection<Boolean> element) {
-    return addData(ZeroType.BOOLEAN_ARRAY, element);
+  public ZeroArray addBooleanArray(Collection<Boolean> data) {
+    return addElement(ZeroType.BOOLEAN_ARRAY, data);
   }
 
   @Override
-  public ZeroArray addByteArray(byte[] element) {
-    return addData(ZeroType.BYTE_ARRAY, element);
+  public ZeroArray addByteArray(byte[] data) {
+    return addElement(ZeroType.BYTE_ARRAY, data);
   }
 
   @Override
-  public ZeroArray addShortArray(Collection<Short> element) {
-    return addData(ZeroType.SHORT_ARRAY, element);
+  public ZeroArray addShortArray(Collection<Short> data) {
+    return addElement(ZeroType.SHORT_ARRAY, data);
   }
 
   @Override
-  public ZeroArray addIntegerArray(Collection<Integer> element) {
-    return addData(ZeroType.INTEGER_ARRAY, element);
+  public ZeroArray addIntegerArray(Collection<Integer> data) {
+    return addElement(ZeroType.INTEGER_ARRAY, data);
   }
 
   @Override
-  public ZeroArray addLongArray(Collection<Long> element) {
-    return addData(ZeroType.LONG_ARRAY, element);
+  public ZeroArray addLongArray(Collection<Long> data) {
+    return addElement(ZeroType.LONG_ARRAY, data);
   }
 
   @Override
-  public ZeroArray addFloatArray(Collection<Float> element) {
-    return addData(ZeroType.FLOAT_ARRAY, element);
+  public ZeroArray addFloatArray(Collection<Float> data) {
+    return addElement(ZeroType.FLOAT_ARRAY, data);
   }
 
   @Override
-  public ZeroArray addDoubleArray(Collection<Double> element) {
-    return addData(ZeroType.DOUBLE_ARRAY, element);
+  public ZeroArray addDoubleArray(Collection<Double> data) {
+    return addElement(ZeroType.DOUBLE_ARRAY, data);
   }
 
   @Override
-  public ZeroArray addStringArray(Collection<String> element) {
-    return addData(ZeroType.STRING_ARRAY, element);
+  public ZeroArray addStringArray(Collection<String> data) {
+    return addElement(ZeroType.STRING_ARRAY, data);
   }
 
   @Override
@@ -332,7 +332,7 @@ public final class ZeroArrayImpl implements ZeroArray {
         .append(zeroElement.getType().toString().toLowerCase()).append(") ").append(toString)
         .append(';')) {
       zeroElement = iterator.next();
-      if (zeroElement.getType() == ZeroType.ZERO_OBJECT) {
+      if (zeroElement.getType() == ZeroType.ZERO_MAP) {
         toString = zeroElement.getData().toString();
       } else if (zeroElement.getType() == ZeroType.ZERO_ARRAY) {
         toString = zeroElement.getData().toString();
@@ -351,8 +351,8 @@ public final class ZeroArrayImpl implements ZeroArray {
     return builder.toString();
   }
 
-  private ZeroArray addData(ZeroType type, Object element) {
-    data.add(ZeroElementImpl.newInstance(type, element));
+  private ZeroArray addElement(ZeroType type, Object data) {
+    array.add(ZeroUtility.newZeroElement(type, data));
     return this;
   }
 }

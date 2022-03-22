@@ -35,43 +35,43 @@ public interface ZeroArray extends ReadonlyZeroArray, Iterable<ZeroElement> {
 
   ZeroArray addNull();
 
-  ZeroArray addBoolean(boolean element);
+  ZeroArray addBoolean(boolean data);
 
-  ZeroArray addByte(byte element);
+  ZeroArray addByte(byte data);
 
-  ZeroArray addShort(short element);
+  ZeroArray addShort(short data);
 
-  ZeroArray addInteger(int element);
+  ZeroArray addInteger(int data);
 
-  ZeroArray addLong(long element);
+  ZeroArray addLong(long data);
 
-  ZeroArray addFloat(float element);
+  ZeroArray addFloat(float data);
 
-  ZeroArray addDouble(double element);
+  ZeroArray addDouble(double data);
 
-  ZeroArray addString(String element);
+  ZeroArray addString(String data);
 
-  ZeroArray addZeroArray(ZeroArray element);
+  ZeroArray addZeroArray(ZeroArray data);
 
-  ZeroArray addZeroMap(ZeroMap element);
+  ZeroArray addZeroMap(ZeroMap data);
 
   ZeroArray addZeroElement(ZeroElement element);
 
-  ZeroArray addBooleanArray(Collection<Boolean> element);
+  ZeroArray addBooleanArray(Collection<Boolean> data);
 
-  ZeroArray addByteArray(byte[] element);
+  ZeroArray addByteArray(byte[] data);
 
-  ZeroArray addShortArray(Collection<Short> element);
+  ZeroArray addShortArray(Collection<Short> data);
 
-  ZeroArray addIntegerArray(Collection<Integer> element);
+  ZeroArray addIntegerArray(Collection<Integer> data);
 
-  ZeroArray addLongArray(Collection<Long> element);
+  ZeroArray addLongArray(Collection<Long> data);
 
-  ZeroArray addFloatArray(Collection<Float> element);
+  ZeroArray addFloatArray(Collection<Float> data);
 
-  ZeroArray addDoubleArray(Collection<Double> element);
+  ZeroArray addDoubleArray(Collection<Double> data);
 
-  ZeroArray addStringArray(Collection<String> element);
+  ZeroArray addStringArray(Collection<String> data);
 
   ReadonlyZeroArray getReadonlyZeroArray();
 }

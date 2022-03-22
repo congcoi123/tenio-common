@@ -68,7 +68,7 @@ public enum ZeroType {
 
   ZERO_ARRAY(17),
 
-  ZERO_OBJECT(18);
+  ZERO_MAP(18);
 
   // Reverse-lookup map for getting a type from a value
   private static final Map<Integer, ZeroType> lookup = new HashMap<>();
