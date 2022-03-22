@@ -22,23 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.data.element;
+package com.tenio.common.data.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.tenio.common.data.ZeroDataType;
+import com.tenio.common.data.implement.ZeroDataImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Unit Test Cases For Zero Data")
-class ZeroDataTest {
+class ZeroDataImplTest {
 
   @Test
   @DisplayName("Creating a new instance should work")
   void createNewInstanceShouldWork() {
-    ZeroData zeroData = ZeroData.newInstance(ZeroDataType.NULL, "Element");
-    assertEquals(ZeroDataType.NULL, zeroData.getType());
-    assertEquals(zeroData.getElement(), "Element");
-    assertEquals("{ type: NULL, value: Element }", zeroData.toString());
+    ZeroDataImpl zeroDataImpl = ZeroDataImpl.newInstance(ZeroDataType.NULL, "Element");
+    assertEquals(ZeroDataType.NULL, zeroDataImpl.getType());
+    assertEquals(zeroDataImpl.getData(), "Element");
+    assertEquals("{ type: NULL, value: Element }", zeroDataImpl.toString());
   }
 }

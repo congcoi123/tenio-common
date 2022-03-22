@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 package com.tenio.common.data;
 
-import com.tenio.common.data.element.ZeroData;
+import com.tenio.common.data.implement.ZeroDataImpl;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -33,7 +33,7 @@ import java.util.Set;
 /**
  * This class holds data by pairs of key and value, works like a map.
  */
-public interface ZeroObject extends ZeroElement {
+public interface ZeroMap extends ZeroCollection {
 
   boolean isNull(String key);
 
@@ -43,7 +43,7 @@ public interface ZeroObject extends ZeroElement {
 
   Set<String> getKeys();
 
-  Iterator<Entry<String, ZeroData>> iterator();
+  Iterator<Entry<String, ZeroDataImpl>> iterator();
 
   Boolean getBoolean(String key);
 
@@ -63,33 +63,33 @@ public interface ZeroObject extends ZeroElement {
 
   ZeroArray getZeroArray(String key);
 
-  ZeroObject getZeroObject(String key);
+  ZeroMap getZeroObject(String key);
 
-  ZeroData getZeroData(String key);
+  ZeroDataImpl getZeroData(String key);
 
-  ZeroObject putNull(String key);
+  ZeroMap putNull(String key);
 
-  ZeroObject putBoolean(String key, boolean element);
+  ZeroMap putBoolean(String key, boolean element);
 
-  ZeroObject putByte(String key, byte element);
+  ZeroMap putByte(String key, byte element);
 
-  ZeroObject putShort(String key, short element);
+  ZeroMap putShort(String key, short element);
 
-  ZeroObject putInteger(String key, int element);
+  ZeroMap putInteger(String key, int element);
 
-  ZeroObject putLong(String key, long element);
+  ZeroMap putLong(String key, long element);
 
-  ZeroObject putFloat(String key, float element);
+  ZeroMap putFloat(String key, float element);
 
-  ZeroObject putDouble(String key, double element);
+  ZeroMap putDouble(String key, double element);
 
-  ZeroObject putString(String key, String element);
+  ZeroMap putString(String key, String element);
 
-  ZeroObject putZeroArray(String key, ZeroArray element);
+  ZeroMap putZeroArray(String key, ZeroArray element);
 
-  ZeroObject putZeroObject(String key, ZeroObject element);
+  ZeroMap putZeroObject(String key, ZeroMap element);
 
-  ZeroObject putZeroData(String key, ZeroData data);
+  ZeroMap putZeroData(String key, ZeroDataImpl data);
 
   Collection<Boolean> getBooleanArray(String key);
 
@@ -107,19 +107,19 @@ public interface ZeroObject extends ZeroElement {
 
   Collection<String> getStringArray(String key);
 
-  ZeroObject putBooleanArray(String key, Collection<Boolean> element);
+  ZeroMap putBooleanArray(String key, Collection<Boolean> element);
 
-  ZeroObject putByteArray(String key, byte[] element);
+  ZeroMap putByteArray(String key, byte[] element);
 
-  ZeroObject putShortArray(String key, Collection<Short> element);
+  ZeroMap putShortArray(String key, Collection<Short> element);
 
-  ZeroObject putIntegerArray(String key, Collection<Integer> element);
+  ZeroMap putIntegerArray(String key, Collection<Integer> element);
 
-  ZeroObject putLongArray(String key, Collection<Long> element);
+  ZeroMap putLongArray(String key, Collection<Long> element);
 
-  ZeroObject putFloatArray(String key, Collection<Float> element);
+  ZeroMap putFloatArray(String key, Collection<Float> element);
 
-  ZeroObject putDoubleArray(String key, Collection<Double> element);
+  ZeroMap putDoubleArray(String key, Collection<Double> element);
 
-  ZeroObject putStringArray(String key, Collection<String> element);
+  ZeroMap putStringArray(String key, Collection<String> element);
 }

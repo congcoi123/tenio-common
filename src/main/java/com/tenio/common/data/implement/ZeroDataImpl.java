@@ -22,33 +22,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.data.element;
+package com.tenio.common.data.implement;
 
 import com.tenio.common.data.ZeroDataType;
 import java.util.Objects;
 
 /**
- * This class holds a relationship between the self-definition data type and its value.
+ * This class holds a relationship between a self-definition data type and its value.
  */
-public final class ZeroData {
+public final class ZeroDataImpl implements com.tenio.common.data.ZeroData {
 
   private final ZeroDataType type;
   private final Object element;
 
-  private ZeroData(ZeroDataType type, Object element) {
+  private ZeroDataImpl(ZeroDataType type, Object element) {
     this.type = type;
     this.element = element;
   }
 
-  public static ZeroData newInstance(ZeroDataType type, Object element) {
-    return new ZeroData(type, element);
+  public static ZeroDataImpl newInstance(ZeroDataType type, Object element) {
+    return new ZeroDataImpl(type, element);
   }
 
+  @Override
   public ZeroDataType getType() {
     return type;
   }
 
-  public Object getElement() {
+  @Override
+  public Object getData() {
     return element;
   }
 
@@ -60,8 +62,8 @@ public final class ZeroData {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ZeroData zeroData = (ZeroData) o;
-    return type == zeroData.type && Objects.equals(element, zeroData.element);
+    ZeroDataImpl zeroDataImpl = (ZeroDataImpl) o;
+    return type == zeroDataImpl.type && Objects.equals(element, zeroDataImpl.element);
   }
 
   @Override

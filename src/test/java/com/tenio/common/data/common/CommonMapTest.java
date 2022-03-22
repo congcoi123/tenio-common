@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.data.element;
+package com.tenio.common.data.common;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,15 +34,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Unit Test Cases For Common Object")
-class CommonObjectTest {
+class CommonMapTest {
 
-  private final CommonObject commonObject = CommonObject.newInstance();
-  private final CommonObject dummyObject = CommonObject.newInstance();
-  private final CommonObjectArray dummyObjectArray = CommonObjectArray.newInstance();
+  private final CommonMap commonMap = CommonMap.newInstance();
+  private final CommonMap dummyObject = CommonMap.newInstance();
+  private final CommonArray dummyObjectArray = CommonArray.newInstance();
 
   @BeforeEach
   void initialization() {
-    commonObject.add("double", 100.0).add("float", 100.0F).add("long", 100L).add("integer", 100)
+    commonMap.add("double", 100.0).add("float", 100.0F).add("long", 100L).add("integer", 100)
         .add("string", "test").add("boolean", true).add("common object", dummyObject)
         .add("common object array", dummyObjectArray).add("object", dummyObject);
   }
@@ -51,23 +51,23 @@ class CommonObjectTest {
   @DisplayName("Allow fetching all inserted data")
   void itShouldFetchAllInsertedData() {
     assertAll("itShouldFetchAllInsertedData",
-        () -> assertEquals(commonObject.getDouble("double"), 100.0),
-        () -> assertEquals(commonObject.getFloat("float"), 100.0F),
-        () -> assertEquals(commonObject.getLong("long"), 100L),
-        () -> assertEquals(commonObject.getInt("integer"), 100),
-        () -> assertEquals(commonObject.getString("string"), "test"),
-        () -> assertTrue(commonObject.getBoolean("boolean")),
-        () -> assertEquals(commonObject.getCommonObject("common object"), dummyObject),
-        () -> assertEquals(commonObject.getCommonObjectArray("common object array"),
+        () -> assertEquals(commonMap.getDouble("double"), 100.0),
+        () -> assertEquals(commonMap.getFloat("float"), 100.0F),
+        () -> assertEquals(commonMap.getLong("long"), 100L),
+        () -> assertEquals(commonMap.getInt("integer"), 100),
+        () -> assertEquals(commonMap.getString("string"), "test"),
+        () -> assertTrue(commonMap.getBoolean("boolean")),
+        () -> assertEquals(commonMap.getCommonObject("common object"), dummyObject),
+        () -> assertEquals(commonMap.getCommonObjectArray("common object array"),
             dummyObjectArray),
-        () -> assertEquals(commonObject.getObject("object"), dummyObject));
+        () -> assertEquals(commonMap.getObject("object"), dummyObject));
   }
 
   @Test
   @DisplayName("Allow checking existed data")
   void itShouldCheckTheExistedData() {
     assertAll("itShouldCheckTheExistedData",
-        () -> assertTrue(commonObject.contains("double")),
-        () -> assertFalse(commonObject.contains("short")));
+        () -> assertTrue(commonMap.contains("double")),
+        () -> assertFalse(commonMap.contains("short")));
   }
 }

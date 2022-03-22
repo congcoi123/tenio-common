@@ -26,11 +26,11 @@ package com.tenio.common.data.utility;
 
 import com.tenio.common.data.ZeroArray;
 import com.tenio.common.data.ZeroDataType;
-import com.tenio.common.data.ZeroElement;
-import com.tenio.common.data.ZeroObject;
-import com.tenio.common.data.element.ZeroData;
+import com.tenio.common.data.ZeroCollection;
+import com.tenio.common.data.ZeroMap;
+import com.tenio.common.data.implement.ZeroDataImpl;
 import com.tenio.common.data.implement.ZeroArrayImpl;
-import com.tenio.common.data.implement.ZeroObjectImpl;
+import com.tenio.common.data.implement.ZeroMapImpl;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,11 +38,11 @@ import java.util.Collection;
 /**
  * This class provides all necessary methods to work with the self-definition classes.
  */
-public final class ZeroDataSerializerUtility {
+public final class ZeroDataUtility {
 
   private static final int BUFFER_CHUNK_BYTES = 512;
 
-  private ZeroDataSerializerUtility() {
+  private ZeroDataUtility() {
     throw new UnsupportedOperationException("This class does not support to create an instance");
   }
 
@@ -52,7 +52,7 @@ public final class ZeroDataSerializerUtility {
    * @param binary the stream of bytes
    * @return a new zero element instance
    */
-  public static ZeroElement binaryToElement(byte[] binary) {
+  public static ZeroCollection binaryToElement(byte[] binary) {
     switch (ZeroDataType.getByValue(binary[0])) {
       case ZERO_OBJECT:
         return binaryToObject(binary);
@@ -92,10 +92,10 @@ public final class ZeroDataSerializerUtility {
    * @param binary the stream of bytes
    * @return a new zero object instance
    */
-  public static ZeroObject binaryToObject(byte[] binary) {
+  public static ZeroMap binaryToObject(byte[] binary) {
     if (binary.length < 3) {
       throw new IllegalStateException(String.format(
-          "Unable to decode a ZeroObject because binary data size is not big enough to work on it"
+          "Unable to decode a ZeroMap because binary data size is not big enough to work on it"
               + ". Size: %d bytes",
           binary.length));
     }
@@ -113,7 +113,7 @@ public final class ZeroDataSerializerUtility {
    * @param object the object
    * @return the stream of bytes converted from the object
    */
-  public static byte[] objectToBinary(ZeroObject object) {
+  public static byte[] objectToBinary(ZeroMap object) {
     var buffer = ByteBuffer.allocate(BUFFER_CHUNK_BYTES);
     buffer.put((byte) ZeroDataType.ZERO_OBJECT.getValue());
     buffer.putShort((short) object.size());
@@ -121,16 +121,16 @@ public final class ZeroDataSerializerUtility {
     return objectToBinary(object, buffer);
   }
 
-  private static byte[] objectToBinary(ZeroObject object, ByteBuffer buffer) {
+  private static byte[] objectToBinary(ZeroMap object, ByteBuffer buffer) {
     var keys = object.getKeys();
-    ZeroData zeroData = null;
+    ZeroDataImpl zeroDataImpl = null;
     Object element = null;
 
     for (var iterator = keys.iterator(); iterator
-        .hasNext(); buffer = encodeObject(buffer, zeroData.getType(), element)) {
+        .hasNext(); buffer = encodeObject(buffer, zeroDataImpl.getType(), element)) {
       var key = iterator.next();
-      zeroData = object.getZeroData(key);
-      element = zeroData.getElement();
+      zeroDataImpl = object.getZeroData(key);
+      element = zeroDataImpl.getData();
       buffer = encodeZeroObjectKey(buffer, key);
     }
 
@@ -157,13 +157,13 @@ public final class ZeroDataSerializerUtility {
   }
 
   private static byte[] arrayToBinary(ZeroArray array, ByteBuffer buffer) {
-    ZeroData zeroData = null;
+    ZeroDataImpl zeroDataImpl = null;
     Object element = null;
 
     for (var iterator = array.iterator(); iterator
-        .hasNext(); buffer = encodeObject(buffer, zeroData.getType(), element)) {
-      zeroData = iterator.next();
-      element = zeroData.getElement();
+        .hasNext(); buffer = encodeObject(buffer, zeroDataImpl.getType(), element)) {
+      zeroDataImpl = iterator.next();
+      element = zeroDataImpl.getData();
     }
 
     var position = buffer.position();
@@ -174,7 +174,7 @@ public final class ZeroDataSerializerUtility {
     return result;
   }
 
-  private static ZeroData decodeObject(ByteBuffer buffer) throws RuntimeException {
+  private static ZeroDataImpl decodeObject(ByteBuffer buffer) throws RuntimeException {
     var headerByte = buffer.get();
     var type = ZeroDataType.getByValue(headerByte);
 
@@ -215,10 +215,10 @@ public final class ZeroDataSerializerUtility {
         return decodeStringArray(buffer);
       case ZERO_ARRAY:
         buffer.position(buffer.position() - Byte.BYTES);
-        return ZeroData.newInstance(ZeroDataType.ZERO_ARRAY, decodeZeroArray(buffer));
+        return ZeroDataImpl.newInstance(ZeroDataType.ZERO_ARRAY, decodeZeroArray(buffer));
       case ZERO_OBJECT:
         buffer.position(buffer.position() - Byte.BYTES);
-        return ZeroData.newInstance(ZeroDataType.ZERO_OBJECT, decodeZeroObject(buffer));
+        return ZeroDataImpl.newInstance(ZeroDataType.ZERO_OBJECT, decodeZeroObject(buffer));
       default:
         return null;
     }
@@ -282,7 +282,7 @@ public final class ZeroDataSerializerUtility {
         buffer = appendBinaryToBuffer(buffer, arrayToBinary((ZeroArray) element));
         break;
       case ZERO_OBJECT:
-        buffer = appendBinaryToBuffer(buffer, objectToBinary((ZeroObject) element));
+        buffer = appendBinaryToBuffer(buffer, objectToBinary((ZeroMap) element));
         break;
       default:
         throw new IllegalArgumentException(
@@ -292,11 +292,11 @@ public final class ZeroDataSerializerUtility {
     return buffer;
   }
 
-  private static ZeroData decodeNull(ByteBuffer buffer) {
-    return ZeroData.newInstance(ZeroDataType.NULL, null);
+  private static ZeroDataImpl decodeNull(ByteBuffer buffer) {
+    return ZeroDataImpl.newInstance(ZeroDataType.NULL, null);
   }
 
-  private static ZeroData decodeBoolean(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeBoolean(ByteBuffer buffer) {
     var bool = buffer.get();
     Boolean element = null;
 
@@ -311,40 +311,40 @@ public final class ZeroDataSerializerUtility {
       element = Boolean.TRUE;
     }
 
-    return ZeroData.newInstance(ZeroDataType.BOOLEAN, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.BOOLEAN, element);
   }
 
-  private static ZeroData decodeByte(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeByte(ByteBuffer buffer) {
     var element = buffer.get();
-    return ZeroData.newInstance(ZeroDataType.BYTE, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.BYTE, element);
   }
 
-  private static ZeroData decodeShort(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeShort(ByteBuffer buffer) {
     var element = buffer.getShort();
-    return ZeroData.newInstance(ZeroDataType.SHORT, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.SHORT, element);
   }
 
-  private static ZeroData decodeInteger(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeInteger(ByteBuffer buffer) {
     var element = buffer.getInt();
-    return ZeroData.newInstance(ZeroDataType.INTEGER, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.INTEGER, element);
   }
 
-  private static ZeroData decodeLong(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeLong(ByteBuffer buffer) {
     var element = buffer.getLong();
-    return ZeroData.newInstance(ZeroDataType.LONG, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.LONG, element);
   }
 
-  private static ZeroData decodeFloat(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeFloat(ByteBuffer buffer) {
     var element = buffer.getFloat();
-    return ZeroData.newInstance(ZeroDataType.FLOAT, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.FLOAT, element);
   }
 
-  private static ZeroData decodeDouble(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeDouble(ByteBuffer buffer) {
     var element = buffer.getDouble();
-    return ZeroData.newInstance(ZeroDataType.DOUBLE, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.DOUBLE, element);
   }
 
-  private static ZeroData decodeString(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeString(ByteBuffer buffer) {
     var strLen = buffer.getShort();
 
     if (strLen < 0) {
@@ -356,10 +356,10 @@ public final class ZeroDataSerializerUtility {
     buffer.get(strData, 0, strLen);
     var element = new String(strData);
 
-    return ZeroData.newInstance(ZeroDataType.STRING, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.STRING, element);
   }
 
-  private static ZeroData decodeBooleanArray(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeBooleanArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Boolean>();
 
@@ -377,10 +377,10 @@ public final class ZeroDataSerializerUtility {
       }
     }
 
-    return ZeroData.newInstance(ZeroDataType.BOOLEAN_ARRAY, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.BOOLEAN_ARRAY, element);
   }
 
-  private static ZeroData decodeByteArray(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeByteArray(ByteBuffer buffer) {
     var arraySize = buffer.getInt();
     if (arraySize < 0) {
       throw new NegativeArraySizeException(
@@ -390,10 +390,10 @@ public final class ZeroDataSerializerUtility {
     var byteData = new byte[arraySize];
     buffer.get(byteData, 0, arraySize);
 
-    return ZeroData.newInstance(ZeroDataType.BYTE_ARRAY, byteData);
+    return ZeroDataImpl.newInstance(ZeroDataType.BYTE_ARRAY, byteData);
   }
 
-  private static ZeroData decodeShortArray(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeShortArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Short>();
 
@@ -402,10 +402,10 @@ public final class ZeroDataSerializerUtility {
       element.add(shortValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.SHORT_ARRAY, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.SHORT_ARRAY, element);
   }
 
-  private static ZeroData decodeIntegerArray(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeIntegerArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Integer>();
 
@@ -414,10 +414,10 @@ public final class ZeroDataSerializerUtility {
       element.add(intValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.INTEGER_ARRAY, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.INTEGER_ARRAY, element);
   }
 
-  private static ZeroData decodeLongArray(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeLongArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Long>();
 
@@ -426,10 +426,10 @@ public final class ZeroDataSerializerUtility {
       element.add(longValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.LONG_ARRAY, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.LONG_ARRAY, element);
   }
 
-  private static ZeroData decodeFloatArray(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeFloatArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Float>();
 
@@ -438,10 +438,10 @@ public final class ZeroDataSerializerUtility {
       element.add(floatValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.FLOAT_ARRAY, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.FLOAT_ARRAY, element);
   }
 
-  private static ZeroData decodeDoubleArray(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeDoubleArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Double>();
 
@@ -450,10 +450,10 @@ public final class ZeroDataSerializerUtility {
       element.add(doubleValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.DOUBLE_ARRAY, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.DOUBLE_ARRAY, element);
   }
 
-  private static ZeroData decodeStringArray(ByteBuffer buffer) {
+  private static ZeroDataImpl decodeStringArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<String>();
 
@@ -470,7 +470,7 @@ public final class ZeroDataSerializerUtility {
       element.add(stringValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.STRING_ARRAY, element);
+    return ZeroDataImpl.newInstance(ZeroDataType.STRING_ARRAY, element);
   }
 
   private static ZeroArray decodeZeroArray(ByteBuffer buffer) {
@@ -507,8 +507,8 @@ public final class ZeroDataSerializerUtility {
     }
   }
 
-  private static ZeroObject decodeZeroObject(ByteBuffer buffer) {
-    var zeroObject = ZeroObjectImpl.newInstance();
+  private static ZeroMap decodeZeroObject(ByteBuffer buffer) {
+    var zeroObject = ZeroMapImpl.newInstance();
     var headerByte = buffer.get();
 
     if (ZeroDataType.getByValue(headerByte) != ZeroDataType.ZERO_OBJECT) {

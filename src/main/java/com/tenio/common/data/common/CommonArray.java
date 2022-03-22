@@ -22,68 +22,60 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.data.element;
+package com.tenio.common.data.common;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
- * This is an element object class holds data in a map. All message comes from other services
+ * This is an element array class holds data in a map. All message comes from other services
  * will be converted to this object. That helps normalize the way to communicate and easy to use.
  */
-public final class CommonObject extends HashMap<String, Object> implements Serializable {
+public final class CommonArray extends ArrayList<Object> implements Serializable {
 
-  private static final long serialVersionUID = 8818783476027583633L;
+  private static final long serialVersionUID = -5100842875580575666L;
 
-  public CommonObject() {
+  public CommonArray() {
   }
 
-  public static CommonObject newInstance() {
-    return new CommonObject();
+  public static CommonArray newInstance() {
+    return new CommonArray();
   }
 
-  public double getDouble(String key) {
-    return (double) get(key);
-  }
-
-  public float getFloat(String key) {
-    return (float) get(key);
-  }
-
-  public long getLong(String key) {
-    return (long) get(key);
-  }
-
-  public int getInt(String key) {
-    return (int) get(key);
-  }
-
-  public boolean getBoolean(String key) {
-    return (boolean) get(key);
-  }
-
-  public String getString(String key) {
-    return (String) get(key);
-  }
-
-  public Object getObject(String key) {
-    return get(key);
-  }
-
-  public CommonObject getCommonObject(String key) {
-    return (CommonObject) get(key);
-  }
-
-  public CommonObjectArray getCommonObjectArray(String key) {
-    return (CommonObjectArray) get(key);
-  }
-
-  public boolean contains(String key) {
-    return containsKey(key);
-  }
-
-  public CommonObject add(String key, Object value) {
-    put(key, value);
+  public CommonArray put(Object value) {
+    add(value);
     return this;
+  }
+
+  public double getDouble(int index) {
+    return (double) get(index);
+  }
+
+  public float getFloat(int index) {
+    return (float) get(index);
+  }
+
+  public long getLong(int index) {
+    return (long) get(index);
+  }
+
+  public int getInt(int index) {
+    return (int) get(index);
+  }
+
+  public boolean getBoolean(int index) {
+    return (boolean) get(index);
+  }
+
+  public String getString(int index) {
+    return (String) get(index);
+  }
+
+  public Object getObject(int index) {
+    return get(index);
+  }
+
+  public CommonArray getCommonObjectArray(int index) {
+    return (CommonArray) get(index);
   }
 }
