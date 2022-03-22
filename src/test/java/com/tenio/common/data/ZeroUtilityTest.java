@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.tenio.common.data.implement.ZeroDataImpl;
+import com.tenio.common.data.implement.ZeroElementImpl;
 import com.tenio.common.data.implement.ZeroArrayImpl;
 import com.tenio.common.data.implement.ZeroMapImpl;
-import com.tenio.common.data.utility.ZeroDataUtility;
+import com.tenio.common.data.utility.ZeroUtility;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.junit.jupiter.api.AfterAll;
@@ -41,7 +41,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Unit Test Cases For Zero Data Utility")
-class ZeroDataImplUtilityTest {
+class ZeroUtilityTest {
 
   private static Collection<Boolean> booleans;
   private static Collection<Short> shorts;
@@ -113,7 +113,7 @@ class ZeroDataImplUtilityTest {
     origin.addBoolean(true).addShort((short) 11).addInteger(1000).addFloat(101.1f).addLong(1000L)
         .addDouble(1010101.101);
     var binary = origin.toBinary();
-    var newOne = ZeroDataUtility.binaryToArray(binary);
+    var newOne = ZeroUtility.binaryToArray(binary);
 
     assertAll("primitiveDataInArrayShouldMatch",
         () -> assertTrue(newOne.getBoolean(0)),
@@ -129,16 +129,16 @@ class ZeroDataImplUtilityTest {
   @DisplayName("Allow adding and fetching nested ZeroArray data to/from ZeroArray")
   void instanceDataInArrayShouldMatch() {
     var origin = ZeroArrayImpl.newInstance();
-    origin.addNull().addZeroData(ZeroDataImpl.newInstance(ZeroDataType.BOOLEAN, false))
+    origin.addNull().addZeroElement(ZeroElementImpl.newInstance(ZeroType.BOOLEAN, false))
         .addString("test");
     var binary = origin.toBinary();
-    var newOne = ZeroDataUtility.binaryToArray(binary);
+    var newOne = ZeroUtility.binaryToArray(binary);
 
     assertAll("instanceDataInArrayShouldMatch",
         () -> assertTrue(newOne.isNull(0)),
         () -> assertAll("zeroDataShouldMatch",
-            () -> assertEquals(newOne.getZeroData(1).getType(), ZeroDataType.BOOLEAN),
-            () -> assertFalse((boolean) newOne.getZeroData(1).getData())
+            () -> assertEquals(newOne.getZeroElement(1).getType(), ZeroType.BOOLEAN),
+            () -> assertFalse((boolean) newOne.getZeroElement(1).getData())
         ),
         () -> assertEquals(newOne.getString(2), "test")
     );
@@ -151,7 +151,7 @@ class ZeroDataImplUtilityTest {
     origin.addBooleanArray(booleans).addShortArray(shorts).addIntegerArray(integers)
         .addLongArray(longs).addFloatArray(floats).addDoubleArray(doubles).addStringArray(strings);
     var binary = origin.toBinary();
-    var newOne = ZeroDataUtility.binaryToArray(binary);
+    var newOne = ZeroUtility.binaryToArray(binary);
 
     assertAll("collectionDataInArrayShouldMatch",
         () -> assertEquals(newOne.getBooleanArray(0).toString(), booleans.toString()),
@@ -171,7 +171,7 @@ class ZeroDataImplUtilityTest {
     origin.addBooleanArray(booleans).addShortArray(shorts).addBooleanArray(booleans)
         .addShortArray(shorts);
     var binary = origin.toBinary();
-    var newOne = ZeroDataUtility.binaryToArray(binary);
+    var newOne = ZeroUtility.binaryToArray(binary);
 
     assertAll("duplicatedValueInArrayShouldWork",
         () -> assertEquals(newOne.getBooleanArray(0).toString(), booleans.toString()),
@@ -190,11 +190,11 @@ class ZeroDataImplUtilityTest {
         .putShort("s", (short) 10)
         .putInteger("i", 100)
         .putShortArray("sa", shorts);
-    origin.addZeroObject(zeroObject);
+    origin.addZeroMap(zeroObject);
     var binary = origin.toBinary();
-    var newOne = ZeroDataUtility.binaryToArray(binary);
+    var newOne = ZeroUtility.binaryToArray(binary);
 
-    assertEquals(zeroObject.toString(), newOne.getZeroObject(0).toString());
+    assertEquals(zeroObject.toString(), newOne.getZeroMap(0).toString());
   }
 
   @Test
@@ -209,7 +209,7 @@ class ZeroDataImplUtilityTest {
         .putDouble("d", 1010101.101)
         .putZeroArray("za", ZeroArrayImpl.newInstance().addDoubleArray(doubles));
     var binary = origin.toBinary();
-    var newOne = ZeroDataUtility.binaryToObject(binary);
+    var newOne = ZeroUtility.binaryToObject(binary);
 
     assertAll("primitiveDataInObjectShouldMatch",
         () -> assertTrue(newOne.getBoolean("b")),
@@ -226,16 +226,16 @@ class ZeroDataImplUtilityTest {
   void instanceDataInObjectShouldMatch() {
     var origin = ZeroMapImpl.newInstance();
     origin.putNull("n")
-        .putZeroData("z", ZeroDataImpl.newInstance(ZeroDataType.BOOLEAN, false))
+        .putZeroElement("z", ZeroElementImpl.newInstance(ZeroType.BOOLEAN, false))
         .putString("s", "test");
     var binary = origin.toBinary();
-    var newOne = ZeroDataUtility.binaryToObject(binary);
+    var newOne = ZeroUtility.binaryToObject(binary);
 
     assertAll("instanceDataInObjectShouldMatch",
         () -> assertTrue(newOne.isNull("n")),
         () -> assertAll("zeroDataShouldMatch",
-            () -> assertEquals(newOne.getZeroData("z").getType(), ZeroDataType.BOOLEAN),
-            () -> assertFalse((boolean) newOne.getZeroData("z").getData())
+            () -> assertEquals(newOne.getZeroElement("z").getType(), ZeroType.BOOLEAN),
+            () -> assertFalse((boolean) newOne.getZeroElement("z").getData())
         ),
         () -> assertEquals(newOne.getString("s"), "test")
     );
@@ -253,7 +253,7 @@ class ZeroDataImplUtilityTest {
         .putDoubleArray("d", doubles)
         .putStringArray("ss", strings);
     var binary = origin.toBinary();
-    var newOne = ZeroDataUtility.binaryToObject(binary);
+    var newOne = ZeroUtility.binaryToObject(binary);
 
     assertAll("collectionDataInObjectShouldMatch",
         () -> assertEquals(newOne.getBooleanArray("b").toString(), booleans.toString()),
@@ -273,7 +273,7 @@ class ZeroDataImplUtilityTest {
     origin.putBooleanArray("b1", booleans).putShortArray("s1", shorts)
         .putBooleanArray("b2", booleans).putShortArray("s2", shorts);
     var binary = origin.toBinary();
-    var newOne = ZeroDataUtility.binaryToObject(binary);
+    var newOne = ZeroUtility.binaryToObject(binary);
 
     assertAll("duplicatedValueInObjectShouldWork",
         () -> assertEquals(newOne.getBooleanArray("b1").toString(), booleans.toString()),
@@ -293,10 +293,10 @@ class ZeroDataImplUtilityTest {
         .putInteger("i", 100)
         .putBooleanArray("ba", booleans)
         .putZeroArray("za", ZeroArrayImpl.newInstance().addDoubleArray(doubles));
-    origin.putZeroObject("z", zeroObject);
+    origin.putZeroMap("z", zeroObject);
     var binary = origin.toBinary();
-    var newOne = ZeroDataUtility.binaryToObject(binary);
+    var newOne = ZeroUtility.binaryToObject(binary);
 
-    assertEquals(zeroObject.toString(), newOne.getZeroObject("z").toString());
+    assertEquals(zeroObject.toString(), newOne.getZeroMap("z").toString());
   }
 }

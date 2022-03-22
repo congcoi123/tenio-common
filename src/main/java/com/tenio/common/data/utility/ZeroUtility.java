@@ -25,10 +25,11 @@ THE SOFTWARE.
 package com.tenio.common.data.utility;
 
 import com.tenio.common.data.ZeroArray;
-import com.tenio.common.data.ZeroDataType;
+import com.tenio.common.data.ZeroElement;
+import com.tenio.common.data.ZeroType;
 import com.tenio.common.data.ZeroCollection;
 import com.tenio.common.data.ZeroMap;
-import com.tenio.common.data.implement.ZeroDataImpl;
+import com.tenio.common.data.implement.ZeroElementImpl;
 import com.tenio.common.data.implement.ZeroArrayImpl;
 import com.tenio.common.data.implement.ZeroMapImpl;
 import java.nio.ByteBuffer;
@@ -38,11 +39,11 @@ import java.util.Collection;
 /**
  * This class provides all necessary methods to work with the self-definition classes.
  */
-public final class ZeroDataUtility {
+public final class ZeroUtility {
 
   private static final int BUFFER_CHUNK_BYTES = 512;
 
-  private ZeroDataUtility() {
+  private ZeroUtility() {
     throw new UnsupportedOperationException("This class does not support to create an instance");
   }
 
@@ -53,7 +54,7 @@ public final class ZeroDataUtility {
    * @return a new zero element instance
    */
   public static ZeroCollection binaryToElement(byte[] binary) {
-    switch (ZeroDataType.getByValue(binary[0])) {
+    switch (ZeroType.getByValue(binary[0])) {
       case ZERO_OBJECT:
         return binaryToObject(binary);
 
@@ -115,7 +116,7 @@ public final class ZeroDataUtility {
    */
   public static byte[] objectToBinary(ZeroMap object) {
     var buffer = ByteBuffer.allocate(BUFFER_CHUNK_BYTES);
-    buffer.put((byte) ZeroDataType.ZERO_OBJECT.getValue());
+    buffer.put((byte) ZeroType.ZERO_OBJECT.getValue());
     buffer.putShort((short) object.size());
 
     return objectToBinary(object, buffer);
@@ -123,14 +124,14 @@ public final class ZeroDataUtility {
 
   private static byte[] objectToBinary(ZeroMap object, ByteBuffer buffer) {
     var keys = object.getKeys();
-    ZeroDataImpl zeroDataImpl = null;
-    Object element = null;
+    ZeroElement zeroElement;
+    Object data;
 
     for (var iterator = keys.iterator(); iterator
-        .hasNext(); buffer = encodeObject(buffer, zeroDataImpl.getType(), element)) {
+        .hasNext(); buffer = encodeObject(buffer, zeroElement.getType(), data)) {
       var key = iterator.next();
-      zeroDataImpl = object.getZeroData(key);
-      element = zeroDataImpl.getData();
+      zeroElement = object.getZeroElement(key);
+      data = zeroElement.getData();
       buffer = encodeZeroObjectKey(buffer, key);
     }
 
@@ -150,20 +151,20 @@ public final class ZeroDataUtility {
    */
   public static byte[] arrayToBinary(ZeroArray array) {
     var buffer = ByteBuffer.allocate(BUFFER_CHUNK_BYTES);
-    buffer.put((byte) ZeroDataType.ZERO_ARRAY.getValue());
+    buffer.put((byte) ZeroType.ZERO_ARRAY.getValue());
     buffer.putShort((short) array.size());
 
     return arrayToBinary(array, buffer);
   }
 
   private static byte[] arrayToBinary(ZeroArray array, ByteBuffer buffer) {
-    ZeroDataImpl zeroDataImpl = null;
-    Object element = null;
+    ZeroElement zeroElement = null;
+    Object data = null;
 
     for (var iterator = array.iterator(); iterator
-        .hasNext(); buffer = encodeObject(buffer, zeroDataImpl.getType(), element)) {
-      zeroDataImpl = iterator.next();
-      element = zeroDataImpl.getData();
+        .hasNext(); buffer = encodeObject(buffer, zeroElement.getType(), data)) {
+      zeroElement = iterator.next();
+      data = zeroElement.getData();
     }
 
     var position = buffer.position();
@@ -174,9 +175,9 @@ public final class ZeroDataUtility {
     return result;
   }
 
-  private static ZeroDataImpl decodeObject(ByteBuffer buffer) throws RuntimeException {
+  private static ZeroElementImpl decodeObject(ByteBuffer buffer) throws RuntimeException {
     var headerByte = buffer.get();
-    var type = ZeroDataType.getByValue(headerByte);
+    var type = ZeroType.getByValue(headerByte);
 
     switch (type) {
       case NULL:
@@ -215,17 +216,17 @@ public final class ZeroDataUtility {
         return decodeStringArray(buffer);
       case ZERO_ARRAY:
         buffer.position(buffer.position() - Byte.BYTES);
-        return ZeroDataImpl.newInstance(ZeroDataType.ZERO_ARRAY, decodeZeroArray(buffer));
+        return ZeroElementImpl.newInstance(ZeroType.ZERO_ARRAY, decodeZeroArray(buffer));
       case ZERO_OBJECT:
         buffer.position(buffer.position() - Byte.BYTES);
-        return ZeroDataImpl.newInstance(ZeroDataType.ZERO_OBJECT, decodeZeroObject(buffer));
+        return ZeroElementImpl.newInstance(ZeroType.ZERO_OBJECT, decodeZeroObject(buffer));
       default:
         return null;
     }
   }
 
   @SuppressWarnings("unchecked")
-  private static ByteBuffer encodeObject(ByteBuffer buffer, ZeroDataType type, Object element) {
+  private static ByteBuffer encodeObject(ByteBuffer buffer, ZeroType type, Object element) {
     switch (type) {
       case NULL:
         buffer = encodeNull(buffer);
@@ -292,11 +293,11 @@ public final class ZeroDataUtility {
     return buffer;
   }
 
-  private static ZeroDataImpl decodeNull(ByteBuffer buffer) {
-    return ZeroDataImpl.newInstance(ZeroDataType.NULL, null);
+  private static ZeroElementImpl decodeNull(ByteBuffer buffer) {
+    return ZeroElementImpl.newInstance(ZeroType.NULL, null);
   }
 
-  private static ZeroDataImpl decodeBoolean(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeBoolean(ByteBuffer buffer) {
     var bool = buffer.get();
     Boolean element = null;
 
@@ -311,40 +312,40 @@ public final class ZeroDataUtility {
       element = Boolean.TRUE;
     }
 
-    return ZeroDataImpl.newInstance(ZeroDataType.BOOLEAN, element);
+    return ZeroElementImpl.newInstance(ZeroType.BOOLEAN, element);
   }
 
-  private static ZeroDataImpl decodeByte(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeByte(ByteBuffer buffer) {
     var element = buffer.get();
-    return ZeroDataImpl.newInstance(ZeroDataType.BYTE, element);
+    return ZeroElementImpl.newInstance(ZeroType.BYTE, element);
   }
 
-  private static ZeroDataImpl decodeShort(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeShort(ByteBuffer buffer) {
     var element = buffer.getShort();
-    return ZeroDataImpl.newInstance(ZeroDataType.SHORT, element);
+    return ZeroElementImpl.newInstance(ZeroType.SHORT, element);
   }
 
-  private static ZeroDataImpl decodeInteger(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeInteger(ByteBuffer buffer) {
     var element = buffer.getInt();
-    return ZeroDataImpl.newInstance(ZeroDataType.INTEGER, element);
+    return ZeroElementImpl.newInstance(ZeroType.INTEGER, element);
   }
 
-  private static ZeroDataImpl decodeLong(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeLong(ByteBuffer buffer) {
     var element = buffer.getLong();
-    return ZeroDataImpl.newInstance(ZeroDataType.LONG, element);
+    return ZeroElementImpl.newInstance(ZeroType.LONG, element);
   }
 
-  private static ZeroDataImpl decodeFloat(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeFloat(ByteBuffer buffer) {
     var element = buffer.getFloat();
-    return ZeroDataImpl.newInstance(ZeroDataType.FLOAT, element);
+    return ZeroElementImpl.newInstance(ZeroType.FLOAT, element);
   }
 
-  private static ZeroDataImpl decodeDouble(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeDouble(ByteBuffer buffer) {
     var element = buffer.getDouble();
-    return ZeroDataImpl.newInstance(ZeroDataType.DOUBLE, element);
+    return ZeroElementImpl.newInstance(ZeroType.DOUBLE, element);
   }
 
-  private static ZeroDataImpl decodeString(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeString(ByteBuffer buffer) {
     var strLen = buffer.getShort();
 
     if (strLen < 0) {
@@ -356,10 +357,10 @@ public final class ZeroDataUtility {
     buffer.get(strData, 0, strLen);
     var element = new String(strData);
 
-    return ZeroDataImpl.newInstance(ZeroDataType.STRING, element);
+    return ZeroElementImpl.newInstance(ZeroType.STRING, element);
   }
 
-  private static ZeroDataImpl decodeBooleanArray(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeBooleanArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Boolean>();
 
@@ -377,10 +378,10 @@ public final class ZeroDataUtility {
       }
     }
 
-    return ZeroDataImpl.newInstance(ZeroDataType.BOOLEAN_ARRAY, element);
+    return ZeroElementImpl.newInstance(ZeroType.BOOLEAN_ARRAY, element);
   }
 
-  private static ZeroDataImpl decodeByteArray(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeByteArray(ByteBuffer buffer) {
     var arraySize = buffer.getInt();
     if (arraySize < 0) {
       throw new NegativeArraySizeException(
@@ -390,10 +391,10 @@ public final class ZeroDataUtility {
     var byteData = new byte[arraySize];
     buffer.get(byteData, 0, arraySize);
 
-    return ZeroDataImpl.newInstance(ZeroDataType.BYTE_ARRAY, byteData);
+    return ZeroElementImpl.newInstance(ZeroType.BYTE_ARRAY, byteData);
   }
 
-  private static ZeroDataImpl decodeShortArray(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeShortArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Short>();
 
@@ -402,10 +403,10 @@ public final class ZeroDataUtility {
       element.add(shortValue);
     }
 
-    return ZeroDataImpl.newInstance(ZeroDataType.SHORT_ARRAY, element);
+    return ZeroElementImpl.newInstance(ZeroType.SHORT_ARRAY, element);
   }
 
-  private static ZeroDataImpl decodeIntegerArray(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeIntegerArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Integer>();
 
@@ -414,10 +415,10 @@ public final class ZeroDataUtility {
       element.add(intValue);
     }
 
-    return ZeroDataImpl.newInstance(ZeroDataType.INTEGER_ARRAY, element);
+    return ZeroElementImpl.newInstance(ZeroType.INTEGER_ARRAY, element);
   }
 
-  private static ZeroDataImpl decodeLongArray(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeLongArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Long>();
 
@@ -426,10 +427,10 @@ public final class ZeroDataUtility {
       element.add(longValue);
     }
 
-    return ZeroDataImpl.newInstance(ZeroDataType.LONG_ARRAY, element);
+    return ZeroElementImpl.newInstance(ZeroType.LONG_ARRAY, element);
   }
 
-  private static ZeroDataImpl decodeFloatArray(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeFloatArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Float>();
 
@@ -438,10 +439,10 @@ public final class ZeroDataUtility {
       element.add(floatValue);
     }
 
-    return ZeroDataImpl.newInstance(ZeroDataType.FLOAT_ARRAY, element);
+    return ZeroElementImpl.newInstance(ZeroType.FLOAT_ARRAY, element);
   }
 
-  private static ZeroDataImpl decodeDoubleArray(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeDoubleArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<Double>();
 
@@ -450,10 +451,10 @@ public final class ZeroDataUtility {
       element.add(doubleValue);
     }
 
-    return ZeroDataImpl.newInstance(ZeroDataType.DOUBLE_ARRAY, element);
+    return ZeroElementImpl.newInstance(ZeroType.DOUBLE_ARRAY, element);
   }
 
-  private static ZeroDataImpl decodeStringArray(ByteBuffer buffer) {
+  private static ZeroElementImpl decodeStringArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
     var element = new ArrayList<String>();
 
@@ -470,18 +471,18 @@ public final class ZeroDataUtility {
       element.add(stringValue);
     }
 
-    return ZeroDataImpl.newInstance(ZeroDataType.STRING_ARRAY, element);
+    return ZeroElementImpl.newInstance(ZeroType.STRING_ARRAY, element);
   }
 
   private static ZeroArray decodeZeroArray(ByteBuffer buffer) {
     var zeroArray = ZeroArrayImpl.newInstance();
     var headerByte = buffer.get();
 
-    if (ZeroDataType.getByValue(headerByte) != ZeroDataType.ZERO_ARRAY) {
+    if (ZeroType.getByValue(headerByte) != ZeroType.ZERO_ARRAY) {
       throw new IllegalStateException(
-          String.format("Invalid ZeroDataType. Expected: %s, value: %d, but found: %s, value: %d",
-              ZeroDataType.ZERO_ARRAY, ZeroDataType.ZERO_ARRAY.getValue(),
-              ZeroDataType.getByValue(headerByte).toString(), headerByte));
+          String.format("Invalid ZeroType. Expected: %s, value: %d, but found: %s, value: %d",
+              ZeroType.ZERO_ARRAY, ZeroType.ZERO_ARRAY.getValue(),
+              ZeroType.getByValue(headerByte).toString(), headerByte));
     }
 
     var arraySize = buffer.getShort();
@@ -498,7 +499,7 @@ public final class ZeroDataUtility {
               String.format("Unable to not decode ZeroArray item at index: %d", i));
         }
 
-        zeroArray.addZeroData(zeroData);
+        zeroArray.addZeroElement(zeroData);
       }
 
       return zeroArray;
@@ -511,11 +512,11 @@ public final class ZeroDataUtility {
     var zeroObject = ZeroMapImpl.newInstance();
     var headerByte = buffer.get();
 
-    if (ZeroDataType.getByValue(headerByte) != ZeroDataType.ZERO_OBJECT) {
+    if (ZeroType.getByValue(headerByte) != ZeroType.ZERO_OBJECT) {
       throw new IllegalStateException(
-          String.format("Invalid ZeroDataType. Expected: %s, value: %d, but found: %s, value: %d",
-              ZeroDataType.ZERO_OBJECT, ZeroDataType.ZERO_OBJECT.getValue(),
-              ZeroDataType.getByValue(headerByte), headerByte));
+          String.format("Invalid ZeroType. Expected: %s, value: %d, but found: %s, value: %d",
+              ZeroType.ZERO_OBJECT, ZeroType.ZERO_OBJECT.getValue(),
+              ZeroType.getByValue(headerByte), headerByte));
     }
 
     var objectSize = buffer.getShort();
@@ -537,7 +538,7 @@ public final class ZeroDataUtility {
               String.format("Unable to decode value for key: %s", keyData));
         }
 
-        zeroObject.putZeroData(key, zeroData);
+        zeroObject.putZeroElement(key, zeroData);
       }
 
       return zeroObject;
@@ -562,18 +563,18 @@ public final class ZeroDataUtility {
   }
 
   private static ByteBuffer encodeBoolean(ByteBuffer buffer, Boolean element) {
-    var data = new byte[] {(byte) ZeroDataType.BOOLEAN.getValue(), (byte) (element ? 1 : 0)};
+    var data = new byte[] {(byte) ZeroType.BOOLEAN.getValue(), (byte) (element ? 1 : 0)};
     return appendBinaryToBuffer(buffer, data);
   }
 
   private static ByteBuffer encodeByte(ByteBuffer buffer, Byte element) {
-    var data = new byte[] {(byte) ZeroDataType.BYTE.getValue(), element};
+    var data = new byte[] {(byte) ZeroType.BYTE.getValue(), element};
     return appendBinaryToBuffer(buffer, data);
   }
 
   private static ByteBuffer encodeShort(ByteBuffer buffer, Short element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES);
-    buf.put((byte) ZeroDataType.SHORT.getValue());
+    buf.put((byte) ZeroType.SHORT.getValue());
     buf.putShort(element);
 
     return appendBinaryToBuffer(buffer, buf.array());
@@ -581,7 +582,7 @@ public final class ZeroDataUtility {
 
   private static ByteBuffer encodeInteger(ByteBuffer buffer, Integer element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES);
-    buf.put((byte) ZeroDataType.INTEGER.getValue());
+    buf.put((byte) ZeroType.INTEGER.getValue());
     buf.putInt(element);
 
     return appendBinaryToBuffer(buffer, buf.array());
@@ -589,7 +590,7 @@ public final class ZeroDataUtility {
 
   private static ByteBuffer encodeLong(ByteBuffer buffer, Long element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Long.BYTES);
-    buf.put((byte) ZeroDataType.LONG.getValue());
+    buf.put((byte) ZeroType.LONG.getValue());
     buf.putLong(element);
 
     return appendBinaryToBuffer(buffer, buf.array());
@@ -597,7 +598,7 @@ public final class ZeroDataUtility {
 
   private static ByteBuffer encodeFloat(ByteBuffer buffer, Float element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Float.BYTES);
-    buf.put((byte) ZeroDataType.FLOAT.getValue());
+    buf.put((byte) ZeroType.FLOAT.getValue());
     buf.putFloat(element);
 
     return appendBinaryToBuffer(buffer, buf.array());
@@ -605,7 +606,7 @@ public final class ZeroDataUtility {
 
   private static ByteBuffer encodeDouble(ByteBuffer buffer, Double element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Double.BYTES);
-    buf.put((byte) ZeroDataType.DOUBLE.getValue());
+    buf.put((byte) ZeroType.DOUBLE.getValue());
     buf.putDouble(element);
 
     return appendBinaryToBuffer(buffer, buf.array());
@@ -614,7 +615,7 @@ public final class ZeroDataUtility {
   private static ByteBuffer encodeString(ByteBuffer buffer, String element) {
     var stringBytes = element.getBytes();
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + stringBytes.length);
-    buf.put((byte) ZeroDataType.STRING.getValue());
+    buf.put((byte) ZeroType.STRING.getValue());
     buf.putShort((short) stringBytes.length);
     buf.put(stringBytes);
 
@@ -623,7 +624,7 @@ public final class ZeroDataUtility {
 
   private static ByteBuffer encodeBooleanArray(ByteBuffer buffer, Collection<Boolean> element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + element.size());
-    buf.put((byte) ZeroDataType.BOOLEAN_ARRAY.getValue());
+    buf.put((byte) ZeroType.BOOLEAN_ARRAY.getValue());
     buf.putShort((short) element.size());
     var iterator = element.iterator();
 
@@ -637,7 +638,7 @@ public final class ZeroDataUtility {
 
   private static ByteBuffer encodeByteArray(ByteBuffer buffer, byte[] element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES + element.length);
-    buf.put((byte) ZeroDataType.BYTE_ARRAY.getValue());
+    buf.put((byte) ZeroType.BYTE_ARRAY.getValue());
     buf.putInt(element.length);
     buf.put(element);
 
@@ -646,7 +647,7 @@ public final class ZeroDataUtility {
 
   private static ByteBuffer encodeShortArray(ByteBuffer buffer, Collection<Short> element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Short.BYTES * element.size());
-    buf.put((byte) ZeroDataType.SHORT_ARRAY.getValue());
+    buf.put((byte) ZeroType.SHORT_ARRAY.getValue());
     buf.putShort((short) element.size());
     var iterator = element.iterator();
 
@@ -660,7 +661,7 @@ public final class ZeroDataUtility {
 
   private static ByteBuffer encodeIntegerArray(ByteBuffer buffer, Collection<Integer> element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Integer.BYTES * element.size());
-    buf.put((byte) ZeroDataType.INTEGER_ARRAY.getValue());
+    buf.put((byte) ZeroType.INTEGER_ARRAY.getValue());
     buf.putShort((short) element.size());
     var iterator = element.iterator();
 
@@ -674,7 +675,7 @@ public final class ZeroDataUtility {
 
   private static ByteBuffer encodeLongArray(ByteBuffer buffer, Collection<Long> element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Long.BYTES * element.size());
-    buf.put((byte) ZeroDataType.LONG_ARRAY.getValue());
+    buf.put((byte) ZeroType.LONG_ARRAY.getValue());
     buf.putShort((short) element.size());
     var iterator = element.iterator();
 
@@ -688,7 +689,7 @@ public final class ZeroDataUtility {
 
   private static ByteBuffer encodeFloatArray(ByteBuffer buffer, Collection<Float> element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Float.BYTES * element.size());
-    buf.put((byte) ZeroDataType.FLOAT_ARRAY.getValue());
+    buf.put((byte) ZeroType.FLOAT_ARRAY.getValue());
     buf.putShort((short) element.size());
     var iterator = element.iterator();
 
@@ -702,7 +703,7 @@ public final class ZeroDataUtility {
 
   private static ByteBuffer encodeDoubleArray(ByteBuffer buffer, Collection<Double> element) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Double.BYTES * element.size());
-    buf.put((byte) ZeroDataType.DOUBLE_ARRAY.getValue());
+    buf.put((byte) ZeroType.DOUBLE_ARRAY.getValue());
     buf.putShort((short) element.size());
     var iterator = element.iterator();
 
@@ -725,7 +726,7 @@ public final class ZeroDataUtility {
     }
 
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + totalStringsLengthInBytes);
-    buf.put((byte) ZeroDataType.STRING_ARRAY.getValue());
+    buf.put((byte) ZeroType.STRING_ARRAY.getValue());
     buf.putShort((short) collection.size());
     collection.forEach(string -> {
       var bytes = string.getBytes();

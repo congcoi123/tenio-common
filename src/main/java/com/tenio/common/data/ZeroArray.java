@@ -24,13 +24,12 @@ THE SOFTWARE.
 
 package com.tenio.common.data;
 
-import com.tenio.common.data.implement.ZeroDataImpl;
 import java.util.Collection;
 
 /**
  * This class holds sequence elements.
  */
-public interface ZeroArray extends ReadonlyZeroArray, Iterable<ZeroData> {
+public interface ZeroArray extends ReadonlyZeroArray, Iterable<ZeroElement> {
 
   void removeElementAt(int index);
 
@@ -54,9 +53,9 @@ public interface ZeroArray extends ReadonlyZeroArray, Iterable<ZeroData> {
 
   ZeroArray addZeroArray(ZeroArray element);
 
-  ZeroArray addZeroObject(ZeroMap element);
+  ZeroArray addZeroMap(ZeroMap element);
 
-  ZeroArray addZeroData(ZeroDataImpl data);
+  ZeroArray addZeroElement(ZeroElement element);
 
   ZeroArray addBooleanArray(Collection<Boolean> element);
 

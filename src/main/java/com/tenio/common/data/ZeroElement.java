@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.data.common;
+package com.tenio.common.data;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+public interface ZeroElement {
 
-import com.tenio.common.data.ZeroDataType;
-import com.tenio.common.data.implement.ZeroDataImpl;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+  /**
+   * Retrieves the type of element.
+   *
+   * @return type of data in {@link ZeroType}
+   */
+  ZeroType getType();
 
-@DisplayName("Unit Test Cases For Zero Data")
-class ZeroDataImplTest {
-
-  @Test
-  @DisplayName("Creating a new instance should work")
-  void createNewInstanceShouldWork() {
-    ZeroDataImpl zeroDataImpl = ZeroDataImpl.newInstance(ZeroDataType.NULL, "Element");
-    assertEquals(ZeroDataType.NULL, zeroDataImpl.getType());
-    assertEquals(zeroDataImpl.getData(), "Element");
-    assertEquals("{ type: NULL, value: Element }", zeroDataImpl.toString());
-  }
+  /**
+   * Retrieves the data of element.
+   *
+   * @return an instance in wrapper class of primitive or array types
+   * @see Byte
+   * @see Boolean
+   * @see Byte
+   * @see Short
+   * @see Integer
+   * @see Long
+   * @see Float
+   * @see Double
+   * @see String
+   * @see java.util.Collection
+   * @see ZeroArray
+   * @see ZeroMap
+   * @see ZeroElement
+   */
+  Object getData();
 }

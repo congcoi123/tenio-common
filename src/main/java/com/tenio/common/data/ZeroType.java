@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * Self-definition data types.
  */
-public enum ZeroDataType {
+public enum ZeroType {
 
   NULL(0),
 
@@ -71,21 +71,21 @@ public enum ZeroDataType {
   ZERO_OBJECT(18);
 
   // Reverse-lookup map for getting a type from a value
-  private static final Map<Integer, ZeroDataType> lookup = new HashMap<Integer, ZeroDataType>();
+  private static final Map<Integer, ZeroType> lookup = new HashMap<>();
 
   static {
-    for (var type : ZeroDataType.values()) {
+    for (var type : ZeroType.values()) {
       lookup.put(type.getValue(), type);
     }
   }
 
   private final int value;
 
-  ZeroDataType(final int value) {
+  ZeroType(final int value) {
     this.value = value;
   }
 
-  public static ZeroDataType getByValue(int value) {
+  public static ZeroType getByValue(int value) {
     return lookup.get(value);
   }
 

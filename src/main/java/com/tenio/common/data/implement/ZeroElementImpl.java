@@ -24,35 +24,35 @@ THE SOFTWARE.
 
 package com.tenio.common.data.implement;
 
-import com.tenio.common.data.ZeroData;
-import com.tenio.common.data.ZeroDataType;
+import com.tenio.common.data.ZeroElement;
+import com.tenio.common.data.ZeroType;
 import java.util.Objects;
 
 /**
  * This class holds a relationship between a self-definition data type and its value.
  */
-public final class ZeroDataImpl implements ZeroData {
+public final class ZeroElementImpl implements ZeroElement {
 
-  private final ZeroDataType type;
-  private final Object element;
+  private final ZeroType type;
+  private final Object data;
 
-  private ZeroDataImpl(ZeroDataType type, Object element) {
+  private ZeroElementImpl(ZeroType type, Object data) {
     this.type = type;
-    this.element = element;
+    this.data = data;
   }
 
-  public static ZeroDataImpl newInstance(ZeroDataType type, Object element) {
-    return new ZeroDataImpl(type, element);
+  public static ZeroElementImpl newInstance(ZeroType type, Object data) {
+    return new ZeroElementImpl(type, data);
   }
 
   @Override
-  public ZeroDataType getType() {
+  public ZeroType getType() {
     return type;
   }
 
   @Override
   public Object getData() {
-    return element;
+    return data;
   }
 
   @Override
@@ -63,17 +63,17 @@ public final class ZeroDataImpl implements ZeroData {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ZeroDataImpl zeroDataImpl = (ZeroDataImpl) o;
-    return type == zeroDataImpl.type && Objects.equals(element, zeroDataImpl.element);
+    ZeroElementImpl zeroDataImpl = (ZeroElementImpl) o;
+    return type == zeroDataImpl.type && Objects.equals(data, zeroDataImpl.data);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, element);
+    return Objects.hash(type, data);
   }
 
   @Override
   public String toString() {
-    return String.format("{ type: %s, value: %s }", type.toString(), element.toString());
+    return String.format("{ type: %s, value: %s }", type.toString(), data.toString());
   }
 }

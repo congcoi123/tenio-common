@@ -38,6 +38,8 @@ public interface ReadonlyZeroMap extends ZeroCollection {
 
   Set<String> getKeys();
 
+  Set<String> getReadonlyKeys();
+
   Boolean getBoolean(String key);
 
   Byte getByte(String key);
@@ -58,7 +60,7 @@ public interface ReadonlyZeroMap extends ZeroCollection {
 
   ZeroMap getZeroMap(String key);
 
-  ZeroData getZeroData(String key);
+  ZeroElement getZeroElement(String key);
 
   Collection<Boolean> getBooleanArray(String key);
 

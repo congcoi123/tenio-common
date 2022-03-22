@@ -24,14 +24,13 @@ THE SOFTWARE.
 
 package com.tenio.common.data;
 
-import com.tenio.common.data.implement.ZeroDataImpl;
 import java.util.Collection;
 import java.util.Map;
 
 /**
  * This class holds data by pairs of key and value, works like a map.
  */
-public interface ZeroMap extends ReadonlyZeroMap, Iterable<Map.Entry<String, ZeroData>> {
+public interface ZeroMap extends ReadonlyZeroMap, Iterable<Map.Entry<String, ZeroElement>> {
 
   boolean removeElement(String key);
 
@@ -57,7 +56,7 @@ public interface ZeroMap extends ReadonlyZeroMap, Iterable<Map.Entry<String, Zer
 
   ZeroMap putZeroMap(String key, ZeroMap element);
 
-  ZeroMap putZeroData(String key, ZeroDataImpl data);
+  ZeroMap putZeroElement(String key, ZeroElement element);
 
   ZeroMap putBooleanArray(String key, Collection<Boolean> element);
 

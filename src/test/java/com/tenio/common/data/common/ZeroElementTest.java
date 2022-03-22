@@ -22,43 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.data;
+package com.tenio.common.data.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.tenio.common.data.ZeroType;
+import com.tenio.common.data.implement.ZeroElementImpl;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.api.Test;
 
-@DisplayName("Unit Test Cases For Zero Data Type")
-class ZeroDataImplTypeTest {
+@DisplayName("Unit Test Cases For Zero Data")
+class ZeroElementTest {
 
-  @ParameterizedTest
-  @CsvSource({
-      "NULL, 0",
-      "BOOLEAN, 1",
-      "BYTE, 2",
-      "SHORT, 3",
-      "INTEGER, 4",
-      "LONG, 5",
-      "FLOAT, 6",
-      "DOUBLE, 7",
-      "STRING, 8",
-      "BOOLEAN_ARRAY, 9",
-      "BYTE_ARRAY, 10",
-      "SHORT_ARRAY, 11",
-      "INTEGER_ARRAY, 12",
-      "LONG_ARRAY, 13",
-      "FLOAT_ARRAY, 14",
-      "DOUBLE_ARRAY, 15",
-      "STRING_ARRAY, 16",
-      "ZERO_ARRAY, 17",
-      "ZERO_OBJECT, 18"
-  })
-  @DisplayName("Test All Enumerated Values")
-  void testAllEnumValues(String name, int value) {
-    ZeroDataType zeroDataType = ZeroDataType.valueOf(name);
-    assertEquals(value, zeroDataType.getValue());
-    assertEquals(name, zeroDataType.toString());
+  @Test
+  @DisplayName("Creating a new instance should work")
+  void createNewInstanceShouldWork() {
+    ZeroElementImpl zeroDataImpl = ZeroElementImpl.newInstance(ZeroType.NULL, "Element");
+    assertEquals(ZeroType.NULL, zeroDataImpl.getType());
+    assertEquals(zeroDataImpl.getData(), "Element");
+    assertEquals("{ type: NULL, value: Element }", zeroDataImpl.toString());
   }
 }

@@ -57,7 +57,7 @@ public interface ReadonlyZeroArray extends ZeroCollection {
 
   ZeroMap getZeroMap(int index);
 
-  ZeroData getZeroData(int index);
+  ZeroElement getZeroElement(int index);
 
   Collection<Boolean> getBooleanArray(int index);
 

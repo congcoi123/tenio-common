@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,11 +25,21 @@ THE SOFTWARE.
 package com.tenio.common.data;
 
 /**
- * The basic collection interface for the self-definition map and array type.
+ * A basic collection interface for the self-definition map and array type.
  */
 public interface ZeroCollection {
 
+  /**
+   * Serializes an object to its corresponding array of <code>bytes</code>.
+   *
+   * @return the object's array of binaries
+   */
   byte[] toBinary();
 
+  /**
+   * Retrieves the number of elements in collection.
+   *
+   * @return the collection's size
+   */
   int size();
 }
