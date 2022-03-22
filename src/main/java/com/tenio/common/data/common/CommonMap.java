@@ -26,10 +26,11 @@ package com.tenio.common.data.common;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is an element object class holds data in a map. All message comes from other services
- * will be converted to this object. That helps normalize the way to communicate and easy to use.
+ * will be converted to this object. That helps normalize the way to communicate and be easy to use.
  */
 public final class CommonMap extends HashMap<String, Object> implements Serializable {
 
@@ -85,5 +86,9 @@ public final class CommonMap extends HashMap<String, Object> implements Serializ
   public CommonMap add(String key, Object value) {
     put(key, value);
     return this;
+  }
+
+  public Map<String, Object> getReadonlyMap() {
+    return Map.copyOf(this);
   }
 }

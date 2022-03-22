@@ -26,10 +26,11 @@ package com.tenio.common.data.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is an element array class holds data in a map. All message comes from other services
- * will be converted to this object. That helps normalize the way to communicate and easy to use.
+ * will be converted to this object. That helps normalize the way to communicate and be easy to use.
  */
 public final class CommonArray extends ArrayList<Object> implements Serializable {
 
@@ -77,5 +78,9 @@ public final class CommonArray extends ArrayList<Object> implements Serializable
 
   public CommonArray getCommonObjectArray(int index) {
     return (CommonArray) get(index);
+  }
+
+  public List<Object> getReadonlyList() {
+    return List.copyOf(this);
   }
 }

@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,12 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("Unit Test Cases For Common Object Array")
-class CommonMapArrayTest {
+@DisplayName("Unit Test Cases For Common Array")
+class CommonArrayTest {
 
   private final CommonArray dummyObjectArray = CommonArray.newInstance();
   private final CommonArray commonArray = CommonArray.newInstance();
@@ -57,5 +58,13 @@ class CommonMapArrayTest {
         () -> assertEquals(commonArray.getCommonObjectArray(6), dummyObjectArray),
         () -> assertTrue(commonArray.getObject(7) instanceof CommonArray)
     );
+  }
+
+  @Test
+  @DisplayName("An exception should be thrown when a readonly array is tried to modify")
+  void itShouldThrowExceptionWhenTryToModifyReadonlyArray() {
+    var readonlyList = commonArray.getReadonlyList();
+    Assertions.assertThrows(UnsupportedOperationException.class,
+        () -> readonlyList.add("new value"));
   }
 }
