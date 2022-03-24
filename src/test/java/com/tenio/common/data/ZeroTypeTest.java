@@ -30,7 +30,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-@DisplayName("Unit Test Cases For Zero Data Type")
+@DisplayName("Unit Test Cases For Zero Type")
 class ZeroTypeTest {
 
   @ParameterizedTest
@@ -53,7 +53,7 @@ class ZeroTypeTest {
       "DOUBLE_ARRAY, 15",
       "STRING_ARRAY, 16",
       "ZERO_ARRAY, 17",
-      "ZERO_OBJECT, 18"
+      "ZERO_MAP, 18"
   })
   @DisplayName("Test All Enumerated Values")
   void testAllEnumValues(String name, int value) {

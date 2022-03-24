@@ -45,12 +45,6 @@ public final class CommonConstant {
    */
   public static final int ADDITIONAL_NUMBER_ELEMENTS_POOL = 32;
 
-//  public static final float FPS = 1 / 60.0f;
-//  public static final String DEFAULT_CONFIGURATION_PACKAGE = "com.tenio.common.configuration";
-//  public static final String DEFAULT_BOOTSTRAP_PACKAGE = "com.tenio.core.bootstrap";
-//  public static final String DEFAULT_EXTENSION_EVENT_PACKAGE = "com.tenio.core.extension.events";
-//  public static final String DEFAULT_ENGINE_HEARTBEAT_PACKAGE = "com.tenio.engine.heartbeat";
-
   private CommonConstant() {
     throw new UnsupportedOperationException("This class doesn't support to create a new instance");
   }

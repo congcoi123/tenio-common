@@ -185,16 +185,16 @@ class ZeroUtilityTest {
   @DisplayName("Allow adding and fetching ZeroMap data to/from ZeroArray")
   void zeroMapInArrayShouldMatch() {
     var origin = ZeroArrayImpl.newInstance();
-    var zeroObject = ZeroMapImpl.newInstance();
-    zeroObject.putBoolean("b", true)
+    var zeroMap = ZeroMapImpl.newInstance();
+    zeroMap.putBoolean("b", true)
         .putShort("s", (short) 10)
         .putInteger("i", 100)
         .putShortArray("sa", shorts);
-    origin.addZeroMap(zeroObject);
+    origin.addZeroMap(zeroMap);
     var binary = origin.toBinary();
     var newOne = ZeroUtility.binaryToArray(binary);
 
-    assertEquals(zeroObject.toString(), newOne.getZeroMap(0).toString());
+    assertEquals(zeroMap.toString(), newOne.getZeroMap(0).toString());
   }
 
   @Test
@@ -287,16 +287,16 @@ class ZeroUtilityTest {
   @DisplayName("Allow adding and fetching nested ZeroMap data to/from ZeroMap")
   void zeroMapInMapShouldMatch() {
     var origin = ZeroMapImpl.newInstance();
-    var zeroObject = ZeroMapImpl.newInstance();
-    zeroObject.putBoolean("b", true)
+    var zeroMap = ZeroMapImpl.newInstance();
+    zeroMap.putBoolean("b", true)
         .putShort("s", (short) 10)
         .putInteger("i", 100)
         .putBooleanArray("ba", booleans)
         .putZeroArray("za", ZeroArrayImpl.newInstance().addDoubleArray(doubles));
-    origin.putZeroMap("z", zeroObject);
+    origin.putZeroMap("z", zeroMap);
     var binary = origin.toBinary();
     var newOne = ZeroUtility.binaryToMap(binary);
 
-    assertEquals(zeroObject.toString(), newOne.getZeroMap("z").toString());
+    assertEquals(zeroMap.toString(), newOne.getZeroMap("z").toString());
   }
 }
