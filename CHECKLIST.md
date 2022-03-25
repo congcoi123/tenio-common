@@ -1,7 +1,7 @@
 ## CHECK LIST
 
 ### Before creating a new Pull Request (PR)
-[x] Implements test cases and make sure the *Coverage* covers more than 50%  
+[x] Implements test cases and make sure the *Coverage* covers more than 50% the soure code  
 [x] Writes *java-docs* for every classes, public methods, important variables  
 [x] Execute command *mvn clean install* to run the *checkstyle* process  
 
