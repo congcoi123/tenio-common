@@ -7,8 +7,10 @@
 
 ### Before updating to new version
 [x] Makes sure the current branch is *develop* branch  
+[x] Changes version in *pom.xml* file  
 [x] Updates the class *TradeMark.java* in the *tenio-common* module  
 [x] Updates new changes in the *CHANGELOG.md* file  
+[x] Execute command *mvn clean install* to run the *checkstyle* process  
 [x] Creates a Pull Request (PR) from develop to master branch  
 
 ### Creating a new release
