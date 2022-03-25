@@ -43,5 +43,11 @@ import java.lang.annotation.Target;
 @Documented
 public @interface AutowiredQualifier {
 
+  /**
+   * Declares the name should be used to distinguish implementations, otherwise, it will use the
+   * implementation class name.
+   *
+   * @return the qualifier name for a implementation
+   */
   String value() default "";
 }
