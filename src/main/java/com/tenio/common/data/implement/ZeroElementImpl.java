@@ -36,13 +36,9 @@ public final class ZeroElementImpl implements ZeroElement {
   private final ZeroType type;
   private final Object data;
 
-  private ZeroElementImpl(ZeroType type, Object data) {
+  public ZeroElementImpl(ZeroType type, Object data) {
     this.type = type;
     this.data = data;
-  }
-
-  public static ZeroElementImpl newInstance(ZeroType type, Object data) {
-    return new ZeroElementImpl(type, data);
   }
 
   @Override

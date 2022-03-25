@@ -24,6 +24,8 @@ THE SOFTWARE.
 
 package com.tenio.common.data;
 
+import java.util.Collection;
+
 public interface ZeroElement {
 
   /**
@@ -37,7 +39,6 @@ public interface ZeroElement {
    * Retrieves the data of element.
    *
    * @return an instance in wrapper class of primitive or array types
-   * @see Byte
    * @see Boolean
    * @see Byte
    * @see Short
@@ -46,7 +47,7 @@ public interface ZeroElement {
    * @see Float
    * @see Double
    * @see String
-   * @see java.util.Collection
+   * @see Collection
    * @see ZeroArray
    * @see ZeroMap
    * @see ZeroElement

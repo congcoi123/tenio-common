@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -44,16 +45,12 @@ public final class ZeroMapImpl implements ZeroMap {
 
   private final Map<String, ZeroElement> map;
 
-  private ZeroMapImpl() {
+  public ZeroMapImpl() {
     map = new HashMap<>();
   }
 
-  public static ZeroMap newInstance() {
-    return new ZeroMapImpl();
-  }
-
-  public static ZeroMap newInstance(byte[] binary) {
-    return ZeroUtility.binaryToMap(binary);
+  private ZeroMapImpl(Map<String, ZeroElement> map) {
+    this.map = map;
   }
 
   @Override
@@ -63,8 +60,8 @@ public final class ZeroMapImpl implements ZeroMap {
 
   @Override
   public boolean isNull(String key) {
-    var data = getZeroElement(key);
-    return data != null && data.getType() == ZeroType.NULL;
+    var element = getZeroElement(key);
+    return Objects.nonNull(element) && element.getType() == ZeroType.NULL;
   }
 
   @Override
@@ -92,6 +89,13 @@ public final class ZeroMapImpl implements ZeroMap {
     return map.size();
   }
 
+  /**
+   * This method potentially create the issue "escape references". Please be aware of using it
+   * properly.
+   *
+   * @return an iterator object for the array.
+   * @see Iterator
+   */
   @Override
   public Iterator<Entry<String, ZeroElement>> iterator() {
     return map.entrySet().iterator();
@@ -99,62 +103,62 @@ public final class ZeroMapImpl implements ZeroMap {
 
   @Override
   public Boolean getBoolean(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Boolean) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Boolean) element.getData();
   }
 
   @Override
   public Byte getByte(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Byte) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Byte) element.getData();
   }
 
   @Override
   public Short getShort(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Short) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Short) element.getData();
   }
 
   @Override
   public Integer getInteger(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Integer) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Integer) element.getData();
   }
 
   @Override
   public Long getLong(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Long) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Long) element.getData();
   }
 
   @Override
   public Float getFloat(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Float) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Float) element.getData();
   }
 
   @Override
   public Double getDouble(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Double) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Double) element.getData();
   }
 
   @Override
   public String getString(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (String) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (String) element.getData();
   }
 
   @Override
   public ZeroArray getZeroArray(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (ZeroArray) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (ZeroArray) element.getData();
   }
 
   @Override
   public ZeroMap getZeroMap(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (ZeroMap) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (ZeroMap) element.getData();
   }
 
   @Override
@@ -226,56 +230,56 @@ public final class ZeroMapImpl implements ZeroMap {
   @SuppressWarnings("unchecked")
   @Override
   public Collection<Boolean> getBooleanArray(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Collection<Boolean>) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Collection<Boolean>) element.getData();
   }
 
   @Override
   public byte[] getByteArray(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (byte[]) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (byte[]) element.getData();
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public Collection<Short> getShortArray(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Collection<Short>) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Collection<Short>) element.getData();
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public Collection<Integer> getIntegerArray(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Collection<Integer>) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Collection<Integer>) element.getData();
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public Collection<Long> getLongArray(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Collection<Long>) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Collection<Long>) element.getData();
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public Collection<Float> getFloatArray(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Collection<Float>) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Collection<Float>) element.getData();
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public Collection<Double> getDoubleArray(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Collection<Double>) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Collection<Double>) element.getData();
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public Collection<String> getStringArray(String key) {
-    var data = getZeroElement(key);
-    return data == null ? null : (Collection<String>) data.getData();
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (Collection<String>) element.getData();
   }
 
   @Override
@@ -320,7 +324,7 @@ public final class ZeroMapImpl implements ZeroMap {
 
   @Override
   public ReadonlyZeroMap getReadonlyZeroMap() {
-    return this;
+    return new ZeroMapImpl(Map.copyOf(map));
   }
 
   @Override

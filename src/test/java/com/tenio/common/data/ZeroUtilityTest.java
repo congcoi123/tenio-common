@@ -29,9 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.tenio.common.data.implement.ZeroElementImpl;
-import com.tenio.common.data.implement.ZeroArrayImpl;
-import com.tenio.common.data.implement.ZeroMapImpl;
 import com.tenio.common.data.utility.ZeroUtility;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,12 +50,12 @@ class ZeroUtilityTest {
 
   @BeforeAll
   static void initialization() {
-    booleans = new ArrayList<Boolean>();
+    booleans = new ArrayList<>();
     booleans.add(true);
     booleans.add(false);
     booleans.add(true);
 
-    shorts = new ArrayList<Short>();
+    shorts = new ArrayList<>();
     shorts.add((short) 10);
     shorts.add((short) 11);
     shorts.add((short) 12);
@@ -66,17 +63,17 @@ class ZeroUtilityTest {
     shorts.add((short) 14);
     shorts.add((short) 15);
 
-    integers = new ArrayList<Integer>();
+    integers = new ArrayList<>();
     integers.add(100);
     integers.add(101);
     integers.add(102);
     integers.add(103);
 
-    longs = new ArrayList<Long>();
+    longs = new ArrayList<>();
     longs.add(1000L);
     longs.add(2000L);
 
-    floats = new ArrayList<Float>();
+    floats = new ArrayList<>();
     floats.add(1001.1f);
     floats.add(1002.2f);
     floats.add(1003.3f);
@@ -84,10 +81,10 @@ class ZeroUtilityTest {
     floats.add(1005.5f);
     floats.add(1006.6f);
 
-    doubles = new ArrayList<Double>();
+    doubles = new ArrayList<>();
     doubles.add(1000000.11111);
 
-    strings = new ArrayList<String>();
+    strings = new ArrayList<>();
     strings.add("zero");
     strings.add("data");
     strings.add("testing");
@@ -109,7 +106,7 @@ class ZeroUtilityTest {
   @Test
   @DisplayName("Allow adding and fetching primitive data to/from ZeroArray")
   void primitiveDataInArrayShouldMatch() {
-    var origin = ZeroArrayImpl.newInstance();
+    var origin = ZeroUtility.newZeroArray();
     origin.addBoolean(true).addShort((short) 11).addInteger(1000).addFloat(101.1f).addLong(1000L)
         .addDouble(1010101.101);
     var binary = origin.toBinary();
@@ -128,8 +125,8 @@ class ZeroUtilityTest {
   @Test
   @DisplayName("Allow adding and fetching nested ZeroArray data to/from ZeroArray")
   void instanceDataInArrayShouldMatch() {
-    var origin = ZeroArrayImpl.newInstance();
-    origin.addNull().addZeroElement(ZeroElementImpl.newInstance(ZeroType.BOOLEAN, false))
+    var origin = ZeroUtility.newZeroArray();
+    origin.addNull().addZeroElement(ZeroUtility.newZeroElement(ZeroType.BOOLEAN, false))
         .addString("test");
     var binary = origin.toBinary();
     var newOne = ZeroUtility.binaryToArray(binary);
@@ -147,7 +144,7 @@ class ZeroUtilityTest {
   @Test
   @DisplayName("Allow adding and fetching arrays of primitive data to/from ZeroArray")
   void collectionDataInArrayShouldMatch() {
-    var origin = ZeroArrayImpl.newInstance();
+    var origin = ZeroUtility.newZeroArray();
     origin.addBooleanArray(booleans).addShortArray(shorts).addIntegerArray(integers)
         .addLongArray(longs).addFloatArray(floats).addDoubleArray(doubles).addStringArray(strings);
     var binary = origin.toBinary();
@@ -167,7 +164,7 @@ class ZeroUtilityTest {
   @Test
   @DisplayName("Allow adding and fetching duplicated data to/from ZeroArray")
   void duplicatedValueInArrayShouldWork() {
-    var origin = ZeroArrayImpl.newInstance();
+    var origin = ZeroUtility.newZeroArray();
     origin.addBooleanArray(booleans).addShortArray(shorts).addBooleanArray(booleans)
         .addShortArray(shorts);
     var binary = origin.toBinary();
@@ -184,8 +181,8 @@ class ZeroUtilityTest {
   @Test
   @DisplayName("Allow adding and fetching ZeroMap data to/from ZeroArray")
   void zeroMapInArrayShouldMatch() {
-    var origin = ZeroArrayImpl.newInstance();
-    var zeroMap = ZeroMapImpl.newInstance();
+    var origin = ZeroUtility.newZeroArray();
+    var zeroMap = ZeroUtility.newZeroMap();
     zeroMap.putBoolean("b", true)
         .putShort("s", (short) 10)
         .putInteger("i", 100)
@@ -200,14 +197,14 @@ class ZeroUtilityTest {
   @Test
   @DisplayName("Allow adding and fetching primitive data to/from ZeroMap")
   void primitiveDataInMapShouldMatch() {
-    var origin = ZeroMapImpl.newInstance();
+    var origin = ZeroUtility.newZeroMap();
     origin.putBoolean("b", true)
         .putShort("s", (short) 11)
         .putInteger("i", 1000)
         .putFloat("f", 101.1f)
         .putLong("l", 1000L)
         .putDouble("d", 1010101.101)
-        .putZeroArray("za", ZeroArrayImpl.newInstance().addDoubleArray(doubles));
+        .putZeroArray("za", ZeroUtility.newZeroArray().addDoubleArray(doubles));
     var binary = origin.toBinary();
     var newOne = ZeroUtility.binaryToMap(binary);
 
@@ -224,9 +221,9 @@ class ZeroUtilityTest {
   @Test
   @DisplayName("Allow adding and fetching nested ZeroMap data to/from ZeroMap")
   void instanceDataInMapShouldMatch() {
-    var origin = ZeroMapImpl.newInstance();
+    var origin = ZeroUtility.newZeroMap();
     origin.putNull("n")
-        .putZeroElement("z", ZeroElementImpl.newInstance(ZeroType.BOOLEAN, false))
+        .putZeroElement("z", ZeroUtility.newZeroElement(ZeroType.BOOLEAN, false))
         .putString("s", "test");
     var binary = origin.toBinary();
     var newOne = ZeroUtility.binaryToMap(binary);
@@ -244,7 +241,7 @@ class ZeroUtilityTest {
   @Test
   @DisplayName("Allow adding and fetching arrays of primitive data to/from ZeroMap")
   void collectionDataInMapShouldMatch() {
-    var origin = ZeroMapImpl.newInstance();
+    var origin = ZeroUtility.newZeroMap();
     origin.putBooleanArray("b", booleans)
         .putShortArray("s", shorts)
         .putIntegerArray("i", integers)
@@ -269,7 +266,7 @@ class ZeroUtilityTest {
   @Test
   @DisplayName("Allow adding and fetching duplicated arrays of primitive data to/from ZeroMap")
   void duplicatedValueInMapShouldWork() {
-    var origin = ZeroMapImpl.newInstance();
+    var origin = ZeroUtility.newZeroMap();
     origin.putBooleanArray("b1", booleans).putShortArray("s1", shorts)
         .putBooleanArray("b2", booleans).putShortArray("s2", shorts);
     var binary = origin.toBinary();
@@ -286,13 +283,13 @@ class ZeroUtilityTest {
   @Test
   @DisplayName("Allow adding and fetching nested ZeroMap data to/from ZeroMap")
   void zeroMapInMapShouldMatch() {
-    var origin = ZeroMapImpl.newInstance();
-    var zeroMap = ZeroMapImpl.newInstance();
+    var origin = ZeroUtility.newZeroMap();
+    var zeroMap = ZeroUtility.newZeroMap();
     zeroMap.putBoolean("b", true)
         .putShort("s", (short) 10)
         .putInteger("i", 100)
         .putBooleanArray("ba", booleans)
-        .putZeroArray("za", ZeroArrayImpl.newInstance().addDoubleArray(doubles));
+        .putZeroArray("za", ZeroUtility.newZeroArray().addDoubleArray(doubles));
     origin.putZeroMap("z", zeroMap);
     var binary = origin.toBinary();
     var newOne = ZeroUtility.binaryToMap(binary);

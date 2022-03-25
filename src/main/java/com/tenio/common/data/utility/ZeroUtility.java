@@ -54,7 +54,6 @@ public final class ZeroUtility {
    * @param type the type of element in {@link ZeroType}
    * @param data the data of element in variety of types
    * @return new instance of zero element
-   * @see Byte
    * @see Boolean
    * @see Byte
    * @see Short
@@ -63,13 +62,13 @@ public final class ZeroUtility {
    * @see Float
    * @see Double
    * @see String
-   * @see java.util.Collection
+   * @see Collection
    * @see ZeroArray
    * @see ZeroMap
    * @see ZeroElement
    */
   public static ZeroElement newZeroElement(ZeroType type, Object data) {
-    return ZeroElementImpl.newInstance(type, data);
+    return new ZeroElementImpl(type, data);
   }
 
   /**
@@ -78,7 +77,7 @@ public final class ZeroUtility {
    * @return new instance of zero array
    */
   public static ZeroArray newZeroArray() {
-    return ZeroArrayImpl.newInstance();
+    return new ZeroArrayImpl();
   }
 
   /**
@@ -87,7 +86,7 @@ public final class ZeroUtility {
    * @return new instance of zero map
    */
   public static ZeroMap newZeroMap() {
-    return ZeroMapImpl.newInstance();
+    return new ZeroMapImpl();
   }
 
   /**

@@ -81,7 +81,7 @@ public enum ZeroType {
 
   private final int value;
 
-  ZeroType(final int value) {
+  ZeroType(int value) {
     this.value = value;
   }
 

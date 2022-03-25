@@ -24,6 +24,15 @@ THE SOFTWARE.
 
 package com.tenio.common.exception;
 
+import com.tenio.common.bootstrap.annotation.Bean;
+import com.tenio.common.bootstrap.injector.Injector;
+
+/**
+ * The method annotated by {@link Bean} annotation but is not defined as <code>public</code> access.
+ *
+ * @see Injector
+ * @see Bean
+ */
 public final class IllegalDefinedAccessControlException extends RuntimeException {
 
   private static final long serialVersionUID = -3263083948979983L;

@@ -36,13 +36,13 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Unit Test Cases For Common Array")
 class CommonArrayTest {
 
-  private final CommonArray dummyObjectArray = CommonArray.newInstance();
+  private final CommonArray dummyArray = CommonArray.newInstance();
   private final CommonArray commonArray = CommonArray.newInstance();
 
   @BeforeEach
   void initialization() {
     commonArray.put(100.0).put(100.0F).put(100L).put(100).put(true).put("test")
-        .put(dummyObjectArray).put(dummyObjectArray);
+        .put(dummyArray).put(dummyArray);
   }
 
   @Test
@@ -55,7 +55,7 @@ class CommonArrayTest {
         () -> assertEquals(commonArray.getInt(3), 100),
         () -> assertTrue(commonArray.getBoolean(4)),
         () -> assertEquals(commonArray.getString(5), "test"),
-        () -> assertEquals(commonArray.getCommonObjectArray(6), dummyObjectArray),
+        () -> assertEquals(commonArray.getCommonObjectArray(6), dummyArray),
         () -> assertTrue(commonArray.getObject(7) instanceof CommonArray)
     );
   }

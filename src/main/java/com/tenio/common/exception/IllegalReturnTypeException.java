@@ -24,6 +24,16 @@ THE SOFTWARE.
 
 package com.tenio.common.exception;
 
+import com.tenio.common.bootstrap.annotation.Bean;
+import com.tenio.common.bootstrap.injector.Injector;
+
+/**
+ * The method annotated by {@link Bean} annotation but returns <b>primitive</b> or
+ * <code>void</code>.
+ *
+ * @see Injector
+ * @see Bean
+ */
 public final class IllegalReturnTypeException extends RuntimeException {
 
   private static final long serialVersionUID = 4084969089509262613L;

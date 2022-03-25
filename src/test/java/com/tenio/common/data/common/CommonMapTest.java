@@ -38,14 +38,14 @@ import org.junit.jupiter.api.Test;
 class CommonMapTest {
 
   private final CommonMap commonMap = CommonMap.newInstance();
-  private final CommonMap dummyObject = CommonMap.newInstance();
-  private final CommonArray dummyObjectArray = CommonArray.newInstance();
+  private final CommonMap dummyMap = CommonMap.newInstance();
+  private final CommonArray dummyArray = CommonArray.newInstance();
 
   @BeforeEach
   void initialization() {
     commonMap.add("double", 100.0).add("float", 100.0F).add("long", 100L).add("integer", 100)
-        .add("string", "test").add("boolean", true).add("common object", dummyObject)
-        .add("common object array", dummyObjectArray).add("object", dummyObject);
+        .add("string", "test").add("boolean", true).add("common object", dummyMap)
+        .add("common object array", dummyArray).add("object", dummyMap);
   }
 
   @Test
@@ -58,10 +58,10 @@ class CommonMapTest {
         () -> assertEquals(commonMap.getInt("integer"), 100),
         () -> assertEquals(commonMap.getString("string"), "test"),
         () -> assertTrue(commonMap.getBoolean("boolean")),
-        () -> assertEquals(commonMap.getCommonObject("common object"), dummyObject),
+        () -> assertEquals(commonMap.getCommonObject("common object"), dummyMap),
         () -> assertEquals(commonMap.getCommonObjectArray("common object array"),
-            dummyObjectArray),
-        () -> assertEquals(commonMap.getObject("object"), dummyObject));
+            dummyArray),
+        () -> assertEquals(commonMap.getObject("object"), dummyMap));
   }
 
   @Test

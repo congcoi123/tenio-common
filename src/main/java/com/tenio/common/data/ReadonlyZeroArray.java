@@ -33,7 +33,7 @@ public interface ReadonlyZeroArray extends ZeroCollection {
 
   boolean contains(Object element);
 
-  Object getElementAt(int index);
+  Object getDataForElementAt(int index);
 
   boolean isNull(int index);
 
