@@ -36,58 +36,140 @@ public final class CommonMap extends HashMap<String, Object> implements Serializ
 
   private static final long serialVersionUID = 8818783476027583633L;
 
+/**
+* Creats a new fresh instance.
+*/
   public CommonMap() {
   }
 
+/**
+* Retrieves new instance of the class.
+*
+* @return an instance
+*/
   public static CommonMap newInstance() {
     return new CommonMap();
   }
 
+/**
+* Retrieves value in the map by its key.
+*
+* @param key the key in map of value
+* @return the value casted in <code>double</code> type fetched by its key of map
+*/
   public double getDouble(String key) {
     return (double) get(key);
   }
 
+/**
+* Retrieves value in the map by its key.
+*
+* @param key the key in map of value
+* @return the value casted in <code>float</code> type fetched by its key of map
+*/
   public float getFloat(String key) {
     return (float) get(key);
   }
 
+/**
+* Retrieves value in the map by its key.
+*
+* @param key the key in map of value
+* @return the value casted in <code>long</code> type fetched by its key of map
+*/
   public long getLong(String key) {
     return (long) get(key);
   }
 
+/**
+* Retrieves value in the map by its key.
+*
+* @param key the key in map of value
+* @return the value casted in <code>integer</code> type fetched by its key of map
+*/
   public int getInt(String key) {
     return (int) get(key);
   }
 
+/**
+* Retrieves value in the map by its key.
+*
+* @param key the key in map of value
+* @return the value casted in <code>boolean</code> type fetched by its key of map
+*/
   public boolean getBoolean(String key) {
     return (boolean) get(key);
   }
 
+/**
+* Retrieves value in the map by its key.
+*
+* @param key the key in map of value
+* @return the value casted in {@link String} type fetched by its key of map
+*/
   public String getString(String key) {
     return (String) get(key);
   }
 
+/**
+* Retrieves value in the map by its key.
+*
+* @param key the key in map of value
+* @return the value in {@link Object} type fetched by its key of map
+*/
   public Object getObject(String key) {
     return get(key);
   }
 
+/**
+* Retrieves value in the map by its key.
+*
+* @param key the key in map of value
+* @return the value casted in {@link CommonMap} type fetched by its key of map
+*/
   public CommonMap getCommonObject(String key) {
     return (CommonMap) get(key);
   }
 
+/**
+* Retrieves value in the map by its key.
+*
+* @param key the key in map of value
+* @return the value casted in {@link CommonArray} type fetched by its key of map
+*/
   public CommonArray getCommonObjectArray(String key) {
     return (CommonArray) get(key);
   }
 
+/**
+* Determines whether the data can be fetched by its key in the map.
+*
+* @param key the key needs to be checked
+* @return <code>true</code> if a value is available, otherwise <code>false</code>
+*/
   public boolean contains(String key) {
     return containsKey(key);
   }
 
+/**
+* Adds new data into the map with its key.
+*
+* @param key the key of data
+* @param value the value needs to be inserted
+* @return the pointer of this instance
+*/
   public CommonMap add(String key, Object value) {
     put(key, value);
     return this;
   }
 
+/**
+* Retrieves a new copy of the interior map.
+*
+* @return a new copy of the map in unmodified mode.
+*
+* @see UnmodifiedMap
+*/
   public Map<String, Object> getReadonlyMap() {
     return Map.copyOf(this);
   }

@@ -62,19 +62,67 @@ public interface ReadonlyZeroMap extends ZeroCollection {
 
   ZeroElement getZeroElement(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held at the key in the map of {@link Boolean} type
+*/
   Collection<Boolean> getBooleanArray(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held at the key in a map of an array of binaries type
+*/
   byte[] getByteArray(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held at the index in a collection of {@link Short} type
+*/
   Collection<Short> getShortArray(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held at the key in  the map of {@link Integer} type
+*/
   Collection<Integer> getIntegerArray(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held at the key in the map of {@link Long} type
+*/
   Collection<Long> getLongArray(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held at the key in the map of {@link Float} type
+*/
   Collection<Float> getFloatArray(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held at the key in the map of {@link Double} type
+*/
   Collection<Double> getDoubleArray(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held at the key in the map of {@link String} type
+*/
   Collection<String> getStringArray(String key);
 }
