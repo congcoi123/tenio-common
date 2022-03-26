@@ -32,34 +32,122 @@ import java.util.Set;
  */
 public interface ReadonlyZeroMap extends ZeroCollection {
 
+/**
+* Determines whether a value in the map is {@link ZeroType#NULL} type.
+*
+* @param key the key used to fetch value
+* @return <code>true</code> if an element is available and it equals to {@link ZeroType#NULL} type, otherwise <code>false</code>
+*/
   boolean isNull(String key);
 
+/**
+* Determines whether a value is available in map.
+*
+* @param key the key for checking
+* @return <code>true</code> if the key is found, othewise <code>false</code>
+*/
   boolean containsKey(String key);
 
+/**
+* Retrieves a set of keys in map.
+*
+* @return a {@link Set} of keys in map.
+*/
   Set<String> getKeys();
 
+/**
+* Retrieves an unmodifiable set of keys in map.
+*
+* @return an {@link UnmodifySet} of keys in map.
+*/
   Set<String> getReadonlyKeys();
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held fetched by its key in {@link Boolean} type
+*/
   Boolean getBoolean(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held fetched by its key in {@link Byte} type
+*/
   Byte getByte(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held fetched by its key in {@link Short} type
+*/
   Short getShort(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held fetched by its key in {@link Integer} type
+*/
   Integer getInteger(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held fetched by its key in {@link Long} type
+*/
   Long getLong(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held fetched by its key in {@link Float} type
+*/
   Float getFloat(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held fetched by its key in {@link Double} type
+*/
   Double getDouble(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held fetched by its key in {@link String} type
+*/
   String getString(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held fetched by its key in {@link ZeroArray} type
+*/
   ZeroArray getZeroArray(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held fetched by its key in {@link ZeroMap} type
+*/
   ZeroMap getZeroMap(String key);
 
+/**
+* Retrieves the data of element by its key in the map.
+*
+* @param key the key needs to be checked
+* @return the value held fetched by its key in {@link ZeroElement} type
+*/
   ZeroElement getZeroElement(String key);
 
 /**

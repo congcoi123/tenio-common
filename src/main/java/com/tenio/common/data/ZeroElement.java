@@ -50,7 +50,6 @@ public interface ZeroElement {
    * @see Collection
    * @see ZeroArray
    * @see ZeroMap
-   * @see ZeroElement
    */
   Object getData();
 }
