@@ -85,10 +85,21 @@ public enum ZeroType {
     this.value = value;
   }
 
+/**
+* Retrieves a type by using its value.
+*
+* @param value the value in <code>integer</code> number
+* @return the corresponding {@link ZeroType} if available, otherwise <code>null</code>
+*/
   public static ZeroType getByValue(int value) {
     return lookup.get(value);
   }
 
+/**
+* Fetches the type's value.
+*
+* @return the type's value in <code>integer</code> type
+*/
   public final int getValue() {
     return this.value;
   }

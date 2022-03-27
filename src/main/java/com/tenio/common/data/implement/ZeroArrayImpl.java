@@ -66,10 +66,10 @@ public final class ZeroArrayImpl implements ZeroArray {
   }
 
   /**
-   * This method potentially create the issue "escape references". Please be aware of using it
+   * This method potentially creates a issue "escape references". Please be aware of using it
    * properly.
    *
-   * @return an iterator object for the array.
+   * @return an iterator object for the interior array.
    * @see Iterator
    */
   @Override

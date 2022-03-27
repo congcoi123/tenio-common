@@ -26,6 +26,12 @@ package com.tenio.common.data;
 
 import java.util.Collection;
 
+/**
+* An element object contains a pair of type and data value.
+*
+* @see ZeroType
+* @see Object
+*/
 public interface ZeroElement {
 
   /**
