@@ -41,7 +41,7 @@ public final class WorkerPool extends SystemLogger {
   private boolean isStopped;
 
   /**
-   * Create a new worker pool.
+   * Creates a new worker pool.
    *
    * @param name         the worker pool's name
    * @param noOfThreads  number of provided threads
@@ -91,7 +91,7 @@ public final class WorkerPool extends SystemLogger {
   }
 
   /**
-   * Wait until all tasks are finished.
+   * Waits until all tasks are finished.
    */
   public synchronized void waitUntilAllTasksFinished() {
     while (taskQueue.size() > 0) {

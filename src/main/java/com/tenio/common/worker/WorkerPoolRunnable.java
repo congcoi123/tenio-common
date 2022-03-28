@@ -39,7 +39,7 @@ public final class WorkerPoolRunnable extends AbstractLogger implements Runnable
   private boolean isStopped;
 
   /**
-   * Create a worker pool management.
+   * Creates a worker pool management.
    *
    * @param name      the pool's name
    * @param index     the index set to differentiate threads
@@ -53,7 +53,7 @@ public final class WorkerPoolRunnable extends AbstractLogger implements Runnable
   }
 
   /**
-   * Start a new thread for a worker pool.
+   * Starts a new thread for a worker pool.
    */
   public void run() {
     thread = Thread.currentThread();
@@ -72,7 +72,7 @@ public final class WorkerPoolRunnable extends AbstractLogger implements Runnable
   }
 
   /**
-   * Stop the current worker pool.
+   * Stops the current worker pool.
    */
   public synchronized void doStop() {
     isStopped = true;
@@ -80,6 +80,11 @@ public final class WorkerPoolRunnable extends AbstractLogger implements Runnable
     thread.interrupt();
   }
 
+/**
+* Checks if the work pool is stopped.
+*
+* @return <code>true</code> if the work pool is stopped, otherwise <code>false</code>
+*/
   public synchronized boolean isStopped() {
     return isStopped;
   }

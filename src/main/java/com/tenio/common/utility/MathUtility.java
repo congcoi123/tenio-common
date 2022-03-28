@@ -51,10 +51,23 @@ public final class MathUtility {
     throw new UnsupportedOperationException("This class does not support to create a new instance");
   }
 
+/**
+* Determines if an object is not <code>null</code>.
+*
+* @param val the instance
+* @return <code>true</code> if the instance is not <code>null</code>, otherwise <code>false</code>
+*
+*/
   public static <T> boolean isNaN(T val) {
     return !(val != null);
   }
 
+/**
+* Converts a value from degree to radian unit.
+*
+* @param degree the value in degree unit
+* @return a converted value in radian unit
+*/
   public static float degreeToRadian(float degree) {
     return TWO_PI * (degree / 360);
   }

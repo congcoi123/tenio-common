@@ -53,6 +53,11 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
     tasks = new ConcurrentHashMap<String, ScheduledFuture<?>>();
   }
 
+/**
+* Creates a new instance for task manager.
+*
+* @return an instance in {@link TaskManager} type
+*/
   public static TaskManager newInstance() {
     return new TaskManagerImpl();
   }

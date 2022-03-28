@@ -36,7 +36,7 @@ import java.util.concurrent.ScheduledFuture;
 public interface TaskManager {
 
   /**
-   * Create a new task.
+   * Creates a new task.
    *
    * @param id   the unique id for management
    * @param task the running task, see {@link ScheduledFuture}
@@ -44,19 +44,19 @@ public interface TaskManager {
   void create(String id, ScheduledFuture<?> task);
 
   /**
-   * Kill or stop a running task.
+   * Kills or stops a running task.
    *
    * @param id the unique id
    */
   void kill(String id);
 
   /**
-   * Kill or stop all running tasks.
+   * Kills or stops all running tasks.
    */
   void clear();
 
   /**
-   * Retrieve the remained time of one task.
+   * Retrieves the remaining time of one task.
    *
    * @param id the unique for retrieving the desired task
    * @return the left time

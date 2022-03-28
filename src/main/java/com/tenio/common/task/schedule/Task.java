@@ -31,5 +31,10 @@ import java.util.concurrent.ScheduledFuture;
  */
 public interface Task {
 
+/**
+* Executes a task.
+*
+* @return a {@link ScheduledFuture} instance to manage its task
+*/
   ScheduledFuture<?> run();
 }
