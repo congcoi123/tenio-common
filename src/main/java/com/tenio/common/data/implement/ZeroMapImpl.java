@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import javax.annotation.Nonnull;
 
 /**
  * An implementation for the zero object.
@@ -45,6 +46,9 @@ public final class ZeroMapImpl implements ZeroMap {
 
   private final Map<String, ZeroElement> map;
 
+  /**
+   * Creates a new instance.
+   */
   public ZeroMapImpl() {
     map = new HashMap<>();
   }
@@ -90,13 +94,15 @@ public final class ZeroMapImpl implements ZeroMap {
   }
 
   /**
-   * This method potentially create the issue "escape references". Please be aware of using it
+   * This method potentially creates an issue called "escape references". Please be aware of
+   * using it
    * properly.
    *
-   * @return an iterator object for the array.
+   * @return an iterator object for the interior array.
    * @see Iterator
    */
   @Override
+  @Nonnull
   public Iterator<Entry<String, ZeroElement>> iterator() {
     return map.entrySet().iterator();
   }

@@ -35,6 +35,11 @@ public final class NullElementPoolException extends RuntimeException {
 
   private static final long serialVersionUID = 1702807220957046354L;
 
+  /**
+   * Creates a new instance.
+   *
+   * @param message the warning message
+   */
   public NullElementPoolException(String message) {
     super(message);
   }

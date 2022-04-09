@@ -65,7 +65,6 @@ public final class ZeroUtility {
    * @see Collection
    * @see ZeroArray
    * @see ZeroMap
-   * @see ZeroElement
    */
   public static ZeroElement newZeroElement(ZeroType type, Object data) {
     return new ZeroElementImpl(type, data);

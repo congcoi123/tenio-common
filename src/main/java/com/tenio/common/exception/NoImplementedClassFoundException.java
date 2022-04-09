@@ -34,6 +34,11 @@ public final class NoImplementedClassFoundException extends RuntimeException {
 
   private static final long serialVersionUID = -2836756456705984458L;
 
+  /**
+   * Creates a new instance.
+   *
+   * @param clazz the interface of which there is no implementation
+   */
   public NoImplementedClassFoundException(Class<?> clazz) {
     super(String.format("Unable to find any implementation for the class: %s", clazz.getName()));
   }

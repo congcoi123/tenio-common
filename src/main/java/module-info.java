@@ -1,3 +1,6 @@
+/**
+ * Exported packages for the tenio.common module
+ */
 open module tenio.common {
   requires jsr305;
   requires org.reflections;
@@ -17,7 +20,7 @@ open module tenio.common {
   exports com.tenio.common.logger;
   exports com.tenio.common.pool;
   exports com.tenio.common.task;
-  exports com.tenio.common.task.schedule;
+  exports com.tenio.common.task.implement to tenio.core;
   exports com.tenio.common.utility;
   exports com.tenio.common.worker;
 }
