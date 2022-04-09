@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2021 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2022 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,37 +25,79 @@ THE SOFTWARE.
 package com.tenio.common.data.utility;
 
 import com.tenio.common.data.ZeroArray;
-import com.tenio.common.data.ZeroDataType;
+import com.tenio.common.data.ZeroCollection;
 import com.tenio.common.data.ZeroElement;
-import com.tenio.common.data.ZeroObject;
-import com.tenio.common.data.element.ZeroData;
+import com.tenio.common.data.ZeroMap;
+import com.tenio.common.data.ZeroType;
 import com.tenio.common.data.implement.ZeroArrayImpl;
-import com.tenio.common.data.implement.ZeroObjectImpl;
+import com.tenio.common.data.implement.ZeroElementImpl;
+import com.tenio.common.data.implement.ZeroMapImpl;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * This class provides all necessary methods to work with the self-definition classes.
+ * This class provides all necessary methods to work with the self-definition data elements.
  */
-public final class ZeroDataSerializerUtility {
+public final class ZeroUtility {
 
   private static final int BUFFER_CHUNK_BYTES = 512;
 
-  private ZeroDataSerializerUtility() {
+  private ZeroUtility() {
     throw new UnsupportedOperationException("This class does not support to create an instance");
   }
 
   /**
-   * Deserialize a stream of bytes to a zero element.
+   * Creates a new instance of {@link ZeroElement} class.
+   *
+   * @param type the type of element in {@link ZeroType}
+   * @param data the data of element in variety of types
+   * @return new instance of zero element
+   * @see Boolean
+   * @see Byte
+   * @see Short
+   * @see Integer
+   * @see Long
+   * @see Float
+   * @see Double
+   * @see String
+   * @see Collection
+   * @see ZeroArray
+   * @see ZeroMap
+   */
+  public static ZeroElement newZeroElement(ZeroType type, Object data) {
+    return new ZeroElementImpl(type, data);
+  }
+
+  /**
+   * Creates a new instance of {@link ZeroArray} class.
+   *
+   * @return new instance of zero array
+   */
+  public static ZeroArray newZeroArray() {
+    return new ZeroArrayImpl();
+  }
+
+  /**
+   * Creates a new instance of {@link ZeroMap} class.
+   *
+   * @return new instance of zero map
+   */
+  public static ZeroMap newZeroMap() {
+    return new ZeroMapImpl();
+  }
+
+  /**
+   * Deserializes a stream of bytes to a zero collection.
    *
    * @param binary the stream of bytes
-   * @return a new zero element instance
+   * @return a new zero collection instance
    */
-  public static ZeroElement binaryToElement(byte[] binary) {
-    switch (ZeroDataType.getByValue(binary[0])) {
-      case ZERO_OBJECT:
-        return binaryToObject(binary);
+  public static ZeroCollection binaryToCollection(byte[] binary) {
+    switch (ZeroType.getByValue(binary[0])) {
+      case ZERO_MAP:
+        return binaryToMap(binary);
 
       case ZERO_ARRAY:
         return binaryToArray(binary);
@@ -66,7 +108,7 @@ public final class ZeroDataSerializerUtility {
   }
 
   /**
-   * Deserialize a stream of bytes to a zero array.
+   * Deserializes a stream of bytes to a zero array.
    *
    * @param binary the stream of bytes
    * @return a new zero array instance
@@ -87,15 +129,15 @@ public final class ZeroDataSerializerUtility {
   }
 
   /**
-   * Deserialize a stream of bytes to a zero object.
+   * Deserializes a stream of bytes to a zero map.
    *
    * @param binary the stream of bytes
-   * @return a new zero object instance
+   * @return a new zero map instance
    */
-  public static ZeroObject binaryToObject(byte[] binary) {
+  public static ZeroMap binaryToMap(byte[] binary) {
     if (binary.length < 3) {
       throw new IllegalStateException(String.format(
-          "Unable to decode a ZeroObject because binary data size is not big enough to work on it"
+          "Unable to decode a ZeroMap because binary data size is not big enough to work on it"
               + ". Size: %d bytes",
           binary.length));
     }
@@ -104,34 +146,34 @@ public final class ZeroDataSerializerUtility {
     buffer.put(binary);
     buffer.flip();
 
-    return decodeZeroObject(buffer);
+    return decodeZeroMap(buffer);
   }
 
   /**
-   * Serialize an object to a stream of bytes.
+   * Serialize a map to a stream of bytes.
    *
-   * @param object the object
-   * @return the stream of bytes converted from the object
+   * @param map the map
+   * @return the stream of bytes converted from the map
    */
-  public static byte[] objectToBinary(ZeroObject object) {
+  public static byte[] mapToBinary(ZeroMap map) {
     var buffer = ByteBuffer.allocate(BUFFER_CHUNK_BYTES);
-    buffer.put((byte) ZeroDataType.ZERO_OBJECT.getValue());
-    buffer.putShort((short) object.size());
+    buffer.put((byte) ZeroType.ZERO_MAP.getValue());
+    buffer.putShort((short) map.size());
 
-    return objectToBinary(object, buffer);
+    return mapToBinary(map, buffer);
   }
 
-  private static byte[] objectToBinary(ZeroObject object, ByteBuffer buffer) {
-    var keys = object.getKeys();
-    ZeroData zeroData = null;
-    Object element = null;
+  private static byte[] mapToBinary(ZeroMap map, ByteBuffer buffer) {
+    var keys = map.getKeys();
+    ZeroElement zeroElement;
+    Object data;
 
     for (var iterator = keys.iterator(); iterator
-        .hasNext(); buffer = encodeObject(buffer, zeroData.getType(), element)) {
+        .hasNext(); buffer = encodeElement(buffer, zeroElement.getType(), data)) {
       var key = iterator.next();
-      zeroData = object.getZeroData(key);
-      element = zeroData.getElement();
-      buffer = encodeZeroObjectKey(buffer, key);
+      zeroElement = map.getZeroElement(key);
+      data = zeroElement.getData();
+      buffer = encodeZeroMapKey(buffer, key);
     }
 
     var position = buffer.position();
@@ -143,27 +185,27 @@ public final class ZeroDataSerializerUtility {
   }
 
   /**
-   * Serialize an array to a stream of bytes.
+   * Serializes an array to a stream of bytes.
    *
    * @param array the array
    * @return the stream of bytes converted from the array
    */
   public static byte[] arrayToBinary(ZeroArray array) {
     var buffer = ByteBuffer.allocate(BUFFER_CHUNK_BYTES);
-    buffer.put((byte) ZeroDataType.ZERO_ARRAY.getValue());
+    buffer.put((byte) ZeroType.ZERO_ARRAY.getValue());
     buffer.putShort((short) array.size());
 
     return arrayToBinary(array, buffer);
   }
 
   private static byte[] arrayToBinary(ZeroArray array, ByteBuffer buffer) {
-    ZeroData zeroData = null;
-    Object element = null;
+    ZeroElement zeroElement;
+    Object data;
 
     for (var iterator = array.iterator(); iterator
-        .hasNext(); buffer = encodeObject(buffer, zeroData.getType(), element)) {
-      zeroData = iterator.next();
-      element = zeroData.getElement();
+        .hasNext(); buffer = encodeElement(buffer, zeroElement.getType(), data)) {
+      zeroElement = iterator.next();
+      data = zeroElement.getData();
     }
 
     var position = buffer.position();
@@ -174,13 +216,13 @@ public final class ZeroDataSerializerUtility {
     return result;
   }
 
-  private static ZeroData decodeObject(ByteBuffer buffer) throws RuntimeException {
+  private static ZeroElement decodeElement(ByteBuffer buffer) throws RuntimeException {
     var headerByte = buffer.get();
-    var type = ZeroDataType.getByValue(headerByte);
+    var type = ZeroType.getByValue(headerByte);
 
     switch (type) {
       case NULL:
-        return decodeNull(buffer);
+        return decodeNull();
       case BOOLEAN:
         return decodeBoolean(buffer);
       case BYTE:
@@ -215,74 +257,74 @@ public final class ZeroDataSerializerUtility {
         return decodeStringArray(buffer);
       case ZERO_ARRAY:
         buffer.position(buffer.position() - Byte.BYTES);
-        return ZeroData.newInstance(ZeroDataType.ZERO_ARRAY, decodeZeroArray(buffer));
-      case ZERO_OBJECT:
+        return newZeroElement(ZeroType.ZERO_ARRAY, decodeZeroArray(buffer));
+      case ZERO_MAP:
         buffer.position(buffer.position() - Byte.BYTES);
-        return ZeroData.newInstance(ZeroDataType.ZERO_OBJECT, decodeZeroObject(buffer));
+        return newZeroElement(ZeroType.ZERO_MAP, decodeZeroMap(buffer));
       default:
         return null;
     }
   }
 
   @SuppressWarnings("unchecked")
-  private static ByteBuffer encodeObject(ByteBuffer buffer, ZeroDataType type, Object element) {
+  private static ByteBuffer encodeElement(ByteBuffer buffer, ZeroType type, Object data) {
     switch (type) {
       case NULL:
         buffer = encodeNull(buffer);
         break;
       case BOOLEAN:
-        buffer = encodeBoolean(buffer, (Boolean) element);
+        buffer = encodeBoolean(buffer, (Boolean) data);
         break;
       case BYTE:
-        buffer = encodeByte(buffer, (Byte) element);
+        buffer = encodeByte(buffer, (Byte) data);
         break;
       case SHORT:
-        buffer = encodeShort(buffer, (Short) element);
+        buffer = encodeShort(buffer, (Short) data);
         break;
       case INTEGER:
-        buffer = encodeInteger(buffer, (Integer) element);
+        buffer = encodeInteger(buffer, (Integer) data);
         break;
       case LONG:
-        buffer = encodeLong(buffer, (Long) element);
+        buffer = encodeLong(buffer, (Long) data);
         break;
       case FLOAT:
-        buffer = encodeFloat(buffer, (Float) element);
+        buffer = encodeFloat(buffer, (Float) data);
         break;
       case DOUBLE:
-        buffer = encodeDouble(buffer, (Double) element);
+        buffer = encodeDouble(buffer, (Double) data);
         break;
       case STRING:
-        buffer = encodeString(buffer, (String) element);
+        buffer = encodeString(buffer, (String) data);
         break;
       case BOOLEAN_ARRAY:
-        buffer = encodeBooleanArray(buffer, (Collection<Boolean>) element);
+        buffer = encodeBooleanArray(buffer, (Collection<Boolean>) data);
         break;
       case BYTE_ARRAY:
-        buffer = encodeByteArray(buffer, (byte[]) element);
+        buffer = encodeByteArray(buffer, (byte[]) data);
         break;
       case SHORT_ARRAY:
-        buffer = encodeShortArray(buffer, (Collection<Short>) element);
+        buffer = encodeShortArray(buffer, (Collection<Short>) data);
         break;
       case INTEGER_ARRAY:
-        buffer = encodeIntegerArray(buffer, (Collection<Integer>) element);
+        buffer = encodeIntegerArray(buffer, (Collection<Integer>) data);
         break;
       case LONG_ARRAY:
-        buffer = encodeLongArray(buffer, (Collection<Long>) element);
+        buffer = encodeLongArray(buffer, (Collection<Long>) data);
         break;
       case FLOAT_ARRAY:
-        buffer = encodeFloatArray(buffer, (Collection<Float>) element);
+        buffer = encodeFloatArray(buffer, (Collection<Float>) data);
         break;
       case DOUBLE_ARRAY:
-        buffer = encodeDoubleArray(buffer, (Collection<Double>) element);
+        buffer = encodeDoubleArray(buffer, (Collection<Double>) data);
         break;
       case STRING_ARRAY:
-        buffer = encodeStringArray(buffer, (Collection<String>) element);
+        buffer = encodeStringArray(buffer, (Collection<String>) data);
         break;
       case ZERO_ARRAY:
-        buffer = appendBinaryToBuffer(buffer, arrayToBinary((ZeroArray) element));
+        buffer = appendBinaryToBuffer(buffer, arrayToBinary((ZeroArray) data));
         break;
-      case ZERO_OBJECT:
-        buffer = appendBinaryToBuffer(buffer, objectToBinary((ZeroObject) element));
+      case ZERO_MAP:
+        buffer = appendBinaryToBuffer(buffer, mapToBinary((ZeroMap) data));
         break;
       default:
         throw new IllegalArgumentException(
@@ -292,59 +334,59 @@ public final class ZeroDataSerializerUtility {
     return buffer;
   }
 
-  private static ZeroData decodeNull(ByteBuffer buffer) {
-    return ZeroData.newInstance(ZeroDataType.NULL, null);
+  private static ZeroElement decodeNull() {
+    return newZeroElement(ZeroType.NULL, null);
   }
 
-  private static ZeroData decodeBoolean(ByteBuffer buffer) {
+  private static ZeroElement decodeBoolean(ByteBuffer buffer) {
     var bool = buffer.get();
-    Boolean element = null;
+    Boolean data;
 
     if (bool == 0) {
-      element = Boolean.FALSE;
+      data = Boolean.FALSE;
     } else {
       if (bool != 1) {
         throw new IllegalStateException(
             String.format("Expected value of 0 or 1, but found: %d", bool));
       }
 
-      element = Boolean.TRUE;
+      data = Boolean.TRUE;
     }
 
-    return ZeroData.newInstance(ZeroDataType.BOOLEAN, element);
+    return newZeroElement(ZeroType.BOOLEAN, data);
   }
 
-  private static ZeroData decodeByte(ByteBuffer buffer) {
-    var element = buffer.get();
-    return ZeroData.newInstance(ZeroDataType.BYTE, element);
+  private static ZeroElement decodeByte(ByteBuffer buffer) {
+    var data = buffer.get();
+    return newZeroElement(ZeroType.BYTE, data);
   }
 
-  private static ZeroData decodeShort(ByteBuffer buffer) {
-    var element = buffer.getShort();
-    return ZeroData.newInstance(ZeroDataType.SHORT, element);
+  private static ZeroElement decodeShort(ByteBuffer buffer) {
+    var data = buffer.getShort();
+    return newZeroElement(ZeroType.SHORT, data);
   }
 
-  private static ZeroData decodeInteger(ByteBuffer buffer) {
-    var element = buffer.getInt();
-    return ZeroData.newInstance(ZeroDataType.INTEGER, element);
+  private static ZeroElement decodeInteger(ByteBuffer buffer) {
+    var data = buffer.getInt();
+    return newZeroElement(ZeroType.INTEGER, data);
   }
 
-  private static ZeroData decodeLong(ByteBuffer buffer) {
-    var element = buffer.getLong();
-    return ZeroData.newInstance(ZeroDataType.LONG, element);
+  private static ZeroElement decodeLong(ByteBuffer buffer) {
+    var data = buffer.getLong();
+    return newZeroElement(ZeroType.LONG, data);
   }
 
-  private static ZeroData decodeFloat(ByteBuffer buffer) {
-    var element = buffer.getFloat();
-    return ZeroData.newInstance(ZeroDataType.FLOAT, element);
+  private static ZeroElement decodeFloat(ByteBuffer buffer) {
+    var data = buffer.getFloat();
+    return newZeroElement(ZeroType.FLOAT, data);
   }
 
-  private static ZeroData decodeDouble(ByteBuffer buffer) {
-    var element = buffer.getDouble();
-    return ZeroData.newInstance(ZeroDataType.DOUBLE, element);
+  private static ZeroElement decodeDouble(ByteBuffer buffer) {
+    var data = buffer.getDouble();
+    return newZeroElement(ZeroType.DOUBLE, data);
   }
 
-  private static ZeroData decodeString(ByteBuffer buffer) {
+  private static ZeroElement decodeString(ByteBuffer buffer) {
     var strLen = buffer.getShort();
 
     if (strLen < 0) {
@@ -354,33 +396,33 @@ public final class ZeroDataSerializerUtility {
 
     var strData = new byte[strLen];
     buffer.get(strData, 0, strLen);
-    var element = new String(strData);
+    var data = new String(strData);
 
-    return ZeroData.newInstance(ZeroDataType.STRING, element);
+    return newZeroElement(ZeroType.STRING, data);
   }
 
-  private static ZeroData decodeBooleanArray(ByteBuffer buffer) {
+  private static ZeroElement decodeBooleanArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
-    var element = new ArrayList<Boolean>();
+    var data = new ArrayList<Boolean>();
 
     for (int i = 0; i < collectionSize; ++i) {
       var bool = buffer.get();
       if (bool == 0) {
-        element.add(false);
+        data.add(false);
       } else {
         if (bool != 1) {
           throw new IllegalStateException(
               String.format("Expected value of 0 or 1, but found: %d", bool));
         }
 
-        element.add(true);
+        data.add(true);
       }
     }
 
-    return ZeroData.newInstance(ZeroDataType.BOOLEAN_ARRAY, element);
+    return newZeroElement(ZeroType.BOOLEAN_ARRAY, data);
   }
 
-  private static ZeroData decodeByteArray(ByteBuffer buffer) {
+  private static ZeroElement decodeByteArray(ByteBuffer buffer) {
     var arraySize = buffer.getInt();
     if (arraySize < 0) {
       throw new NegativeArraySizeException(
@@ -390,72 +432,72 @@ public final class ZeroDataSerializerUtility {
     var byteData = new byte[arraySize];
     buffer.get(byteData, 0, arraySize);
 
-    return ZeroData.newInstance(ZeroDataType.BYTE_ARRAY, byteData);
+    return newZeroElement(ZeroType.BYTE_ARRAY, byteData);
   }
 
-  private static ZeroData decodeShortArray(ByteBuffer buffer) {
+  private static ZeroElement decodeShortArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
-    var element = new ArrayList<Short>();
+    var data = new ArrayList<Short>();
 
     for (int i = 0; i < collectionSize; ++i) {
       var shortValue = buffer.getShort();
-      element.add(shortValue);
+      data.add(shortValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.SHORT_ARRAY, element);
+    return newZeroElement(ZeroType.SHORT_ARRAY, data);
   }
 
-  private static ZeroData decodeIntegerArray(ByteBuffer buffer) {
+  private static ZeroElement decodeIntegerArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
-    var element = new ArrayList<Integer>();
+    var data = new ArrayList<Integer>();
 
     for (int i = 0; i < collectionSize; ++i) {
       var intValue = buffer.getInt();
-      element.add(intValue);
+      data.add(intValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.INTEGER_ARRAY, element);
+    return newZeroElement(ZeroType.INTEGER_ARRAY, data);
   }
 
-  private static ZeroData decodeLongArray(ByteBuffer buffer) {
+  private static ZeroElement decodeLongArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
-    var element = new ArrayList<Long>();
+    var data = new ArrayList<Long>();
 
     for (int i = 0; i < collectionSize; ++i) {
       var longValue = buffer.getLong();
-      element.add(longValue);
+      data.add(longValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.LONG_ARRAY, element);
+    return newZeroElement(ZeroType.LONG_ARRAY, data);
   }
 
-  private static ZeroData decodeFloatArray(ByteBuffer buffer) {
+  private static ZeroElement decodeFloatArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
-    var element = new ArrayList<Float>();
+    var data = new ArrayList<Float>();
 
     for (int i = 0; i < collectionSize; ++i) {
       var floatValue = buffer.getFloat();
-      element.add(floatValue);
+      data.add(floatValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.FLOAT_ARRAY, element);
+    return newZeroElement(ZeroType.FLOAT_ARRAY, data);
   }
 
-  private static ZeroData decodeDoubleArray(ByteBuffer buffer) {
+  private static ZeroElement decodeDoubleArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
-    var element = new ArrayList<Double>();
+    var data = new ArrayList<Double>();
 
     for (int i = 0; i < collectionSize; ++i) {
       var doubleValue = buffer.getDouble();
-      element.add(doubleValue);
+      data.add(doubleValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.DOUBLE_ARRAY, element);
+    return newZeroElement(ZeroType.DOUBLE_ARRAY, data);
   }
 
-  private static ZeroData decodeStringArray(ByteBuffer buffer) {
+  private static ZeroElement decodeStringArray(ByteBuffer buffer) {
     var collectionSize = getCollectionSize(buffer);
-    var element = new ArrayList<String>();
+    var data = new ArrayList<String>();
 
     for (int i = 0; i < collectionSize; ++i) {
       var strLen = buffer.getShort();
@@ -467,21 +509,21 @@ public final class ZeroDataSerializerUtility {
       var strData = new byte[strLen];
       buffer.get(strData, 0, strLen);
       var stringValue = new String(strData);
-      element.add(stringValue);
+      data.add(stringValue);
     }
 
-    return ZeroData.newInstance(ZeroDataType.STRING_ARRAY, element);
+    return newZeroElement(ZeroType.STRING_ARRAY, data);
   }
 
   private static ZeroArray decodeZeroArray(ByteBuffer buffer) {
-    var zeroArray = ZeroArrayImpl.newInstance();
+    var zeroArray = newZeroArray();
     var headerByte = buffer.get();
 
-    if (ZeroDataType.getByValue(headerByte) != ZeroDataType.ZERO_ARRAY) {
+    if (ZeroType.getByValue(headerByte) != ZeroType.ZERO_ARRAY) {
       throw new IllegalStateException(
-          String.format("Invalid ZeroDataType. Expected: %s, value: %d, but found: %s, value: %d",
-              ZeroDataType.ZERO_ARRAY, ZeroDataType.ZERO_ARRAY.getValue(),
-              ZeroDataType.getByValue(headerByte).toString(), headerByte));
+          String.format("Invalid ZeroType. Expected: %s, value: %d, but found: %s, value: %d",
+              ZeroType.ZERO_ARRAY, ZeroType.ZERO_ARRAY.getValue(),
+              ZeroType.getByValue(headerByte).toString(), headerByte));
     }
 
     var arraySize = buffer.getShort();
@@ -492,13 +534,13 @@ public final class ZeroDataSerializerUtility {
 
     try {
       for (int i = 0; i < arraySize; ++i) {
-        var zeroData = decodeObject(buffer);
-        if (zeroData == null) {
+        var zeroElement = decodeElement(buffer);
+        if (zeroElement == null) {
           throw new IllegalStateException(
               String.format("Unable to not decode ZeroArray item at index: %d", i));
         }
 
-        zeroArray.addZeroData(zeroData);
+        zeroArray.addZeroElement(zeroElement);
       }
 
       return zeroArray;
@@ -507,40 +549,40 @@ public final class ZeroDataSerializerUtility {
     }
   }
 
-  private static ZeroObject decodeZeroObject(ByteBuffer buffer) {
-    var zeroObject = ZeroObjectImpl.newInstance();
+  private static ZeroMap decodeZeroMap(ByteBuffer buffer) {
+    var zeroMap = newZeroMap();
     var headerByte = buffer.get();
 
-    if (ZeroDataType.getByValue(headerByte) != ZeroDataType.ZERO_OBJECT) {
+    if (ZeroType.getByValue(headerByte) != ZeroType.ZERO_MAP) {
       throw new IllegalStateException(
-          String.format("Invalid ZeroDataType. Expected: %s, value: %d, but found: %s, value: %d",
-              ZeroDataType.ZERO_OBJECT, ZeroDataType.ZERO_OBJECT.getValue(),
-              ZeroDataType.getByValue(headerByte), headerByte));
+          String.format("Invalid ZeroType. Expected: %s, value: %d, but found: %s, value: %d",
+              ZeroType.ZERO_MAP, ZeroType.ZERO_MAP.getValue(),
+              ZeroType.getByValue(headerByte), headerByte));
     }
 
-    var objectSize = buffer.getShort();
-    if (objectSize < 0) {
+    var mapSize = buffer.getShort();
+    if (mapSize < 0) {
       throw new NegativeArraySizeException(
-          String.format("Could not create an object with negative size value: %d", objectSize));
+          String.format("Could not create an object with negative size value: %d", mapSize));
     }
 
     try {
-      for (int i = 0; i < objectSize; ++i) {
+      for (int i = 0; i < mapSize; ++i) {
         var keySize = buffer.getShort();
         var keyData = new byte[keySize];
         buffer.get(keyData, 0, keyData.length);
         var key = new String(keyData);
-        var zeroData = decodeObject(buffer);
+        var zeroElement = decodeElement(buffer);
 
-        if (zeroData == null) {
+        if (zeroElement == null) {
           throw new IllegalStateException(
-              String.format("Unable to decode value for key: %s", keyData));
+              String.format("Unable to decode value for key: %s", Arrays.toString(keyData)));
         }
 
-        zeroObject.putZeroData(key, zeroData);
+        zeroMap.putZeroElement(key, zeroElement);
       }
 
-      return zeroObject;
+      return zeroMap;
     } catch (RuntimeException e) {
       throw new IllegalArgumentException(e.getMessage());
     }
@@ -561,153 +603,141 @@ public final class ZeroDataSerializerUtility {
     return appendBinaryToBuffer(buffer, new byte[1]);
   }
 
-  private static ByteBuffer encodeBoolean(ByteBuffer buffer, Boolean element) {
-    var data = new byte[] {(byte) ZeroDataType.BOOLEAN.getValue(), (byte) (element ? 1 : 0)};
-    return appendBinaryToBuffer(buffer, data);
+  private static ByteBuffer encodeBoolean(ByteBuffer buffer, Boolean data) {
+    var binary = new byte[] {(byte) ZeroType.BOOLEAN.getValue(), (byte) (data ? 1 : 0)};
+    return appendBinaryToBuffer(buffer, binary);
   }
 
-  private static ByteBuffer encodeByte(ByteBuffer buffer, Byte element) {
-    var data = new byte[] {(byte) ZeroDataType.BYTE.getValue(), element};
-    return appendBinaryToBuffer(buffer, data);
+  private static ByteBuffer encodeByte(ByteBuffer buffer, Byte data) {
+    var binary = new byte[] {(byte) ZeroType.BYTE.getValue(), data};
+    return appendBinaryToBuffer(buffer, binary);
   }
 
-  private static ByteBuffer encodeShort(ByteBuffer buffer, Short element) {
+  private static ByteBuffer encodeShort(ByteBuffer buffer, Short data) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES);
-    buf.put((byte) ZeroDataType.SHORT.getValue());
-    buf.putShort(element);
+    buf.put((byte) ZeroType.SHORT.getValue());
+    buf.putShort(data);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeInteger(ByteBuffer buffer, Integer element) {
+  private static ByteBuffer encodeInteger(ByteBuffer buffer, Integer data) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES);
-    buf.put((byte) ZeroDataType.INTEGER.getValue());
-    buf.putInt(element);
+    buf.put((byte) ZeroType.INTEGER.getValue());
+    buf.putInt(data);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeLong(ByteBuffer buffer, Long element) {
+  private static ByteBuffer encodeLong(ByteBuffer buffer, Long data) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Long.BYTES);
-    buf.put((byte) ZeroDataType.LONG.getValue());
-    buf.putLong(element);
+    buf.put((byte) ZeroType.LONG.getValue());
+    buf.putLong(data);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeFloat(ByteBuffer buffer, Float element) {
+  private static ByteBuffer encodeFloat(ByteBuffer buffer, Float data) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Float.BYTES);
-    buf.put((byte) ZeroDataType.FLOAT.getValue());
-    buf.putFloat(element);
+    buf.put((byte) ZeroType.FLOAT.getValue());
+    buf.putFloat(data);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeDouble(ByteBuffer buffer, Double element) {
+  private static ByteBuffer encodeDouble(ByteBuffer buffer, Double data) {
     var buf = ByteBuffer.allocate(Byte.BYTES + Double.BYTES);
-    buf.put((byte) ZeroDataType.DOUBLE.getValue());
-    buf.putDouble(element);
+    buf.put((byte) ZeroType.DOUBLE.getValue());
+    buf.putDouble(data);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeString(ByteBuffer buffer, String element) {
-    var stringBytes = element.getBytes();
+  private static ByteBuffer encodeString(ByteBuffer buffer, String data) {
+    var stringBytes = data.getBytes();
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + stringBytes.length);
-    buf.put((byte) ZeroDataType.STRING.getValue());
+    buf.put((byte) ZeroType.STRING.getValue());
     buf.putShort((short) stringBytes.length);
     buf.put(stringBytes);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeBooleanArray(ByteBuffer buffer, Collection<Boolean> element) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + element.size());
-    buf.put((byte) ZeroDataType.BOOLEAN_ARRAY.getValue());
-    buf.putShort((short) element.size());
-    var iterator = element.iterator();
+  private static ByteBuffer encodeBooleanArray(ByteBuffer buffer, Collection<Boolean> data) {
+    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + data.size());
+    buf.put((byte) ZeroType.BOOLEAN_ARRAY.getValue());
+    buf.putShort((short) data.size());
 
-    while (iterator.hasNext()) {
-      var boolValue = iterator.next();
+    for (Boolean boolValue : data) {
       buf.put((byte) (boolValue ? 1 : 0));
     }
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeByteArray(ByteBuffer buffer, byte[] element) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES + element.length);
-    buf.put((byte) ZeroDataType.BYTE_ARRAY.getValue());
-    buf.putInt(element.length);
-    buf.put(element);
+  private static ByteBuffer encodeByteArray(ByteBuffer buffer, byte[] data) {
+    var buf = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES + data.length);
+    buf.put((byte) ZeroType.BYTE_ARRAY.getValue());
+    buf.putInt(data.length);
+    buf.put(data);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeShortArray(ByteBuffer buffer, Collection<Short> element) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Short.BYTES * element.size());
-    buf.put((byte) ZeroDataType.SHORT_ARRAY.getValue());
-    buf.putShort((short) element.size());
-    var iterator = element.iterator();
+  private static ByteBuffer encodeShortArray(ByteBuffer buffer, Collection<Short> data) {
+    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Short.BYTES * data.size());
+    buf.put((byte) ZeroType.SHORT_ARRAY.getValue());
+    buf.putShort((short) data.size());
 
-    while (iterator.hasNext()) {
-      var shortValue = iterator.next();
+    for (Short shortValue : data) {
       buf.putShort(shortValue);
     }
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeIntegerArray(ByteBuffer buffer, Collection<Integer> element) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Integer.BYTES * element.size());
-    buf.put((byte) ZeroDataType.INTEGER_ARRAY.getValue());
-    buf.putShort((short) element.size());
-    var iterator = element.iterator();
+  private static ByteBuffer encodeIntegerArray(ByteBuffer buffer, Collection<Integer> data) {
+    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Integer.BYTES * data.size());
+    buf.put((byte) ZeroType.INTEGER_ARRAY.getValue());
+    buf.putShort((short) data.size());
 
-    while (iterator.hasNext()) {
-      var integerValue = iterator.next();
+    for (Integer integerValue : data) {
       buf.putInt(integerValue);
     }
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeLongArray(ByteBuffer buffer, Collection<Long> element) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Long.BYTES * element.size());
-    buf.put((byte) ZeroDataType.LONG_ARRAY.getValue());
-    buf.putShort((short) element.size());
-    var iterator = element.iterator();
+  private static ByteBuffer encodeLongArray(ByteBuffer buffer, Collection<Long> data) {
+    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Long.BYTES * data.size());
+    buf.put((byte) ZeroType.LONG_ARRAY.getValue());
+    buf.putShort((short) data.size());
 
-    while (iterator.hasNext()) {
-      var longValue = iterator.next();
+    for (Long longValue : data) {
       buf.putLong(longValue);
     }
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeFloatArray(ByteBuffer buffer, Collection<Float> element) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Float.BYTES * element.size());
-    buf.put((byte) ZeroDataType.FLOAT_ARRAY.getValue());
-    buf.putShort((short) element.size());
-    var iterator = element.iterator();
+  private static ByteBuffer encodeFloatArray(ByteBuffer buffer, Collection<Float> data) {
+    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Float.BYTES * data.size());
+    buf.put((byte) ZeroType.FLOAT_ARRAY.getValue());
+    buf.putShort((short) data.size());
 
-    while (iterator.hasNext()) {
-      var floatValue = iterator.next();
+    for (Float floatValue : data) {
       buf.putFloat(floatValue);
     }
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeDoubleArray(ByteBuffer buffer, Collection<Double> element) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Double.BYTES * element.size());
-    buf.put((byte) ZeroDataType.DOUBLE_ARRAY.getValue());
-    buf.putShort((short) element.size());
-    var iterator = element.iterator();
+  private static ByteBuffer encodeDoubleArray(ByteBuffer buffer, Collection<Double> data) {
+    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Double.BYTES * data.size());
+    buf.put((byte) ZeroType.DOUBLE_ARRAY.getValue());
+    buf.putShort((short) data.size());
 
-    while (iterator.hasNext()) {
-      var doubleValue = iterator.next();
+    for (Double doubleValue : data) {
       buf.putDouble(doubleValue);
     }
 
@@ -716,7 +746,7 @@ public final class ZeroDataSerializerUtility {
 
   private static ByteBuffer encodeStringArray(ByteBuffer buffer, Collection<String> collection) {
     var totalStringsLengthInBytes = 0;
-    byte[] stringInBinary = null;
+    byte[] stringInBinary;
 
     for (var iterator = collection.iterator(); iterator
         .hasNext(); totalStringsLengthInBytes += Short.BYTES + stringInBinary.length) {
@@ -725,7 +755,7 @@ public final class ZeroDataSerializerUtility {
     }
 
     var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + totalStringsLengthInBytes);
-    buf.put((byte) ZeroDataType.STRING_ARRAY.getValue());
+    buf.put((byte) ZeroType.STRING_ARRAY.getValue());
     buf.putShort((short) collection.size());
     collection.forEach(string -> {
       var bytes = string.getBytes();
@@ -736,7 +766,7 @@ public final class ZeroDataSerializerUtility {
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
-  private static ByteBuffer encodeZeroObjectKey(ByteBuffer buffer, String key) {
+  private static ByteBuffer encodeZeroMapKey(ByteBuffer buffer, String key) {
     var buf = ByteBuffer.allocate(Short.BYTES + key.length());
     buf.putShort((short) key.length());
     buf.put(key.getBytes());
