@@ -36,119 +36,117 @@ public final class CommonArray extends ArrayList<Object> implements Serializable
 
   private static final long serialVersionUID = -5100842875580575666L;
 
-/**
-* Create a fresh instance.
-*/
+  /**
+   * Create a fresh instance.
+   */
   public CommonArray() {
   }
 
-/**
-* Retrieves new instance of the class.
-*
-* @return an instance
-*/
+  /**
+   * Retrieves new instance of the class.
+   *
+   * @return an instance
+   */
   public static CommonArray newInstance() {
     return new CommonArray();
   }
 
-/**
-* Appends a new value into the array.
-*
-* @param value the data value in common {@link Object} type
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a new value into the array.
+   *
+   * @param value the data value in common {@link Object} type
+   * @return the pointer of this instance
+   */
   public CommonArray put(Object value) {
     add(value);
     return this;
   }
 
-/**
-* Retrieves value in the array by its index.
-*
-* @param index the index in array of value
-* @return the value casted in <code>double</code> type at index of array
-*/
+  /**
+   * Retrieves value in the array by its index.
+   *
+   * @param index the <code>integer</code> index in array
+   * @return the value converted in <code>double</code> type at index in the array
+   */
   public double getDouble(int index) {
     return (double) get(index);
   }
 
-/**
-* Retrieves value in the array by its index.
-*
-* @param index the index in array of value
-* @return the value casted in <code>float</code> type at index of array
-*/
+  /**
+   * Retrieves value in the array by its index.
+   *
+   * @param index the <code>integer</code> index in array
+   * @return the value converted in <code>float</code> type at index in the array
+   */
   public float getFloat(int index) {
     return (float) get(index);
   }
 
-/**
-* Retrieves value in the array by its index.
-*
-* @param index the index in array of value
-* @return the value casted in <code>long</code> type at index of array
-*/
+  /**
+   * Retrieves value in the array by its index.
+   *
+   * @param index the <code>integer</code> index in array
+   * @return the value converted in <code>long</code> type at index in the array
+   */
   public long getLong(int index) {
     return (long) get(index);
   }
 
-/**
-* Retrieves value in the array by its index.
-*
-* @param index the index in array of value
-* @return the value casted in <code>integer</code> type at index of array
-*/
+  /**
+   * Retrieves value in the array by its index.
+   *
+   * @param index the <code>integer</code> index in array
+   * @return the value converted in <code>integer</code> type at index in the array
+   */
   public int getInt(int index) {
     return (int) get(index);
   }
 
-/**
-* Retrieves value in the array by its index.
-*
-* @param index the index in array of value
-* @return the value casted in <code>boolean</code> type at index of array
-*/
+  /**
+   * Retrieves value in the array by its index.
+   *
+   * @param index the <code>integer</code> index in array
+   * @return the value converted in <code>boolean</code> type at index in the array
+   */
   public boolean getBoolean(int index) {
     return (boolean) get(index);
   }
 
-/**
-* Retrieves value in the array by its index.
-*
-* @param index the index in array of value
-* @return the value casted in {@link String} type at index of array
-*/
+  /**
+   * Retrieves value in the array by its index.
+   *
+   * @param index the <code>integer</code> index in array
+   * @return the value converted in {@link String} type at index in the array
+   */
   public String getString(int index) {
     return (String) get(index);
   }
 
-/**
-* Retrieves value in the array by its index.
-*
-* @param index the index in array of value
-* @return the value casted in {@link Object} type at index of array
-*/
+  /**
+   * Retrieves value in the array by its index.
+   *
+   * @param index the <code>integer</code> index in array
+   * @return the value converted in {@link Object} type at index in the array
+   */
   public Object getObject(int index) {
     return get(index);
   }
 
-/**
-* Retrieves value in the array by its index.
-*
-* @param index the index in array of value
-* @return the value casted in {@link CommonArray} type at index of array
-*/
+  /**
+   * Retrieves value in the array by its index.
+   *
+   * @param index the <code>integer</code> index in array
+   * @return the value converted in {@link CommonArray} type at index in the array
+   */
   public CommonArray getCommonObjectArray(int index) {
     return (CommonArray) get(index);
   }
 
-/**
-* Retrieves a new copy of the interior array.
-*
-* @return a new copy of the array in unmodified mode.
-*
-* @see UnmodifiedArray
-*/
+  /**
+   * Retrieves a new copy of the interior array.
+   *
+   * @return a new copy of the array in unmodified mode.
+   */
   public List<Object> getReadonlyList() {
     return List.copyOf(this);
   }

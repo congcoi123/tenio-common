@@ -80,11 +80,11 @@ public final class WorkerPoolRunnable extends AbstractLogger implements Runnable
     thread.interrupt();
   }
 
-/**
-* Checks if the work pool is stopped.
-*
-* @return <code>true</code> if the work pool is stopped, otherwise <code>false</code>
-*/
+  /**
+   * Checks if the work pool is stopped.
+   *
+   * @return <code>true</code> if the work pool is stopped, otherwise <code>false</code>
+   */
   public synchronized boolean isStopped() {
     return isStopped;
   }

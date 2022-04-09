@@ -31,180 +31,188 @@ import java.util.Collection;
  */
 public interface ReadonlyZeroArray extends ZeroCollection {
 
-/**
-* Determines whether a value is available in array.
-*
-* @param element the value in dertermination
-* @return <code>true</code> if the value is existed, othewise <code>false</code>
-*/
+  /**
+   * Determines whether a value is available in array.
+   *
+   * @param element the {@link Object} value in determination
+   * @return <code>true</code> if the value is existed, otherwise <code>false</code>
+   */
   boolean contains(Object element);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in common {@link Object} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in common {@link Object} type
+   */
   Object getDataForElementAt(int index);
 
-/**
-* Determines whether a value at an index is {@link ZeroType#NULL}.
-*
-* @param index the index needs to be checked
-* @return <code>true</code> if the value is {@link ZeroType#NULL} type, othewise <code>false</code>
-* @see ZeroType
-*/
+  /**
+   * Determines whether a value at an index is {@link ZeroType#NULL}.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return <code>true</code> if the value equals to {@link ZeroType#NULL} type, otherwise
+   * <code>false</code>
+   * @see ZeroType
+   */
   boolean isNull(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in {@link Boolean} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in {@link Boolean} type
+   */
   Boolean getBoolean(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in {@link Byte} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code>  index needs to be checked
+   * @return the value held at the index in {@link Byte} type
+   */
   Byte getByte(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in {@link Short} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in {@link Short} type
+   */
   Short getShort(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in {@link Integer} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in {@link Integer} type
+   */
   Integer getInteger(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in {@link Long} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in {@link Long} type
+   */
   Long getLong(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in {@link Float} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in {@link Float} type
+   */
   Float getFloat(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in {@link Double} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in {@link Double} type
+   */
   Double getDouble(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in {@link String} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in {@link String} type
+   */
   String getString(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in {@link ZeroArray} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in {@link ZeroArray} type
+   */
   ZeroArray getZeroArray(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in {@link Map} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in {@link ZeroMap} type
+   */
   ZeroMap getZeroMap(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in {@link ZeroElement} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in {@link ZeroElement} type
+   */
   ZeroElement getZeroElement(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in a collection of {@link Boolean} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in a collection of {@link Boolean} type
+   * @see Collection
+   */
   Collection<Boolean> getBooleanArray(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in an array of binaries type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in an array of binaries
+   */
   byte[] getByteArray(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in a collection of {@link Short} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in a collection of {@link Short} type
+   * @see Collection
+   */
   Collection<Short> getShortArray(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in a collection of {@link Integer} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in a collection of {@link Integer} type
+   * @see Collection
+   */
   Collection<Integer> getIntegerArray(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in a collection of {@link Long} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in a collection of {@link Long} type
+   * @see Collection
+   */
   Collection<Long> getLongArray(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in a collection of {@link Float} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in a collection of {@link Float} type
+   * @see Collection
+   */
   Collection<Float> getFloatArray(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in a collection of {@link Double} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in a collection of {@link Double} type
+   * @see Collection
+   */
   Collection<Double> getDoubleArray(int index);
 
-/**
-* Retrieves the data of element at index in the array.
-*
-* @param index the index needs to be checked
-* @return the value held at the index in a collection of {@link String} type
-*/
+  /**
+   * Retrieves the data of element at index in the array.
+   *
+   * @param index the <code>integer</code> index needs to be checked
+   * @return the value held at the index in a collection of {@link String} type
+   * @see Collection
+   */
   Collection<String> getStringArray(int index);
 }

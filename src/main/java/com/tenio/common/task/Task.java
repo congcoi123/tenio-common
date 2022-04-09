@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.task.schedule;
+package com.tenio.common.task;
 
 import java.util.concurrent.ScheduledFuture;
 
@@ -31,10 +31,10 @@ import java.util.concurrent.ScheduledFuture;
  */
 public interface Task {
 
-/**
-* Executes a task.
-*
-* @return a {@link ScheduledFuture} instance to manage its task
-*/
+  /**
+   * Executes a task.
+   *
+   * @return a {@link ScheduledFuture} instance to manage its task
+   */
   ScheduledFuture<?> run();
 }

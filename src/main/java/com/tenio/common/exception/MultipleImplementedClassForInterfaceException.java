@@ -34,6 +34,11 @@ public final class MultipleImplementedClassForInterfaceException extends Runtime
 
   private static final long serialVersionUID = 9186053637398483773L;
 
+  /**
+   * Creates a new instance.
+   *
+   * @param clazz the interface of which the implementations are more than one class
+   */
   public MultipleImplementedClassForInterfaceException(Class<?> clazz) {
     super(String.format("Multiple implementations for the class: %s found", clazz.getName()));
   }

@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 
 /**
  * An implementation for the zero array.
@@ -45,6 +46,9 @@ public final class ZeroArrayImpl implements ZeroArray {
 
   private final List<ZeroElement> array;
 
+  /**
+   * Creates a new instance.
+   */
   public ZeroArrayImpl() {
     array = new ArrayList<>();
   }
@@ -66,13 +70,15 @@ public final class ZeroArrayImpl implements ZeroArray {
   }
 
   /**
-   * This method potentially creates a issue "escape references". Please be aware of using it
+   * This method potentially creates an issue called "escape references". Please be aware of
+   * using it
    * properly.
    *
    * @return an iterator object for the interior array.
    * @see Iterator
    */
   @Override
+  @Nonnull
   public Iterator<ZeroElement> iterator() {
     return array.iterator();
   }

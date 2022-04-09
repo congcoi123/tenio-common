@@ -22,10 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.task;
+package com.tenio.common.task.implement;
 
 import com.tenio.common.exception.RunningScheduledTaskException;
 import com.tenio.common.logger.SystemLogger;
+import com.tenio.common.task.TaskManager;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
@@ -50,14 +51,14 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
   private final Map<String, ScheduledFuture<?>> tasks;
 
   private TaskManagerImpl() {
-    tasks = new ConcurrentHashMap<String, ScheduledFuture<?>>();
+    tasks = new ConcurrentHashMap<>();
   }
 
-/**
-* Creates a new instance for task manager.
-*
-* @return an instance in {@link TaskManager} type
-*/
+  /**
+   * Creates a new instance for task manager.
+   *
+   * @return an instance in {@link TaskManager} type
+   */
   public static TaskManager newInstance() {
     return new TaskManagerImpl();
   }

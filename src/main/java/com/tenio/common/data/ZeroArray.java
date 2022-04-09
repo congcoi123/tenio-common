@@ -31,177 +31,183 @@ import java.util.Collection;
  */
 public interface ZeroArray extends ReadonlyZeroArray, Iterable<ZeroElement> {
 
-/**
-* Removes an element at an index.
-*
-* @param index the index of element should be removed
-*/
+  /**
+   * Removes an element at an <code>integer</code> index.
+   *
+   * @param index the index of element should be removed
+   */
   void removeElementAt(int index);
 
-/**
-* Appends a <code>null</code> value into the array.
-*
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a <code>null</code> value into the array.
+   *
+   * @return the pointer of this instance
+   */
   ZeroArray addNull();
 
-/**
-* Appends a <code>boolean</code> value into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a <code>boolean</code> value into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   */
   ZeroArray addBoolean(boolean data);
 
-/**
-* Appends a <code>byte</code> value into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a <code>byte</code> value into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   */
   ZeroArray addByte(byte data);
 
-/**
-* Appends a <code>short</code> value into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a <code>short</code> value into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   */
   ZeroArray addShort(short data);
 
-/**
-* Appends a <code>integer</code> value into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a <code>integer</code> value into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   */
   ZeroArray addInteger(int data);
 
-/**
-* Appends a <code>long</code> value into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a <code>long</code> value into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   */
   ZeroArray addLong(long data);
 
-/**
-* Appends a <code>float</code> value into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a <code>float</code> value into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   */
   ZeroArray addFloat(float data);
 
-/**
-* Appends a <code>double</code> value into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a <code>double</code> value into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   */
   ZeroArray addDouble(double data);
 
-/**
-* Appends a {@link String} value into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a {@link String} value into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   */
   ZeroArray addString(String data);
 
-/**
-* Appends a {@link ZeroArray} value into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a {@link ZeroArray} value into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   */
   ZeroArray addZeroArray(ZeroArray data);
 
-/**
-* Appends a {@link ZeroMap} value into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a {@link ZeroMap} value into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   */
   ZeroArray addZeroMap(ZeroMap data);
 
-/**
-* Appends a {@link ZeroElement} value into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a {@link ZeroElement} into the array.
+   *
+   * @param element the appended data
+   * @return the pointer of this instance
+   */
   ZeroArray addZeroElement(ZeroElement element);
 
-/**
-* Appends a collection of {@link Boolean} values into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a collection of {@link Boolean} values into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   * @see Collection
+   */
   ZeroArray addBooleanArray(Collection<Boolean> data);
 
-/**
-* Appends an array of binaries into the array.
-*
-* @param data the appended <code>byte[]</code> data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends an array of binaries into the array.
+   *
+   * @param data the appended <code>byte[]</code> data
+   * @return the pointer of this instance
+   */
   ZeroArray addByteArray(byte[] data);
 
-/**
-* Appends a collection of {@link Short} values into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a collection of {@link Short} values into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   * @see Collection
+   */
   ZeroArray addShortArray(Collection<Short> data);
 
-/**
-* Appends a collection of {@link Integer} values into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a collection of {@link Integer} values into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   * @see Collection
+   */
   ZeroArray addIntegerArray(Collection<Integer> data);
 
-/**
-* Appends a collection of {@link Long} values into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a collection of {@link Long} values into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   * @see Collection
+   */
   ZeroArray addLongArray(Collection<Long> data);
 
-/**
-* Appends a collection of {@link Float} values into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a collection of {@link Float} values into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   * @see Collection
+   */
   ZeroArray addFloatArray(Collection<Float> data);
 
-/**
-* Appends a collection of {@link Double} values into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a collection of {@link Double} values into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   * @see Collection
+   */
   ZeroArray addDoubleArray(Collection<Double> data);
 
-/**
-* Appends a collection of {@link String} values into the array.
-*
-* @param data the appended data
-* @return the pointer of this instance
-*/
+  /**
+   * Appends a collection of {@link String} values into the array.
+   *
+   * @param data the appended data
+   * @return the pointer of this instance
+   * @see Collection
+   */
   ZeroArray addStringArray(Collection<String> data);
 
-/**
-* Retrieves a new array in read-only mode.
-*
-* @return a read-only array
-* @see ReadonlyZeroArray
-*/
+  /**
+   * Retrieves a new array in read-only mode.
+   *
+   * @return a read-only array {@link ReadonlyZeroArray}
+   */
   ReadonlyZeroArray getReadonlyZeroArray();
 }

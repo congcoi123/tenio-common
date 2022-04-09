@@ -58,9 +58,21 @@ public final class OsUtility {
    * Types of Operating Systems.
    */
   public enum OsType {
+    /**
+     * Windows OS
+     */
     WINDOWS,
+    /**
+     * Mac OS
+     */
     MAC,
+    /**
+     * Unix type OS
+     */
     LINUX,
+    /**
+     * Unknown OS
+     */
     OTHER
   }
 }

@@ -38,7 +38,7 @@ public interface TaskManager {
   /**
    * Creates a new task.
    *
-   * @param id   the unique id for management
+   * @param id   the unique {@link String} id for management
    * @param task the running task, see {@link ScheduledFuture}
    */
   void create(String id, ScheduledFuture<?> task);
@@ -46,7 +46,7 @@ public interface TaskManager {
   /**
    * Kills or stops a running task.
    *
-   * @param id the unique id
+   * @param id the unique {@link String} id
    */
   void kill(String id);
 
@@ -58,7 +58,7 @@ public interface TaskManager {
   /**
    * Retrieves the remaining time of one task.
    *
-   * @param id the unique for retrieving the desired task
+   * @param id the unique {@link String} value for retrieving the desired task
    * @return the left time
    */
   int getRemainTime(String id);

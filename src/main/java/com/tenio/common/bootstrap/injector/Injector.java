@@ -102,14 +102,14 @@ public final class Injector {
    * @param packages   a list of packages' names. It allows to define the scanning packages by
    *                   their names
    * @throws InstantiationException    it is caused by
-   *                                   {@link Class#getDeclaredConstructor(Class[])#newInstance()}
+   *                                   Class#getDeclaredConstructor(Class[])#newInstance()
    * @throws IllegalAccessException    it is caused by
-   *                                   {@link Class#getDeclaredConstructor(Class[])#newInstance()}
+   *                                   Class#getDeclaredConstructor(Class[])#newInstance()
    * @throws ClassNotFoundException    it is caused by
    *                                   {@link #getImplementedClass(Class, String, String)}
    * @throws IllegalArgumentException  it is related to the illegal argument exception
    * @throws InvocationTargetException it is caused by
-   *                                   {@link Class#getDeclaredConstructor(Class[])#newInstance()}
+   *                                   Class#getDeclaredConstructor(Class[])#newInstance()
    * @throws NoSuchMethodException     it is caused by
    *                                   {@link Class#getDeclaredConstructor(Class[])}
    * @throws SecurityException         it is related to the security exception

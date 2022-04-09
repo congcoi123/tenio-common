@@ -42,8 +42,11 @@ public abstract class CommonConfiguration extends SystemLogger implements Config
    */
   private final Map<ConfigurationType, Object> configuration;
 
+  /**
+   * Creates a new instance.
+   */
   public CommonConfiguration() {
-    configuration = new HashMap<ConfigurationType, Object>();
+    configuration = new HashMap<>();
   }
 
   @Override
