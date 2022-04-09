@@ -1,8 +1,8 @@
 ## CHECK LIST
 
 ### Before creating a new Pull Request (PR)
-- [x] Implements test cases and make sure the *Coverage* covers more than 50% the soure code  
-- [x] Writes *java-docs* for every classes, public methods, important variables  
+- [x] Implements test cases and make sure the *Coverage* covers more than 50% the source code  
+- [x] Writes *java-docs* for every classes, public methods, enumeration values, open-module, important variables  
 - [x] Executes command *mvn clean install* to run the *checkstyle* process  
 
 ### Before updating to new version
@@ -20,4 +20,4 @@
 
 ### Deploying a release to mvn repositories center
 - [x] Makes sure the current branch is right *release* branch  
-- [x] Executes commands to deploy the package  
+- [x] Execute commands to deploy the package  
