@@ -32,10 +32,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Using <code>AutowiredQualifier</code> annotation with {@link Autowired} or {@link AutowiredAcceptNull}
- * annotation.
- * <p>
- * This annotation can be used to avoid conflict if there are multiple
+ * Using <code>AutowiredQualifier</code> annotation with {@link Autowired}
+ * or {@link AutowiredAcceptNull} annotation.
+ *
+ * <p>This annotation can be used to avoid conflict if there are multiple
  * implementations of a same interface.
  */
 @Target({FIELD})
@@ -47,7 +47,7 @@ public @interface AutowiredQualifier {
    * Declares the name should be used to distinguish implementations, otherwise, it will use the
    * implementation class name.
    *
-   * @return the qualifier name for a implementation
+   * @return the qualifier name for an implementation
    */
   String value() default "";
 }

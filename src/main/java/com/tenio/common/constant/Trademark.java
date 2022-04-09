@@ -32,7 +32,7 @@ public final class Trademark {
   private static final String VERSION = "0.0.1";
 
   /**
-   * The trademark content
+   * The trademark content.
    */
   public static final String[] CONTENT = new String[] {
       "********************************************************",

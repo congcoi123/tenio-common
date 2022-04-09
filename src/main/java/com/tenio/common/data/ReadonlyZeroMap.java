@@ -36,7 +36,8 @@ public interface ReadonlyZeroMap extends ZeroCollection {
    * Determines whether a value in the map is {@link ZeroType#NULL} type.
    *
    * @param key the {@link String} key used to fetch value
-   * @return <code>true</code> if an element is available, and it equals to {@link ZeroType#NULL} type, otherwise <code>false</code>
+   * @return <code>true</code> if an element is available, and it equals to
+   * {@link ZeroType#NULL} type, otherwise <code>false</code>
    * @see ZeroType
    */
   boolean isNull(String key);

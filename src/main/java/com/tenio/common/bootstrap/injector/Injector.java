@@ -62,16 +62,16 @@ public final class Injector {
 
   /**
    * A map contains keys are interfaces and values hold keys' implemented classes.
-   * <p>
-   * This map is protected by the class instance to ensure thread-safe.
+   *
+   * <p>This map is protected by the class instance to ensure thread-safe.
    */
   @GuardedBy("this")
   private final Map<Class<?>, Class<?>> classesMap;
   /**
    * A map has keys are {@link #classesMap}'s key implemented classes and the value are keys'
    * instances.
-   * <p>
-   * This map is protected by the class instance to ensure thread-safe.
+   *
+   * <p>This map is protected by the class instance to ensure thread-safe.
    */
   @GuardedBy("this")
   private final Map<Class<?>, Object> classBeansMap;
@@ -247,17 +247,22 @@ public final class Injector {
    *                       used to create the bean (instance)
    * @param <T>            the type of implemented class
    * @return a bean object, an instance of the implemented class
-   * @throws ClassNotFoundException                        it is caused by {@link #getImplementedClass(Class, String, String)}
-   * @throws NoSuchMethodException                         it is caused by {@link Class#getDeclaredConstructor(Class[])}
+   * @throws ClassNotFoundException                        it is caused by
+   *                                                       {@link #getImplementedClass(Class, String, String)}
+   * @throws NoSuchMethodException                         it is caused by
+   *                                                       Class#getDeclaredConstructor(Class[])
    * @throws InvocationTargetException                     it is caused by
-   *                                                       {@link Class#getDeclaredConstructor(Class[])#newInstance()}
-   * @throws InstantiationException                        it is caused by {@link Class#getDeclaredConstructor(Class[])#newInstance()}
-   * @throws IllegalAccessException                        it is caused by {@link Class#getDeclaredConstructor(Class[])#newInstance()}
-   * @throws NoImplementedClassFoundException              this exception should be thrown when there is no
-   *                                                       {@link Component} annotation associated class found for the corresponding declared field in
-   *                                                       a class
+   *                                                       Class#getDeclaredConstructor(Class[])#newInstance()
+   * @throws InstantiationException                        it is caused by
+   * @throws IllegalAccessException                        it is caused by
+   *                                                       Class#getDeclaredConstructor(Class[])#newInstance()
+   * @throws NoImplementedClassFoundException              this exception should be thrown
+   *                                                       when there is no {@link Component} annotation associated class found for the corresponding
+   *                                                       declared field in a class
    * @throws MultipleImplementedClassForInterfaceException this exception would be thrown when
-   *                                                       there are more than 1 {@link Component} annotation associated with classes that implement a same interface
+   *                                                       there are more than 1 {@link Component} annotation associated with classes that implement
+   *                                                       a same interface
+   *                                                       Class#getDeclaredConstructor(Class[])#newInstance()
    */
   private <T> Object getBeanInstanceForInjector(Class<T> classInterface, String fieldName,
                                                 String qualifier)
@@ -313,11 +318,11 @@ public final class Injector {
    * @param bean  the bean (instance) associated with the declared field
    * @throws IllegalArgumentException  it is related to the illegal argument exception
    * @throws SecurityException         it is related to the security exception
-   * @throws NoSuchMethodException     it is caused by {@link Class#getDeclaredConstructor(Class[])}
-   * @throws InvocationTargetException it is caused by {@link Class#getDeclaredConstructor(Class[])#newInstance()}
-   * @throws InstantiationException    it is caused by  {@link Class#getDeclaredConstructor(Class[])#newInstance()}
-   * @throws IllegalAccessException    it is caused by  {@link Class#getDeclaredConstructor(Class[])#newInstance()}
-   * @throws InstantiationException    it is caused by  {@link Class#getDeclaredConstructor(Class[])#newInstance()}
+   * @throws NoSuchMethodException     it is caused by Class#getDeclaredConstructor(Class[])
+   * @throws InvocationTargetException it is caused by Class#getDeclaredConstructor(Class[])#newInstance()
+   * @throws InstantiationException    it is caused by Class#getDeclaredConstructor(Class[])#newInstance()
+   * @throws IllegalAccessException    it is caused by Class#getDeclaredConstructor(Class[])#newInstance()
+   * @throws InstantiationException    it is caused by Class#getDeclaredConstructor(Class[])#newInstance()
    */
   private void autowire(Class<?> clazz, Object bean)
       throws InstantiationException, IllegalAccessException, IllegalArgumentException,

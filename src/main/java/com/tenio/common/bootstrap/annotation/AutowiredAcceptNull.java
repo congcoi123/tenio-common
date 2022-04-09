@@ -37,8 +37,8 @@ import java.lang.annotation.Target;
  * But the difference is that this one should be used in case you do not know the implementation
  * class was declared or not. When the corresponding class was not found then the variable
  * associated with it will be set by <code>null</code>.
- * <p>
- * Using this annotation will never throw the {@link NoImplementedClassFoundException} exception.
+ *
+ * <p>Using this annotation will never throw the {@link NoImplementedClassFoundException} exception.
  */
 @Target({FIELD})
 @Retention(RUNTIME)

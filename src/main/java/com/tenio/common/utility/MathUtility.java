@@ -83,7 +83,8 @@ public final class MathUtility {
    *
    * @param <T> a generic type
    * @param val the instance
-   * @return <code>true</code> if the instance is not <code>null</code>, otherwise <code>false</code>
+   * @return <code>true</code> if the instance is not <code>null</code>,
+   * otherwise <code>false</code>
    */
   public static <T> boolean isNaN(T val) {
     return val == null;

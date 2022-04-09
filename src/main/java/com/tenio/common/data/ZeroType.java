@@ -34,93 +34,93 @@ import java.util.Map;
 public enum ZeroType {
 
   /**
-   * Null Value
+   * Null Value.
    */
   NULL(0),
   /**
-   * {@link Boolean} Value
+   * {@link Boolean} Value.
    */
   BOOLEAN(1),
   /**
-   * Byte Value
+   * Byte Value.
    */
   BYTE(2),
   /**
-   * {@link Short} Value
+   * {@link Short} Value.
    */
   SHORT(3),
   /**
-   * {@link Integer} Value
+   * {@link Integer} Value.
    */
   INTEGER(4),
   /**
-   * {@link Long} Value
+   * {@link Long} Value.
    */
   LONG(5),
   /**
-   * {@link Float} Value
+   * {@link Float} Value.
    */
   FLOAT(6),
   /**
-   * {@link Double} Value
+   * {@link Double} Value.
    */
   DOUBLE(7),
   /**
-   * {@link String} Value
+   * {@link String} Value.
    */
   STRING(8),
   /**
-   * Collection of {@link Boolean} Value
+   * Collection of {@link Boolean} Value.
    *
    * @see Collection
    */
   BOOLEAN_ARRAY(9),
   /**
-   * Byte Array Value
+   * Byte Array Value.
    */
   BYTE_ARRAY(10),
   /**
-   * Collection of {@link Short} Value
+   * Collection of {@link Short} Value.
    *
    * @see Collection
    */
   SHORT_ARRAY(11),
   /**
-   * Collection of {@link Integer} Value
+   * Collection of {@link Integer} Value.
    *
    * @see Collection
    */
   INTEGER_ARRAY(12),
   /**
-   * Collection of {@link Long} Value
+   * Collection of {@link Long} Value.
    *
    * @see Collection
    */
   LONG_ARRAY(13),
   /**
-   * Collection of {@link Float} Value
+   * Collection of {@link Float} Value.
    *
    * @see Collection
    */
   FLOAT_ARRAY(14),
   /**
-   * Collection of {@link Double} Value
+   * Collection of {@link Double} Value.
    *
    * @see Collection
    */
   DOUBLE_ARRAY(15),
   /**
-   * Collection of {@link String} Value
+   * Collection of {@link String} Value.
    *
    * @see Collection
    */
   STRING_ARRAY(16),
   /**
-   * {@link ZeroArray} Value
+   * {@link ZeroArray} Value.
    */
   ZERO_ARRAY(17),
   /**
-   * {@link ZeroMap} Value
+   * {@link ZeroMap} Value.
    */
   ZERO_MAP(18);
 
