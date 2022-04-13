@@ -36,6 +36,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * This class provides all necessary methods to work with the self-definition data elements.
@@ -535,7 +536,7 @@ public final class ZeroUtility {
     try {
       for (int i = 0; i < arraySize; ++i) {
         var zeroElement = decodeElement(buffer);
-        if (zeroElement == null) {
+        if (Objects.isNull(zeroElement)) {
           throw new IllegalStateException(
               String.format("Unable to not decode ZeroArray item at index: %d", i));
         }
@@ -574,7 +575,7 @@ public final class ZeroUtility {
         var key = new String(keyData);
         var zeroElement = decodeElement(buffer);
 
-        if (zeroElement == null) {
+        if (Objects.isNull(zeroElement)) {
           throw new IllegalStateException(
               String.format("Unable to decode value for key: %s", Arrays.toString(keyData)));
         }

@@ -28,6 +28,7 @@ import com.tenio.common.exception.RunningScheduledTaskException;
 import com.tenio.common.logger.SystemLogger;
 import com.tenio.common.task.TaskManager;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -86,7 +87,7 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
       info("KILLED TASK", id);
       tasks.remove(id);
       var task = tasks.get(id);
-      if (task != null && (!task.isDone() || !task.isCancelled())) {
+      if (Objects.nonNull(task) && (!task.isDone() || !task.isCancelled())) {
         task.cancel(true);
       }
     }
@@ -96,7 +97,7 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
   public void clear() {
     tasks.forEach((id, task) -> {
       info("KILLED TASK", id);
-      if (task != null && (!task.isDone() || !task.isCancelled())) {
+      if (Objects.nonNull(task) && (!task.isDone() || !task.isCancelled())) {
         task.cancel(true);
       }
     });
@@ -106,7 +107,7 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
   @Override
   public int getRemainTime(String id) {
     var task = tasks.get(id);
-    if (task != null) {
+    if (Objects.nonNull(task)) {
       return (int) task.getDelay(TimeUnit.SECONDS);
     }
     return -1;

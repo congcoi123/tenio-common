@@ -76,7 +76,7 @@ public abstract class CommonConfiguration extends SystemLogger implements Config
 
   @Override
   public boolean isDefined(ConfigurationType key) {
-    return configuration.get(key) != null && (!getString(key).equals("-1"));
+    return Objects.nonNull(configuration.get(key)) && (!getString(key).equals("-1"));
   }
 
   @Override
