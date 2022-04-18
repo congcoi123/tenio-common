@@ -1,5 +1,5 @@
 /**
- * Exported packages for the tenio.common module
+ * Exported packages for the tenio.common module.
  */
 open module tenio.common {
   requires jsr305;
