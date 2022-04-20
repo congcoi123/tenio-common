@@ -37,7 +37,6 @@ public final class WorkerPool extends SystemLogger {
 
   private final BlockingQueue<Runnable> taskQueue;
   private final List<WorkerPoolRunnable> runnableWorkerPools;
-  private final String name;
   private boolean isStopped;
 
   /**
@@ -48,16 +47,15 @@ public final class WorkerPool extends SystemLogger {
    * @param maxNoOfTasks the maximum supported tasks
    */
   public WorkerPool(String name, int noOfThreads, int maxNoOfTasks) {
-    taskQueue = new ArrayBlockingQueue<Runnable>(maxNoOfTasks);
-    runnableWorkerPools = new ArrayList<WorkerPoolRunnable>();
-    this.name = name;
+    taskQueue = new ArrayBlockingQueue<>(maxNoOfTasks);
+    runnableWorkerPools = new ArrayList<>();
     isStopped = false;
 
     info("CREATED NEW WORKERS",
         buildgen("Number of threads: ", noOfThreads, ", Max number of tasks: ", maxNoOfTasks));
 
     for (int i = 0; i < noOfThreads; i++) {
-      runnableWorkerPools.add(new WorkerPoolRunnable(this.name, i, taskQueue));
+      runnableWorkerPools.add(new WorkerPoolRunnable(name, i, taskQueue));
     }
     for (WorkerPoolRunnable runnable : runnableWorkerPools) {
       new Thread(runnable).start();

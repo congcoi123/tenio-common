@@ -365,7 +365,7 @@ public final class Injector {
   private Set<Field> findFields(Class<?> clazz) {
     var fields = new HashSet<Field>();
 
-    while (clazz != null) {
+    while (Objects.nonNull(clazz)) {
       for (var field : clazz.getDeclaredFields()) {
         if (field.isAnnotationPresent(Autowired.class)
             || field.isAnnotationPresent(AutowiredAcceptNull.class)) {

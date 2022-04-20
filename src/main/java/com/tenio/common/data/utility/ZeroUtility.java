@@ -36,6 +36,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * This class provides all necessary methods to work with the self-definition data elements.
@@ -535,7 +536,7 @@ public final class ZeroUtility {
     try {
       for (int i = 0; i < arraySize; ++i) {
         var zeroElement = decodeElement(buffer);
-        if (zeroElement == null) {
+        if (Objects.isNull(zeroElement)) {
           throw new IllegalStateException(
               String.format("Unable to not decode ZeroArray item at index: %d", i));
         }
@@ -574,7 +575,7 @@ public final class ZeroUtility {
         var key = new String(keyData);
         var zeroElement = decodeElement(buffer);
 
-        if (zeroElement == null) {
+        if (Objects.isNull(zeroElement)) {
           throw new IllegalStateException(
               String.format("Unable to decode value for key: %s", Arrays.toString(keyData)));
         }
@@ -613,49 +614,55 @@ public final class ZeroUtility {
     return appendBinaryToBuffer(buffer, binary);
   }
 
+  private static final int ENCODE_SHORT_BYTES = Byte.BYTES + Short.BYTES;
   private static ByteBuffer encodeShort(ByteBuffer buffer, Short data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES);
+    var buf = ByteBuffer.allocate(ENCODE_SHORT_BYTES);
     buf.put((byte) ZeroType.SHORT.getValue());
     buf.putShort(data);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
+  private static final int ENCODE_INTEGER_BYTES = Byte.BYTES + Integer.BYTES;
   private static ByteBuffer encodeInteger(ByteBuffer buffer, Integer data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES);
+    var buf = ByteBuffer.allocate(ENCODE_INTEGER_BYTES);
     buf.put((byte) ZeroType.INTEGER.getValue());
     buf.putInt(data);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
+  private static final int ENCODE_LONG_BYTES = Byte.BYTES + Long.BYTES;
   private static ByteBuffer encodeLong(ByteBuffer buffer, Long data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Long.BYTES);
+    var buf = ByteBuffer.allocate(ENCODE_LONG_BYTES);
     buf.put((byte) ZeroType.LONG.getValue());
     buf.putLong(data);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
+  private static final int ENCODE_FLOAT_BYTES = Byte.BYTES + Float.BYTES;
   private static ByteBuffer encodeFloat(ByteBuffer buffer, Float data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Float.BYTES);
+    var buf = ByteBuffer.allocate(ENCODE_FLOAT_BYTES);
     buf.put((byte) ZeroType.FLOAT.getValue());
     buf.putFloat(data);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
+  private static final int ENCODE_DOUBLE_BYTES = Byte.BYTES + Double.BYTES;
   private static ByteBuffer encodeDouble(ByteBuffer buffer, Double data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Double.BYTES);
+    var buf = ByteBuffer.allocate(ENCODE_DOUBLE_BYTES);
     buf.put((byte) ZeroType.DOUBLE.getValue());
     buf.putDouble(data);
 
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
+  private static final int ENCODE_HEADER_STRING_BYTES = Byte.BYTES + Short.BYTES;
   private static ByteBuffer encodeString(ByteBuffer buffer, String data) {
     var stringBytes = data.getBytes();
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + stringBytes.length);
+    var buf = ByteBuffer.allocate(ENCODE_HEADER_STRING_BYTES + stringBytes.length);
     buf.put((byte) ZeroType.STRING.getValue());
     buf.putShort((short) stringBytes.length);
     buf.put(stringBytes);
@@ -663,8 +670,9 @@ public final class ZeroUtility {
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
+  private static final int ENCODE_HEADER_BOOLEAN_ARRAY_BYTES = Byte.BYTES + Short.BYTES;
   private static ByteBuffer encodeBooleanArray(ByteBuffer buffer, Collection<Boolean> data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + data.size());
+    var buf = ByteBuffer.allocate(ENCODE_HEADER_BOOLEAN_ARRAY_BYTES + data.size());
     buf.put((byte) ZeroType.BOOLEAN_ARRAY.getValue());
     buf.putShort((short) data.size());
 
@@ -675,8 +683,9 @@ public final class ZeroUtility {
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
+  private static final int ENCODE_HEADER_BYTE_ARRAY_BYTES = Byte.BYTES + Integer.BYTES;
   private static ByteBuffer encodeByteArray(ByteBuffer buffer, byte[] data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES + data.length);
+    var buf = ByteBuffer.allocate(ENCODE_HEADER_BYTE_ARRAY_BYTES + data.length);
     buf.put((byte) ZeroType.BYTE_ARRAY.getValue());
     buf.putInt(data.length);
     buf.put(data);
@@ -684,8 +693,9 @@ public final class ZeroUtility {
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
+  private static final int ENCODE_HEADER_NUMERIC_ARRAY_BYTES = Byte.BYTES + Short.BYTES;
   private static ByteBuffer encodeShortArray(ByteBuffer buffer, Collection<Short> data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Short.BYTES * data.size());
+    var buf = ByteBuffer.allocate(ENCODE_HEADER_NUMERIC_ARRAY_BYTES + Short.BYTES * data.size());
     buf.put((byte) ZeroType.SHORT_ARRAY.getValue());
     buf.putShort((short) data.size());
 
@@ -697,7 +707,7 @@ public final class ZeroUtility {
   }
 
   private static ByteBuffer encodeIntegerArray(ByteBuffer buffer, Collection<Integer> data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Integer.BYTES * data.size());
+    var buf = ByteBuffer.allocate(ENCODE_HEADER_NUMERIC_ARRAY_BYTES + Integer.BYTES * data.size());
     buf.put((byte) ZeroType.INTEGER_ARRAY.getValue());
     buf.putShort((short) data.size());
 
@@ -709,7 +719,7 @@ public final class ZeroUtility {
   }
 
   private static ByteBuffer encodeLongArray(ByteBuffer buffer, Collection<Long> data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Long.BYTES * data.size());
+    var buf = ByteBuffer.allocate(ENCODE_HEADER_NUMERIC_ARRAY_BYTES + Long.BYTES * data.size());
     buf.put((byte) ZeroType.LONG_ARRAY.getValue());
     buf.putShort((short) data.size());
 
@@ -721,7 +731,7 @@ public final class ZeroUtility {
   }
 
   private static ByteBuffer encodeFloatArray(ByteBuffer buffer, Collection<Float> data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Float.BYTES * data.size());
+    var buf = ByteBuffer.allocate(ENCODE_HEADER_NUMERIC_ARRAY_BYTES + Float.BYTES * data.size());
     buf.put((byte) ZeroType.FLOAT_ARRAY.getValue());
     buf.putShort((short) data.size());
 
@@ -733,7 +743,7 @@ public final class ZeroUtility {
   }
 
   private static ByteBuffer encodeDoubleArray(ByteBuffer buffer, Collection<Double> data) {
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + Double.BYTES * data.size());
+    var buf = ByteBuffer.allocate(ENCODE_HEADER_NUMERIC_ARRAY_BYTES + Double.BYTES * data.size());
     buf.put((byte) ZeroType.DOUBLE_ARRAY.getValue());
     buf.putShort((short) data.size());
 
@@ -744,6 +754,7 @@ public final class ZeroUtility {
     return appendBinaryToBuffer(buffer, buf.array());
   }
 
+  private static final int ENCODE_HEADER_STRING_ARRAY_BYTES = Byte.BYTES + Short.BYTES;
   private static ByteBuffer encodeStringArray(ByteBuffer buffer, Collection<String> collection) {
     var totalStringsLengthInBytes = 0;
     byte[] stringInBinary;
@@ -754,7 +765,7 @@ public final class ZeroUtility {
       stringInBinary = item.getBytes();
     }
 
-    var buf = ByteBuffer.allocate(Byte.BYTES + Short.BYTES + totalStringsLengthInBytes);
+    var buf = ByteBuffer.allocate(ENCODE_HEADER_STRING_ARRAY_BYTES + totalStringsLengthInBytes);
     buf.put((byte) ZeroType.STRING_ARRAY.getValue());
     buf.putShort((short) collection.size());
     collection.forEach(string -> {

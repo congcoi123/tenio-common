@@ -39,8 +39,6 @@ import javax.annotation.Nonnull;
 
 /**
  * An implementation for the zero array.
- *
- * @see ZeroArray
  */
 public final class ZeroArrayImpl implements ZeroArray {
 
