@@ -24,22 +24,36 @@ THE SOFTWARE.
 
 package com.tenio.common.data;
 
+import com.tenio.common.data.msgpack.MsgPackUtility;
+import com.tenio.common.data.zero.utility.ZeroUtility;
+
 /**
- * A basic collection interface for the self-definition map and array type.
+ * This class provides all necessary methods to work with the data elements.
  */
-public interface ZeroCollection {
+public final class DataUtility {
+
+  private DataUtility() {
+    throw new UnsupportedOperationException("This class does not support creating a new instance");
+  }
 
   /**
-   * Serializes an object to its corresponding array of <code>bytes</code>.
+   * Deserializes a stream of bytes to a zero collection.
    *
-   * @return the object's array of binaries
+   * @param type   the serialization tool is using which is declared by {@link DataType}
+   * @param binary the stream of bytes
+   * @return a new collection instance
    */
-  byte[] toBinary();
+  public static DataCollection binaryToCollection(DataType type, byte[] binary) {
+    switch (type) {
+      case ZERO:
+        return ZeroUtility.binaryToCollection(binary);
 
-  /**
-   * Retrieves the number of elements in collection.
-   *
-   * @return the collection's size
-   */
-  int size();
+      case MSG_PACK:
+        return MsgPackUtility.unserialize(binary);
+
+      default:
+        throw new UnsupportedOperationException(String.format("Unsupported serialization type: " +
+            "%s", type));
+    }
+  }
 }

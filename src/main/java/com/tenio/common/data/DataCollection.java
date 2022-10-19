@@ -24,38 +24,22 @@ THE SOFTWARE.
 
 package com.tenio.common.data;
 
-import java.util.Collection;
-
 /**
- * An element object contains a pair of type and data value.
- *
- * @see ZeroType
- * @see Object
+ * A basic collection interface for the self-definition map and array type.
  */
-public interface ZeroElement {
+public interface DataCollection {
 
   /**
-   * Retrieves the type of element.
+   * Serializes an object to its corresponding array of <code>bytes</code>.
    *
-   * @return type of data in {@link ZeroType}
+   * @return the object's array of binaries
    */
-  ZeroType getType();
+  byte[] toBinary();
 
   /**
-   * Retrieves the data of element.
+   * Retrieves the number of elements in collection.
    *
-   * @return an instance in wrapper class of primitive or array types
-   * @see Boolean
-   * @see Byte
-   * @see Short
-   * @see Integer
-   * @see Long
-   * @see Float
-   * @see Double
-   * @see String
-   * @see Collection
-   * @see ZeroArray
-   * @see ZeroMap
+   * @return the collection's size
    */
-  Object getData();
+  int size();
 }
