@@ -34,7 +34,7 @@ import java.util.List;
  */
 public final class MsgPackArray extends ArrayList<Object> implements Serializable {
 
-  private static final long serialVersionUID = -5100842875580575666L;
+  private static final long serialVersionUID = -2718756636745901607L;
 
   /**
    * Create a fresh instance.
@@ -54,22 +54,56 @@ public final class MsgPackArray extends ArrayList<Object> implements Serializabl
   /**
    * Appends a new value into the array.
    *
-   * @param value the data value in common {@link Object} type
+   * @param value the data value in common {@link MsgPackArray} type
    * @return the pointer of this instance
    */
-  public MsgPackArray put(Object value) {
+  public MsgPackArray addMsgPackArray(MsgPackArray value) {
     add(value);
     return this;
   }
 
   /**
-   * Retrieves value in the array by its index.
+   * Appends a new value into the array.
    *
-   * @param index the <code>integer</code> index in array
-   * @return the value converted in <code>double</code> type at index in the array
+   * @param value the data value in common {@link String} type
+   * @return the pointer of this instance
    */
-  public double getDouble(int index) {
-    return (double) get(index);
+  public MsgPackArray addString(String value) {
+    add(value);
+    return this;
+  }
+
+  /**
+   * Appends a new value into the array.
+   *
+   * @param value the data value in common {@code float} type
+   * @return the pointer of this instance
+   */
+  public MsgPackArray addFloat(float value) {
+    add(value);
+    return this;
+  }
+
+  /**
+   * Appends a new value into the array.
+   *
+   * @param value the data value in common {@code integer} type
+   * @return the pointer of this instance
+   */
+  public MsgPackArray addInteger(int value) {
+    add(value);
+    return this;
+  }
+
+  /**
+   * Appends a new value into the array.
+   *
+   * @param value the data value in common {@code boolean} type
+   * @return the pointer of this instance
+   */
+  public MsgPackArray addBoolean(boolean value) {
+    add(value);
+    return this;
   }
 
   /**
@@ -86,19 +120,9 @@ public final class MsgPackArray extends ArrayList<Object> implements Serializabl
    * Retrieves value in the array by its index.
    *
    * @param index the <code>integer</code> index in array
-   * @return the value converted in <code>long</code> type at index in the array
-   */
-  public long getLong(int index) {
-    return (long) get(index);
-  }
-
-  /**
-   * Retrieves value in the array by its index.
-   *
-   * @param index the <code>integer</code> index in array
    * @return the value converted in <code>integer</code> type at index in the array
    */
-  public int getInt(int index) {
+  public int getInteger(int index) {
     return (int) get(index);
   }
 
@@ -126,19 +150,9 @@ public final class MsgPackArray extends ArrayList<Object> implements Serializabl
    * Retrieves value in the array by its index.
    *
    * @param index the <code>integer</code> index in array
-   * @return the value converted in {@link Object} type at index in the array
-   */
-  public Object getObject(int index) {
-    return get(index);
-  }
-
-  /**
-   * Retrieves value in the array by its index.
-   *
-   * @param index the <code>integer</code> index in array
    * @return the value converted in {@link MsgPackArray} type at index in the array
    */
-  public MsgPackArray getCommonObjectArray(int index) {
+  public MsgPackArray getMsgPackArray(int index) {
     return (MsgPackArray) get(index);
   }
 

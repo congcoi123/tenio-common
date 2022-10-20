@@ -25,6 +25,12 @@ THE SOFTWARE.
 package com.tenio.common.data;
 
 import com.tenio.common.data.msgpack.MsgPackUtility;
+import com.tenio.common.data.msgpack.element.MsgPackArray;
+import com.tenio.common.data.msgpack.element.MsgPackMap;
+import com.tenio.common.data.zero.ZeroArray;
+import com.tenio.common.data.zero.ZeroMap;
+import com.tenio.common.data.zero.implement.ZeroArrayImpl;
+import com.tenio.common.data.zero.implement.ZeroMapImpl;
 import com.tenio.common.data.zero.utility.ZeroUtility;
 
 /**
@@ -34,6 +40,42 @@ public final class DataUtility {
 
   private DataUtility() {
     throw new UnsupportedOperationException("This class does not support creating a new instance");
+  }
+
+  /**
+   * Creates a new instance of {@link ZeroArray} class.
+   *
+   * @return new instance of zero array
+   */
+  public static ZeroArray newZeroArray() {
+    return new ZeroArrayImpl();
+  }
+
+  /**
+   * Creates a new instance of {@link ZeroMap} class.
+   *
+   * @return new instance of zero map
+   */
+  public static ZeroMap newZeroMap() {
+    return new ZeroMapImpl();
+  }
+
+  /**
+   * Creates a new instance of {@link MsgPackArray} class.
+   *
+   * @return new instance of msgpack array
+   */
+  public static MsgPackArray newMsgArray() {
+    return MsgPackArray.newInstance();
+  }
+
+  /**
+   * Creates a new instance of {@link MsgPackMap} class.
+   *
+   * @return new instance of msgpck map
+   */
+  public static MsgPackMap newMsgMap() {
+    return MsgPackMap.newInstance();
   }
 
   /**

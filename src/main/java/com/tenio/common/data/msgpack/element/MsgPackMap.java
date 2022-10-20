@@ -37,7 +37,7 @@ import java.util.Map;
 public final class MsgPackMap extends HashMap<String, Object>
     implements DataCollection, Serializable {
 
-  private static final long serialVersionUID = 8818783476027583633L;
+  private static final long serialVersionUID = 6697372748701824069L;
 
   /**
    * Creates a new fresh instance.
@@ -58,16 +58,6 @@ public final class MsgPackMap extends HashMap<String, Object>
    * Retrieves value in the map by its key.
    *
    * @param key the {@link String} key in the map
-   * @return the value converted in <code>double</code> type fetched by its key in the map
-   */
-  public double getDouble(String key) {
-    return (double) get(key);
-  }
-
-  /**
-   * Retrieves value in the map by its key.
-   *
-   * @param key the {@link String} key in the map
    * @return the value converted in <code>float</code> type fetched by its key in the map
    */
   public float getFloat(String key) {
@@ -78,19 +68,9 @@ public final class MsgPackMap extends HashMap<String, Object>
    * Retrieves value in the map by its key.
    *
    * @param key the {@link String} key in the map
-   * @return the value converted in <code>long</code> type fetched by its key in the map
-   */
-  public long getLong(String key) {
-    return (long) get(key);
-  }
-
-  /**
-   * Retrieves value in the map by its key.
-   *
-   * @param key the {@link String} key in the map
    * @return the value converted in <code>integer</code> type fetched by its key in the map
    */
-  public int getInt(String key) {
+  public int getInteger(String key) {
     return (int) get(key);
   }
 
@@ -118,29 +98,9 @@ public final class MsgPackMap extends HashMap<String, Object>
    * Retrieves value in the map by its key.
    *
    * @param key the {@link String} key in the map
-   * @return the value in {@link Object} type fetched by its key in the map
-   */
-  public Object getObject(String key) {
-    return get(key);
-  }
-
-  /**
-   * Retrieves value in the map by its key.
-   *
-   * @param key the {@link String} key in the map
-   * @return the value converted in {@link MsgPackMap} type fetched by its key in the map
-   */
-  public MsgPackMap getCommonObject(String key) {
-    return (MsgPackMap) get(key);
-  }
-
-  /**
-   * Retrieves value in the map by its key.
-   *
-   * @param key the {@link String} key in the map
    * @return the value converted in {@link MsgPackArray} type fetched by its key in the map
    */
-  public MsgPackArray getCommonObjectArray(String key) {
+  public MsgPackArray getMsgPackArray(String key) {
     return (MsgPackArray) get(key);
   }
 
@@ -158,10 +118,58 @@ public final class MsgPackMap extends HashMap<String, Object>
    * Adds new data into the map with its key.
    *
    * @param key   the {@link String} key of data
-   * @param value the {@link Object} value needs to be inserted
+   * @param value the {@link MsgPackArray} value needs to be inserted
    * @return the pointer of this instance
    */
-  public MsgPackMap add(String key, Object value) {
+  public MsgPackMap putMsgPackArray(String key, MsgPackArray value) {
+    put(key, value);
+    return this;
+  }
+
+  /**
+   * Adds new data into the map with its key.
+   *
+   * @param key   the {@link String} key of data
+   * @param value the {@link String} value needs to be inserted
+   * @return the pointer of this instance
+   */
+  public MsgPackMap putString(String key, String value) {
+    put(key, value);
+    return this;
+  }
+
+  /**
+   * Adds new data into the map with its key.
+   *
+   * @param key   the {@link String} key of data
+   * @param value the {@code float} value needs to be inserted
+   * @return the pointer of this instance
+   */
+  public MsgPackMap putFloat(String key, float value) {
+    put(key, value);
+    return this;
+  }
+
+  /**
+   * Adds new data into the map with its key.
+   *
+   * @param key   the {@link String} key of data
+   * @param value the {@code integer} value needs to be inserted
+   * @return the pointer of this instance
+   */
+  public MsgPackMap putInteger(String key, int value) {
+    put(key, value);
+    return this;
+  }
+
+  /**
+   * Adds new data into the map with its key.
+   *
+   * @param key   the {@link String} key of data
+   * @param value the {@code boolean} value needs to be inserted
+   * @return the pointer of this instance
+   */
+  public MsgPackMap putBoolean(String key, boolean value) {
     put(key, value);
     return this;
   }

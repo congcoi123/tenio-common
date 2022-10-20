@@ -33,7 +33,9 @@ import com.tenio.common.data.msgpack.element.MsgPackMap;
 import java.io.IOException;
 import java.util.Map;
 import org.msgpack.MessagePack;
+import org.msgpack.template.Templates;
 import org.msgpack.type.Value;
+import org.msgpack.unpacker.Converter;
 
 /**
  * <a href="https://msgpack.org/index.html">MessagePack</a> is an efficient
@@ -70,7 +72,13 @@ public final class MsgPackUtility {
     if (dstMap == null || dstMap.isEmpty()) {
       return null;
     }
-    dstMap.forEach((key, value) -> msgPackMap.put(key, MsgPackConverter.valueToObject(value)));
+    dstMap.forEach((key, value) -> {
+      try {
+        msgPackMap.put(key, MsgPackConverter.valueToObject(value));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    });
     return msgPackMap;
   }
 
@@ -87,7 +95,13 @@ public final class MsgPackUtility {
     if (dstMap == null || dstMap.isEmpty()) {
       return null;
     }
-    dstMap.forEach((key, value) -> msgObject.put(key, MsgPackConverter.valueToObject(value)));
+    dstMap.forEach((key, value) -> {
+      try {
+        msgObject.put(key, MsgPackConverter.valueToObject(value));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    });
     return msgObject;
   }
 }
@@ -139,9 +153,8 @@ class MsgPackConverter {
    * @param value the value in {@link Value} type
    * @return an object in Java type
    */
-  public static Object valueToObject(Value value) {
+  public static Object valueToObject(Value value) throws IOException {
     if (value.isNilValue()) {
-      value.asNilValue();
       return null;
     } else if (value.isRawValue()) {
       // String only
@@ -149,21 +162,30 @@ class MsgPackConverter {
     } else if (value.isBooleanValue()) {
       return value.asBooleanValue().getBoolean();
     } else if (value.isFloatValue()) {
-      // Double only (8 bytes)
-      return value.asFloatValue().getDouble();
+      // Float only (4 bytes)
+      return value.asFloatValue().getFloat();
     } else if (value.isIntegerValue()) {
       // Integer only (4 bytes)
       return value.asIntegerValue().getInt();
     } else if (value.isArrayValue()) {
-      // Convert value to list of objects (MessageObjectArray)
-      var arr = value.asArrayValue();
+      // Convert value to list of objects (MsgPackArray)
+      var arrayValue = value.asArrayValue();
       var array = MsgPackArray.newInstance();
-      arr.forEach(element -> {
-        array.add(valueToObject(element));
+      arrayValue.forEach(element -> {
+        try {
+          array.add(valueToObject(element));
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
       });
       return array;
     } else if (value.isMapValue()) {
-      throw new UnsupportedOperationException();
+      var mapValue = value.asMapValue();
+      var map = MsgPackMap.newInstance();
+      for (Value key : mapValue.keySet()) {
+        map.put(new Converter(key).read(Templates.TString), valueToObject(mapValue.get(key)));
+      }
+      return map;
     } else {
       throw new UnsupportedOperationException();
     }
