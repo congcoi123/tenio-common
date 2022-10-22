@@ -33,9 +33,7 @@ import com.tenio.common.data.msgpack.element.MsgPackMap;
 import java.io.IOException;
 import java.util.Map;
 import org.msgpack.MessagePack;
-import org.msgpack.template.Templates;
 import org.msgpack.type.Value;
-import org.msgpack.unpacker.Converter;
 
 /**
  * <a href="https://msgpack.org/index.html">MessagePack</a> is an efficient
@@ -48,25 +46,25 @@ import org.msgpack.unpacker.Converter;
 public final class MsgPackUtility {
 
   /**
-   * Serialize an object to an array of bytes data
+   * Serialize an object to an array of bytes data.
    *
-   * @param object a {@link Map} type object
+   * @param msgPackMap a {@link MsgPackMap} type object
    * @return an array of bytes data
    */
-  public static byte[] serialize(Map<String, Object> object) {
-    return MsgPackConverter.pack(object);
+  public static byte[] serialize(MsgPackMap msgPackMap) {
+    return MsgPackConverter.pack(msgPackMap);
   }
 
   /**
-   * Un-serialize an array of bytes data to a {@link Map}
+   * Deserialize an array of bytes data to a {@link MsgPackMap} object.
    *
    * @param msgPackMap     the message container which is using in the system
-   * @param byteArrayInput the object for converting raw bytes data to msgpack
+   * @param byteArrayInput the object for converting raw binaries' data to msgpack
    *                       using one
    * @param binaries       an array of bytes data
    * @return an message object in {@link MsgPackMap} type
    */
-  public static MsgPackMap unserialize(MsgPackMap msgPackMap, ByteArrayInputStream byteArrayInput,
+  public static MsgPackMap deserialize(MsgPackMap msgPackMap, ByteArrayInputStream byteArrayInput,
                                        byte[] binaries) {
     var dstMap = MsgPackConverter.unpack(byteArrayInput, binaries);
     if (dstMap == null || dstMap.isEmpty()) {
@@ -83,12 +81,12 @@ public final class MsgPackUtility {
   }
 
   /**
-   * Un-serialize an array of bytes data to a {@link Map}
+   * Deserialize an array of bytes data to a {@link MsgPackMap} object.
    *
    * @param binaries an array of bytes data
    * @return an message object in {@link MsgPackMap} type
    */
-  public static MsgPackMap unserialize(byte[] binaries) {
+  public static MsgPackMap deserialize(byte[] binaries) {
     var msgObject = MsgPackMap.newInstance();
     var byteArrayInput = ByteArrayInputStream.newInstance();
     var dstMap = MsgPackConverter.unpack(byteArrayInput, binaries);
@@ -109,12 +107,12 @@ public final class MsgPackUtility {
 class MsgPackConverter {
 
   /**
-   * A MsgPack instance
+   * A MsgPack instance.
    */
   private static final MessagePack PACKER = new MessagePack();
 
   /**
-   * Converting an object ({@link Map}) to array of bytes data
+   * Converting an object ({@link Map}) to array of bytes data.
    *
    * @param map an object in {@link Map} type
    * @return an array of bytes data
@@ -129,7 +127,7 @@ class MsgPackConverter {
   }
 
   /**
-   * Converting an array of bytes data to a {@link Map} object
+   * Converting an array of bytes data to a {@link Map} object.
    *
    * @param byteArrayInput object for handling byte array
    * @param binaries       an array of bytes
@@ -148,7 +146,7 @@ class MsgPackConverter {
   }
 
   /**
-   * Converting value in MsgPack type to its corresponding in Java type
+   * Converting value in MsgPack type to its corresponding in Java type.
    *
    * @param value the value in {@link Value} type
    * @return an object in Java type
@@ -183,7 +181,7 @@ class MsgPackConverter {
       var mapValue = value.asMapValue();
       var map = MsgPackMap.newInstance();
       for (Value key : mapValue.keySet()) {
-        map.put(new Converter(key).read(Templates.TString), valueToObject(mapValue.get(key)));
+        map.put(key.asRawValue().getString(), valueToObject(mapValue.get(key)));
       }
       return map;
     } else {

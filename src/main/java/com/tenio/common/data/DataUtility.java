@@ -91,7 +91,7 @@ public final class DataUtility {
         return ZeroUtility.binaryToCollection(binary);
 
       case MSG_PACK:
-        return MsgPackUtility.unserialize(binary);
+        return MsgPackUtility.deserialize(binary);
 
       default:
         throw new UnsupportedOperationException(String.format("Unsupported serialization type: " +
