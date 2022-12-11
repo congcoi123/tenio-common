@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.tenio.common.data.zero.ZeroType;
 import com.tenio.common.data.zero.utility.ZeroUtility;
+import com.tenio.common.utility.ByteUtility;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -126,7 +127,7 @@ class ZeroUtilityTest {
   }
 
   @Test
-  @DisplayName("Checking whether binaries data is a collect should work")
+  @DisplayName("Checking whether binaries data is a collection should work")
   void itShouldReturnCorrectDataCollection() {
     var zeroMap = ZeroUtility.newZeroMap().putBoolean("a", true);
     var checkZeroMap = ZeroUtility.binaryToCollection(zeroMap.toBinary());
@@ -142,18 +143,19 @@ class ZeroUtilityTest {
   @DisplayName("Allow adding and fetching primitive data to/from ZeroArray")
   void primitiveDataInArrayShouldMatch() {
     var origin = ZeroUtility.newZeroArray();
-    origin.addBoolean(true).addShort((short) 11).addInteger(1000).addFloat(101.1f).addLong(1000L)
-        .addDouble(1010101.101);
+    origin.addBoolean(true).addByte((byte) 1).addShort((short) 11).addInteger(1000).addFloat(101.1f)
+        .addLong(1000L).addDouble(1010101.101);
     var binary = origin.toBinary();
     var newOne = ZeroUtility.binaryToArray(binary);
 
     assertAll("primitiveDataInArrayShouldMatch",
         () -> assertTrue(newOne.getBoolean(0)),
-        () -> assertEquals(newOne.getShort(1), (short) 11),
-        () -> assertEquals(newOne.getInteger(2), 1000),
-        () -> assertEquals(newOne.getFloat(3), 101.1f),
-        () -> assertEquals(newOne.getLong(4), 1000L),
-        () -> assertEquals(newOne.getDouble(5), 1010101.101)
+        () -> assertEquals(newOne.getByte(1), (byte) 1),
+        () -> assertEquals(newOne.getShort(2), (short) 11),
+        () -> assertEquals(newOne.getInteger(3), 1000),
+        () -> assertEquals(newOne.getFloat(4), 101.1f),
+        () -> assertEquals(newOne.getLong(5), 1000L),
+        () -> assertEquals(newOne.getDouble(6), 1010101.101)
     );
   }
 
@@ -181,7 +183,8 @@ class ZeroUtilityTest {
   void collectionDataInArrayShouldMatch() {
     var origin = ZeroUtility.newZeroArray();
     var zeroArray = ZeroUtility.newZeroArray().addString("newZeroArray");
-    origin.addBooleanArray(booleans).addShortArray(shorts).addIntegerArray(integers)
+    origin.addBooleanArray(booleans).addByteArray(binaries).addShortArray(shorts)
+        .addIntegerArray(integers)
         .addLongArray(longs).addFloatArray(floats).addDoubleArray(doubles).addStringArray(strings)
         .addZeroArray(zeroArray);
     var binary = origin.toBinary();
@@ -189,13 +192,14 @@ class ZeroUtilityTest {
 
     assertAll("collectionDataInArrayShouldMatch",
         () -> assertEquals(newOne.getBooleanArray(0).toString(), booleans.toString()),
-        () -> assertEquals(newOne.getShortArray(1).toString(), shorts.toString()),
-        () -> assertEquals(newOne.getIntegerArray(2).toString(), integers.toString()),
-        () -> assertEquals(newOne.getLongArray(3).toString(), longs.toString()),
-        () -> assertEquals(newOne.getFloatArray(4).toString(), floats.toString()),
-        () -> assertEquals(newOne.getDoubleArray(5).toString(), doubles.toString()),
-        () -> assertEquals(newOne.getStringArray(6).toString(), strings.toString()),
-        () -> assertEquals(newOne.getZeroArray(7).toString(), zeroArray.toString())
+        () -> assertEquals(newOne.getByteArray(1).length, binaries.length),
+        () -> assertEquals(newOne.getShortArray(2).toString(), shorts.toString()),
+        () -> assertEquals(newOne.getIntegerArray(3).toString(), integers.toString()),
+        () -> assertEquals(newOne.getLongArray(4).toString(), longs.toString()),
+        () -> assertEquals(newOne.getFloatArray(5).toString(), floats.toString()),
+        () -> assertEquals(newOne.getDoubleArray(6).toString(), doubles.toString()),
+        () -> assertEquals(newOne.getStringArray(7).toString(), strings.toString()),
+        () -> assertEquals(newOne.getZeroArray(8).toString(), zeroArray.toString())
     );
   }
 
@@ -501,5 +505,117 @@ class ZeroUtilityTest {
     assertEquals("""
         ZeroMap{ (boolean) a: true; (byte) b: 1; (short) c: 2; (integer) d: 3; (long) e: 4; (float) f: 5.0; (double) g: 6.0; (string) h: 7; (null) i: null; (boolean_array) k: [true, false, true]; (byte_array) l: byte[3]; (short_array) m: [10, 11, 12, 13, 14, 15]; (integer_array) n: [100, 101, 102, 103]; (long_array) o: [1000, 2000]; (float_array) p: [1001.1, 1002.2, 1003.3, 1004.4, 1005.5, 1006.6]; (double_array) q: [1000000.11111]; (zero_array) r: ZeroArray{ (string) newZeroArray }; (zero_map) s: ZeroMap{ (boolean) b: true; (short) s: 10; (zero_array) za: ZeroArray{ (double_array) [1000000.11111] }; (integer) i: 100; (boolean_array) ba: [true, false, true] } }
         """.trim(), origin.toString());
+  }
+
+  @Test
+  @DisplayName("It should throw exceptions when invalid conversions  were called")
+  void itShouldThrowExceptionsWhenInvalidConversionCalled() {
+    // array size is insufficient
+    assertThrows(IllegalStateException.class,
+        () -> ZeroUtility.binaryToArray(new byte[] {(byte) 1}));
+    // it is not the zero array
+    assertThrows(IllegalStateException.class,
+        () -> ZeroUtility.binaryToArray(new byte[] {(byte) 1, (byte) 2, (byte) 3}));
+    // an array with negative size
+    var negativeArraySizeInShort = ByteUtility.shortToBytes((short) -2);
+    assertThrows(NegativeArraySizeException.class,
+        () -> ZeroUtility.binaryToArray(
+            new byte[] {(byte) ZeroType.ZERO_ARRAY.getValue(), negativeArraySizeInShort[0],
+                negativeArraySizeInShort[1]}));
+    // unrecognized zero type
+    var arraySizeInShort = ByteUtility.shortToBytes((short) 2);
+    assertThrows(IllegalArgumentException.class,
+        () -> ZeroUtility.binaryToArray(
+            new byte[] {(byte) ZeroType.ZERO_ARRAY.getValue(), arraySizeInShort[0],
+                arraySizeInShort[1], (byte) 19, (byte) 1}));
+    // failed to decode boolean
+    assertThrows(IllegalArgumentException.class,
+        () -> ZeroUtility.binaryToArray(
+            new byte[] {(byte) ZeroType.ZERO_ARRAY.getValue(), arraySizeInShort[0],
+                arraySizeInShort[1],
+                (byte) ZeroType.BOOLEAN.getValue(), (byte) 2}));
+    // failed to decode string
+    assertThrows(IllegalArgumentException.class,
+        () -> ZeroUtility.binaryToArray(
+            new byte[] {(byte) ZeroType.ZERO_ARRAY.getValue(), arraySizeInShort[0],
+                arraySizeInShort[1],
+                (byte) ZeroType.STRING.getValue(), negativeArraySizeInShort[0],
+                negativeArraySizeInShort[1]}));
+    // failed to decode collection
+    assertThrows(IllegalArgumentException.class,
+        () -> ZeroUtility.binaryToArray(
+            new byte[] {(byte) ZeroType.ZERO_ARRAY.getValue(), arraySizeInShort[0],
+                arraySizeInShort[1],
+                (byte) ZeroType.BOOLEAN_ARRAY.getValue(), negativeArraySizeInShort[0],
+                negativeArraySizeInShort[1]}));
+    // failed to decode boolean array
+    assertThrows(IllegalArgumentException.class,
+        () -> ZeroUtility.binaryToArray(
+            new byte[] {(byte) ZeroType.ZERO_ARRAY.getValue(), arraySizeInShort[0],
+                arraySizeInShort[1],
+                (byte) ZeroType.BOOLEAN_ARRAY.getValue(), arraySizeInShort[0], arraySizeInShort[1],
+                (byte) 2}));
+    // failed to decode byte array
+    var negativeArraySizeInInteger = ByteUtility.intToBytes((short) -1);
+    assertThrows(IllegalArgumentException.class,
+        () -> ZeroUtility.binaryToArray(
+            new byte[] {(byte) ZeroType.ZERO_ARRAY.getValue(), arraySizeInShort[0],
+                arraySizeInShort[1],
+                (byte) ZeroType.BYTE_ARRAY.getValue(), negativeArraySizeInInteger[0],
+                negativeArraySizeInInteger[1], negativeArraySizeInInteger[2],
+                negativeArraySizeInInteger[3]}));
+    // failed to decode string array
+    assertThrows(IllegalArgumentException.class,
+        () -> ZeroUtility.binaryToArray(
+            new byte[] {(byte) ZeroType.ZERO_ARRAY.getValue(), arraySizeInShort[0],
+                arraySizeInShort[1],
+                (byte) ZeroType.STRING_ARRAY.getValue(), negativeArraySizeInShort[0],
+                negativeArraySizeInShort[1]}));
+
+    assertThrows(IllegalStateException.class, () -> ZeroUtility.binaryToMap(new byte[] {(byte) 1}));
+    // it is not the zero map
+    assertThrows(IllegalStateException.class,
+        () -> ZeroUtility.binaryToMap(new byte[] {(byte) 1, (byte) 2, (byte) 3}));
+    // a map with negative size
+    assertThrows(NegativeArraySizeException.class,
+        () -> ZeroUtility.binaryToMap(
+            new byte[] {(byte) ZeroType.ZERO_MAP.getValue(), negativeArraySizeInShort[0],
+                negativeArraySizeInShort[1]}));
+    // unrecognized zero type
+    assertThrows(IllegalStateException.class,
+        () -> ZeroUtility.binaryToMap(
+            new byte[] {(byte) ZeroType.ZERO_ARRAY.getValue(), arraySizeInShort[0],
+                arraySizeInShort[1], (byte) 19, (byte) 1}));
+    // failed to decode boolean
+    assertThrows(IllegalArgumentException.class,
+        () -> ZeroUtility.binaryToMap(
+            new byte[] {(byte) ZeroType.ZERO_MAP.getValue(), arraySizeInShort[0],
+                arraySizeInShort[1], arraySizeInShort[0], arraySizeInShort[1], (byte) 61,
+                (byte) ZeroType.BOOLEAN.getValue(), (byte) 2}));
+    // failed to decode unrecognized element
+    assertThrows(IllegalArgumentException.class,
+        () -> ZeroUtility.binaryToMap(
+            new byte[] {(byte) ZeroType.ZERO_MAP.getValue(), arraySizeInShort[0],
+                arraySizeInShort[1], arraySizeInShort[0], arraySizeInShort[1], (byte) 61,
+                (byte) 0, (byte) 19}));
+  }
+
+  @Test
+  @DisplayName("Insufficient ByteBuffer should be appended")
+  void insufficientByteBufferShouldBeAppended() {
+    var origin = ZeroUtility.newZeroMap();
+    var zeroMap = ZeroUtility.newZeroMap();
+    zeroMap.putBoolean("b", true)
+        .putShort("s", (short) 10)
+        .putInteger("i", 100)
+        .putFloat("f", 10.0f)
+        .putShortArray("sa", shorts);
+    var binaryMap = zeroMap.toBinary();
+    for (char i = 'a'; i <= 'z'; i++) {
+      origin.putZeroMap(String.valueOf(i), ZeroUtility.binaryToMap(binaryMap));
+    }
+
+    origin.toBinary();
+    assertTrue(true);
   }
 }

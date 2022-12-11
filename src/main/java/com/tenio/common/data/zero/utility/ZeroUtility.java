@@ -226,6 +226,9 @@ public final class ZeroUtility {
   private static ZeroElement decodeElement(ByteBuffer buffer) throws RuntimeException {
     var headerByte = buffer.get();
     var type = ZeroType.getByValue(headerByte);
+    if (Objects.isNull(type)) {
+      return null;
+    }
 
     switch (type) {
       case NULL:
@@ -268,9 +271,8 @@ public final class ZeroUtility {
       case ZERO_MAP:
         buffer.position(buffer.position() - Byte.BYTES);
         return newZeroElement(ZeroType.ZERO_MAP, decodeZeroMap(buffer));
-      default:
-        return null;
     }
+    return null;
   }
 
   @SuppressWarnings("unchecked")
@@ -295,8 +297,6 @@ public final class ZeroUtility {
       case STRING_ARRAY -> buffer = encodeStringArray(buffer, (Collection<String>) data);
       case ZERO_ARRAY -> buffer = appendBinaryToBuffer(buffer, arrayToBinary((ZeroArray) data));
       case ZERO_MAP -> buffer = appendBinaryToBuffer(buffer, mapToBinary((ZeroMap) data));
-      default -> throw new IllegalArgumentException(
-          String.format("Unsupported data type: %s", type));
     }
 
     return buffer;
@@ -491,7 +491,8 @@ public final class ZeroUtility {
       throw new IllegalStateException(
           String.format("Invalid ZeroType. Expected: %s, value: %d, but found: %s, value: %d",
               ZeroType.ZERO_ARRAY, ZeroType.ZERO_ARRAY.getValue(),
-              ZeroType.getByValue(headerByte).toString(), headerByte));
+              Objects.nonNull(ZeroType.getByValue(headerByte)) ?
+                  ZeroType.getByValue(headerByte).toString() : "null", headerByte));
     }
 
     var arraySize = buffer.getShort();

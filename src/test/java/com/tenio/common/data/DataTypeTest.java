@@ -22,25 +22,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.data.common;
+package com.tenio.common.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.tenio.common.data.zero.ZeroType;
-import com.tenio.common.data.zero.utility.ZeroUtility;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
-@DisplayName("Unit Test Cases For Zero Data")
-class ZeroElementTest {
+@DisplayName("Unit Test Cases For Data Type")
+class DataTypeTest {
 
-  @Test
-  @DisplayName("Creating a new instance should work")
-  void createNewInstanceShouldWork() {
-    var zeroElement = ZeroUtility.newZeroElement(ZeroType.NULL,
-        "Element");
-    assertEquals(ZeroType.NULL, zeroElement.getType());
-    assertEquals(zeroElement.getData(), "Element");
-    assertEquals("ZeroElement{type=NULL, data=Element}", zeroElement.toString());
+  @ParameterizedTest
+  @CsvSource({
+      "ZERO, zero",
+      "MSG_PACK, msgpack"
+  })
+  @DisplayName("Test All Enumerated Values")
+  void testAllEnumValues(String name, String value) {
+    DataType dataType = DataType.valueOf(name);
+    DataType dataTypeByValue = DataType.getByValue(value);
+    assertEquals(dataType, dataTypeByValue);
+    assertEquals(value, dataType.getValue());
+    assertEquals(value, dataType.toString());
+    assertEquals(name, dataType.name());
   }
 }
