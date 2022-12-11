@@ -24,8 +24,6 @@ THE SOFTWARE.
 
 package com.tenio.common.utility;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,26 +44,5 @@ class TimeUtilityTest {
       constructor.setAccessible(true);
       constructor.newInstance();
     });
-  }
-
-  @Test
-  void testDegreeToRadian() {
-    assertEquals(0.17453294f, MathUtility.degreeToRadian(10.0f));
-  }
-
-  @Test
-  void testIsEqual() {
-    assertTrue(MathUtility.isEqual(10.0f, 10.0f));
-    assertFalse(MathUtility.isEqual(0.0f, 10.0f));
-  }
-
-  @Test
-  void testRandInt2() {
-    assertEquals(1, MathUtility.randInt(1, 1));
-  }
-
-  @Test
-  void testRandInRange() {
-    assertEquals(10.0f, MathUtility.randInRange(10.0f, 10.0f));
   }
 }

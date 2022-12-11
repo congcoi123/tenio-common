@@ -51,7 +51,24 @@ class OsUtilityTest {
   }
 
   @Test
-  @EnabledOnOs(OS.MAC)
+  @DisplayName("Test all system types should work")
+  void testAllSystemTypesShouldWork() {
+    System.setProperty("os.name", "mac");
+    assertEquals(OsUtility.OsType.MAC, OsUtility.getOperatingSystemType());
+    System.setProperty("os.name", "darwin");
+    assertEquals(OsUtility.OsType.MAC, OsUtility.getOperatingSystemType());
+    System.setProperty("os.name", "win");
+    assertEquals(OsUtility.OsType.WINDOWS, OsUtility.getOperatingSystemType());
+    System.setProperty("os.name", "nux");
+    assertEquals(OsUtility.OsType.LINUX, OsUtility.getOperatingSystemType());
+    System.setProperty("os.name", "other");
+    assertEquals(OsUtility.OsType.OTHER, OsUtility.getOperatingSystemType());
+
+    assertEquals("MAC", OsUtility.OsType.MAC.toString());
+  }
+
+  @Test
+  @EnabledIfSystemProperty(named = "os.name", matches = "mac")
   @DisplayName("Fetch operation system type should return MAC")
   void getOperatingSystemTypeMac() {
     assertEquals(OsUtility.OsType.MAC, OsUtility.getOperatingSystemType());

@@ -24,9 +24,12 @@ THE SOFTWARE.
 
 package com.tenio.common.utility;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.tenio.common.constant.CommonConstant;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.DisplayName;
@@ -44,5 +47,14 @@ class ClassLoaderUtilityTest {
       constructor.setAccessible(true);
       constructor.newInstance();
     });
+  }
+
+  @Test
+  @DisplayName("Fetching a package should disclose all inside classes")
+  void fetchingPackageShouldReturnNumberOfClasses() throws ClassNotFoundException {
+    var classes = ClassLoaderUtility.getClasses("com.tenio.common.constant");
+    assertAll("fetchingPackageShouldReturnNumberOfClasses",
+        () -> assertTrue(classes.contains(CommonConstant.class)),
+        () -> assertEquals(2, classes.size()));
   }
 }

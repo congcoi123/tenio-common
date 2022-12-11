@@ -621,6 +621,5 @@ class ZeroUtilityTest {
     }
 
     origin.toBinary();
-    assertTrue(true);
   }
 }
