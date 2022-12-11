@@ -76,7 +76,7 @@ public final class StringUtility {
 
       // generate a random number between
       // 0 to AlphaNumericString variable length
-      int index = (int) (ALPHA_NUMERIC_STRING.length() * Math.random());
+      int index = MathUtility.randInt(0, ALPHA_NUMERIC_STRING.length());
 
       // add Character one by one in end of sb
       builder.append(ALPHA_NUMERIC_STRING.charAt(index));
