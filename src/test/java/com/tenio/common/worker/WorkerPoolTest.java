@@ -27,8 +27,10 @@ package com.tenio.common.worker;
 import static org.mockito.Mockito.mock;
 
 import com.tenio.common.custom.DisabledTestFindingSolution;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("Unit Test Cases For Worker Pool Runnable Utility")
 class WorkerPoolTest {
   @Test
   void testConstructor() {
@@ -181,4 +183,3 @@ class WorkerPoolTest {
     (new WorkerPool("Name", 2, 1)).waitUntilAllTasksFinished();
   }
 }
-

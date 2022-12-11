@@ -25,6 +25,7 @@ THE SOFTWARE.
 package com.tenio.common.utility;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,17 +33,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
-@DisplayName("Unit Test Cases For OS Utility")
-class OsUtilityTest {
+@DisplayName("Unit Test Cases For Time Utility")
+class TimeUtilityTest {
 
   @Test
   @DisplayName("Throw an exception when the class's instance is attempted creating")
   void createNewInstanceShouldThrowException() throws NoSuchMethodException {
-    var constructor = OsUtility.class.getDeclaredConstructor();
+    var constructor = TimeUtility.class.getDeclaredConstructor();
     assertTrue(Modifier.isPrivate(constructor.getModifiers()));
     assertThrows(InvocationTargetException.class, () -> {
       constructor.setAccessible(true);
@@ -51,30 +49,23 @@ class OsUtilityTest {
   }
 
   @Test
-  @EnabledOnOs(OS.MAC)
-  @DisplayName("Fetch operation system type should return MAC")
-  void getOperatingSystemTypeMac() {
-    assertEquals(OsUtility.OsType.MAC, OsUtility.getOperatingSystemType());
+  void testDegreeToRadian() {
+    assertEquals(0.17453294f, MathUtility.degreeToRadian(10.0f));
   }
 
   @Test
-  @EnabledIfSystemProperty(named = "os.name", matches = "win")
-  @DisplayName("Fetch operation system type should return WINDOWS")
-  void getOperatingSystemTypeWindows() {
-    assertEquals(OsUtility.OsType.WINDOWS, OsUtility.getOperatingSystemType());
+  void testIsEqual() {
+    assertTrue(MathUtility.isEqual(10.0f, 10.0f));
+    assertFalse(MathUtility.isEqual(0.0f, 10.0f));
   }
 
   @Test
-  @EnabledIfSystemProperty(named = "os.name", matches = "nux")
-  @DisplayName("Fetch operation system type should return LINUX")
-  void getOperatingSystemTypeLinux() {
-    assertEquals(OsUtility.OsType.LINUX, OsUtility.getOperatingSystemType());
+  void testRandInt2() {
+    assertEquals(1, MathUtility.randInt(1, 1));
   }
 
   @Test
-  @EnabledOnOs(OS.OTHER)
-  @DisplayName("Fetch operation system type should return OTHER")
-  void getOperatingSystemTypeOther() {
-    assertEquals(OsUtility.OsType.OTHER, OsUtility.getOperatingSystemType());
+  void testRandInRange() {
+    assertEquals(10.0f, MathUtility.randInRange(10.0f, 10.0f));
   }
 }

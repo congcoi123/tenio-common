@@ -56,27 +56,41 @@ class MsgPackUtilityTest {
     var msgpackMap = MsgPackUtility.newMsgPackMap().putBoolean("a", true).putMsgPackArray("b",
         MsgPackUtility.newMsgPackArray().addBoolean(true));
     var checkMsgPackMap = MsgPackUtility.deserialize(msgpackMap.toBinary());
+
     assert checkMsgPackMap != null;
-    assertEquals(checkMsgPackMap.toString(), msgpackMap.toString());
+    assertEquals(msgpackMap.toString(), checkMsgPackMap.toString());
   }
 
   @Test
-  @DisplayName("Allow adding and fetching primitive data to/from MsgPackArray")
-  void primitiveDataInArrayShouldMatch() {
+  @DisplayName("Allow adding and fetching data to/from MsgPackArray")
+  void addedDataInArrayShouldMatch() {
     var origin = MsgPackUtility.newMsgPackArray();
     origin.addBoolean(true).addInteger(1000).addFloat(101.1f).addString("msgpack")
-        .addBoolean(false);
+        .addBoolean(false).addMsgPackArray(MsgPackUtility.newMsgPackArray().addBoolean(true));
     var carry = MsgPackUtility.newMsgPackMap().putMsgPackArray("k", origin);
     var binary = carry.toBinary();
     var newOne = MsgPackUtility.deserialize(binary);
-    assert newOne != null;
 
-    assertAll("primitiveDataInArrayShouldMatch",
+    assert newOne != null;
+    assertAll("addedDataInArrayShouldMatch",
         () -> assertTrue(newOne.getMsgPackArray("k").getBoolean(0)),
-        () -> assertEquals(newOne.getMsgPackArray("k").getInteger(1), 1000),
-        () -> assertEquals(newOne.getMsgPackArray("k").getFloat(2), 101.1f),
-        () -> assertEquals(newOne.getMsgPackArray("k").getString(3), "msgpack"),
-        () -> assertFalse(newOne.getMsgPackArray("k").getBoolean(4))
+        () -> assertEquals(1000, newOne.getMsgPackArray("k").getInteger(1)),
+        () -> assertEquals(101.1f, newOne.getMsgPackArray("k").getFloat(2)),
+        () -> assertEquals("msgpack", newOne.getMsgPackArray("k").getString(3)),
+        () -> assertFalse(newOne.getMsgPackArray("k").getBoolean(4)),
+        () -> assertEquals(MsgPackUtility.newMsgPackArray().addBoolean(true).toString(),
+            newOne.getMsgPackArray("k").getMsgPackArray(5).toString())
+    );
+
+    var readonlyArray = origin.getReadonlyList();
+    assertAll("readonlyDataInArrayShouldMatch",
+        () -> assertTrue((boolean) readonlyArray.get(0)),
+        () -> assertEquals(1000, (int) readonlyArray.get(1)),
+        () -> assertEquals(101.1f, (float) readonlyArray.get(2)),
+        () -> assertEquals("msgpack", readonlyArray.get(3)),
+        () -> assertFalse((boolean) readonlyArray.get(4)),
+        () -> assertEquals(MsgPackUtility.newMsgPackArray().addBoolean(true).toString(),
+            readonlyArray.get(5).toString())
     );
   }
 
@@ -92,9 +106,9 @@ class MsgPackUtilityTest {
     var carry = MsgPackUtility.newMsgPackMap().putMsgPackArray("k", origin);
     var binary = carry.toBinary();
     var newOne = MsgPackUtility.deserialize(binary);
-    assert newOne != null;
 
-    assertEquals(carry.getMsgPackArray("k").toString(), newOne.getMsgPackArray("k").toString());
+    assert newOne != null;
+    assertEquals(newOne.getMsgPackArray("k").toString(), carry.getMsgPackArray("k").toString());
   }
 
   @Test
@@ -109,30 +123,30 @@ class MsgPackUtilityTest {
         .putMsgPackMap("mm", MsgPackUtility.newMsgPackMap().putBoolean("b", true));
     var binary = origin.toBinary();
     var newOne = MsgPackUtility.deserialize(binary);
-    assert newOne != null;
 
+    assert newOne != null;
     assertAll("putDataInMapShouldMatch",
         () -> assertFalse(newOne.contains("out")),
         () -> assertTrue(newOne.getBoolean("b")),
-        () -> assertEquals(newOne.getInteger("i"), 1000),
-        () -> assertEquals(newOne.getFloat("f"), 101.1f),
-        () -> assertEquals(newOne.getString("s"), "msgpack"),
-        () -> assertEquals(newOne.getMsgPackArray("ma").toString(),
-            MsgPackUtility.newMsgPackArray().addBoolean(true).toString()),
-        () -> assertEquals(newOne.getMsgPackMap("mm").toString(),
-            MsgPackUtility.newMsgPackMap().putBoolean("b", true).toString())
+        () -> assertEquals(1000, newOne.getInteger("i")),
+        () -> assertEquals(101.1f, newOne.getFloat("f")),
+        () -> assertEquals("msgpack", newOne.getString("s")),
+        () -> assertEquals(MsgPackUtility.newMsgPackArray().addBoolean(true).toString(),
+            newOne.getMsgPackArray("ma").toString()),
+        () -> assertEquals(MsgPackUtility.newMsgPackMap().putBoolean("b", true).toString(),
+            newOne.getMsgPackMap("mm").toString())
     );
 
     var readonlyMap = origin.getReadonlyMap();
     assertAll("readonlyDataInMapShouldMatch",
         () -> assertTrue((boolean) readonlyMap.get("b")),
-        () -> assertEquals((int) readonlyMap.get("i"), 1000),
-        () -> assertEquals((float) readonlyMap.get("f"), 101.1f),
-        () -> assertEquals(readonlyMap.get("s"), "msgpack"),
-        () -> assertEquals(newOne.get("ma").toString(),
-            MsgPackUtility.newMsgPackArray().addBoolean(true).toString()),
-        () -> assertEquals(newOne.get("mm").toString(),
-            MsgPackUtility.newMsgPackMap().putBoolean("b", true).toString())
+        () -> assertEquals(1000, (int) readonlyMap.get("i")),
+        () -> assertEquals(101.1f, (float) readonlyMap.get("f")),
+        () -> assertEquals("msgpack", readonlyMap.get("s")),
+        () -> assertEquals(MsgPackUtility.newMsgPackArray().addBoolean(true).toString(),
+            newOne.get("ma").toString()),
+        () -> assertEquals(MsgPackUtility.newMsgPackMap().putBoolean("b", true).toString(),
+            newOne.get("mm").toString())
     );
   }
 }

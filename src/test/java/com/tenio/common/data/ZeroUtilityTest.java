@@ -131,10 +131,12 @@ class ZeroUtilityTest {
   void itShouldReturnCorrectDataCollection() {
     var zeroMap = ZeroUtility.newZeroMap().putBoolean("a", true);
     var checkZeroMap = ZeroUtility.binaryToCollection(zeroMap.toBinary());
-    assertEquals(checkZeroMap.toString(), zeroMap.toString());
+    assertEquals(zeroMap.toString(), checkZeroMap.toString());
+
     var zeroArray = ZeroUtility.newZeroArray().addBoolean(true);
     var checkZeroArray = ZeroUtility.binaryToCollection(zeroArray.toBinary());
-    assertEquals(checkZeroArray.toString(), zeroArray.toString());
+
+    assertEquals(zeroArray.toString(), checkZeroArray.toString());
     assertThrows(UnsupportedOperationException.class,
         () -> ZeroUtility.binaryToCollection(new byte[] {(byte) 1}));
   }
@@ -150,12 +152,12 @@ class ZeroUtilityTest {
 
     assertAll("primitiveDataInArrayShouldMatch",
         () -> assertTrue(newOne.getBoolean(0)),
-        () -> assertEquals(newOne.getByte(1), (byte) 1),
-        () -> assertEquals(newOne.getShort(2), (short) 11),
-        () -> assertEquals(newOne.getInteger(3), 1000),
-        () -> assertEquals(newOne.getFloat(4), 101.1f),
-        () -> assertEquals(newOne.getLong(5), 1000L),
-        () -> assertEquals(newOne.getDouble(6), 1010101.101)
+        () -> assertEquals((byte) 1, newOne.getByte(1)),
+        () -> assertEquals((short) 11, newOne.getShort(2)),
+        () -> assertEquals(1000, newOne.getInteger(3)),
+        () -> assertEquals(101.1f, newOne.getFloat(4)),
+        () -> assertEquals(1000L, newOne.getLong(5)),
+        () -> assertEquals(1010101.101, newOne.getDouble(6))
     );
   }
 
@@ -171,10 +173,10 @@ class ZeroUtilityTest {
     assertAll("instanceDataInArrayShouldMatch",
         () -> assertTrue(newOne.isNull(0)),
         () -> assertAll("zeroDataShouldMatch",
-            () -> assertEquals(newOne.getZeroElement(1).getType(), ZeroType.BOOLEAN),
+            () -> assertEquals(ZeroType.BOOLEAN, newOne.getZeroElement(1).getType()),
             () -> assertFalse((boolean) newOne.getZeroElement(1).getData())
         ),
-        () -> assertEquals(newOne.getString(2), "test")
+        () -> assertEquals("test", newOne.getString(2))
     );
   }
 
@@ -191,15 +193,15 @@ class ZeroUtilityTest {
     var newOne = ZeroUtility.binaryToArray(binary);
 
     assertAll("collectionDataInArrayShouldMatch",
-        () -> assertEquals(newOne.getBooleanArray(0).toString(), booleans.toString()),
-        () -> assertEquals(newOne.getByteArray(1).length, binaries.length),
-        () -> assertEquals(newOne.getShortArray(2).toString(), shorts.toString()),
-        () -> assertEquals(newOne.getIntegerArray(3).toString(), integers.toString()),
-        () -> assertEquals(newOne.getLongArray(4).toString(), longs.toString()),
-        () -> assertEquals(newOne.getFloatArray(5).toString(), floats.toString()),
-        () -> assertEquals(newOne.getDoubleArray(6).toString(), doubles.toString()),
-        () -> assertEquals(newOne.getStringArray(7).toString(), strings.toString()),
-        () -> assertEquals(newOne.getZeroArray(8).toString(), zeroArray.toString())
+        () -> assertEquals(booleans.toString(), newOne.getBooleanArray(0).toString()),
+        () -> assertEquals(binaries.length, newOne.getByteArray(1).length),
+        () -> assertEquals(shorts.toString(), newOne.getShortArray(2).toString()),
+        () -> assertEquals(integers.toString(), newOne.getIntegerArray(3).toString()),
+        () -> assertEquals(longs.toString(), newOne.getLongArray(4).toString()),
+        () -> assertEquals(floats.toString(), newOne.getFloatArray(5).toString()),
+        () -> assertEquals(doubles.toString(), newOne.getDoubleArray(6).toString()),
+        () -> assertEquals(strings.toString(), newOne.getStringArray(7).toString()),
+        () -> assertEquals(zeroArray.toString(), newOne.getZeroArray(8).toString())
     );
   }
 
@@ -213,10 +215,10 @@ class ZeroUtilityTest {
     var newOne = ZeroUtility.binaryToArray(binary);
 
     assertAll("duplicatedValueInArrayShouldWork",
-        () -> assertEquals(newOne.getBooleanArray(0).toString(), booleans.toString()),
-        () -> assertEquals(newOne.getShortArray(1).toString(), shorts.toString()),
-        () -> assertEquals(newOne.getBooleanArray(2).toString(), booleans.toString()),
-        () -> assertEquals(newOne.getShortArray(3).toString(), shorts.toString())
+        () -> assertEquals(booleans.toString(), newOne.getBooleanArray(0).toString()),
+        () -> assertEquals(shorts.toString(), newOne.getShortArray(1).toString()),
+        () -> assertEquals(booleans.toString(), newOne.getBooleanArray(2).toString()),
+        () -> assertEquals(shorts.toString(), newOne.getShortArray(3).toString())
     );
   }
 
@@ -252,11 +254,11 @@ class ZeroUtilityTest {
 
     assertAll("primitiveDataInObjectShouldMatch",
         () -> assertTrue(newOne.getBoolean("b")),
-        () -> assertEquals(newOne.getShort("s"), (short) 11),
-        () -> assertEquals(newOne.getInteger("i"), 1000),
-        () -> assertEquals(newOne.getFloat("f"), 101.1f),
-        () -> assertEquals(newOne.getLong("l"), 1000L),
-        () -> assertEquals(newOne.getDouble("d"), 1010101.101)
+        () -> assertEquals((short) 11, newOne.getShort("s")),
+        () -> assertEquals(1000, newOne.getInteger("i")),
+        () -> assertEquals(101.1f, newOne.getFloat("f")),
+        () -> assertEquals(1000L, newOne.getLong("l")),
+        () -> assertEquals(1010101.101, newOne.getDouble("d"))
     );
   }
 
@@ -273,10 +275,10 @@ class ZeroUtilityTest {
     assertAll("instanceDataInObjectShouldMatch",
         () -> assertTrue(newOne.isNull("n")),
         () -> assertAll("zeroDataShouldMatch",
-            () -> assertEquals(newOne.getZeroElement("z").getType(), ZeroType.BOOLEAN),
+            () -> assertEquals(ZeroType.BOOLEAN, newOne.getZeroElement("z").getType()),
             () -> assertFalse((boolean) newOne.getZeroElement("z").getData())
         ),
-        () -> assertEquals(newOne.getString("s"), "test")
+        () -> assertEquals("test", newOne.getString("s"))
     );
   }
 
@@ -297,14 +299,14 @@ class ZeroUtilityTest {
     var newOne = ZeroUtility.binaryToMap(binary);
 
     assertAll("collectionDataInObjectShouldMatch",
-        () -> assertEquals(newOne.getBooleanArray("b").toString(), booleans.toString()),
-        () -> assertEquals(newOne.getShortArray("s").toString(), shorts.toString()),
-        () -> assertEquals(newOne.getIntegerArray("i").toString(), integers.toString()),
-        () -> assertEquals(newOne.getLongArray("l").toString(), longs.toString()),
-        () -> assertEquals(newOne.getFloatArray("f").toString(), floats.toString()),
-        () -> assertEquals(newOne.getDoubleArray("d").toString(), doubles.toString()),
-        () -> assertEquals(newOne.getStringArray("ss").toString(), strings.toString()),
-        () -> assertEquals(newOne.getZeroArray("za").toString(), zeroArray.toString())
+        () -> assertEquals(booleans.toString(), newOne.getBooleanArray("b").toString()),
+        () -> assertEquals(shorts.toString(), newOne.getShortArray("s").toString()),
+        () -> assertEquals(integers.toString(), newOne.getIntegerArray("i").toString()),
+        () -> assertEquals(longs.toString(), newOne.getLongArray("l").toString()),
+        () -> assertEquals(floats.toString(), newOne.getFloatArray("f").toString()),
+        () -> assertEquals(doubles.toString(), newOne.getDoubleArray("d").toString()),
+        () -> assertEquals(strings.toString(), newOne.getStringArray("ss").toString()),
+        () -> assertEquals(zeroArray.toString(), newOne.getZeroArray("za").toString())
     );
   }
 
@@ -318,10 +320,10 @@ class ZeroUtilityTest {
     var newOne = ZeroUtility.binaryToMap(binary);
 
     assertAll("duplicatedValueInObjectShouldWork",
-        () -> assertEquals(newOne.getBooleanArray("b1").toString(), booleans.toString()),
-        () -> assertEquals(newOne.getShortArray("s1").toString(), shorts.toString()),
-        () -> assertEquals(newOne.getBooleanArray("b2").toString(), booleans.toString()),
-        () -> assertEquals(newOne.getShortArray("s2").toString(), shorts.toString())
+        () -> assertEquals(booleans.toString(), newOne.getBooleanArray("b1").toString()),
+        () -> assertEquals(shorts.toString(), newOne.getShortArray("s1").toString()),
+        () -> assertEquals(booleans.toString(), newOne.getBooleanArray("b2").toString()),
+        () -> assertEquals(shorts.toString(), newOne.getShortArray("s2").toString())
     );
   }
 
@@ -360,6 +362,7 @@ class ZeroUtilityTest {
   void fetchElementsFromZeroArrayShouldHaveExpectedResults() {
     var origin = ZeroUtility.newZeroArray();
     origin.addInteger(10).addInteger(20).addInteger(30).addNull();
+
     assertAll("fetchElementsFromZeroArrayShouldHaveExpectedResults",
         () -> assertEquals(10, (int) origin.getDataForElementAt(0)),
         () -> assertNull(origin.getDataForElementAt(3)),
@@ -378,6 +381,7 @@ class ZeroUtilityTest {
   void workingWithBinariesInZeroArrayShouldReturnExpectedResults() {
     var origin = ZeroUtility.newZeroArray();
     origin.addByte((byte) 1).addByteArray(new byte[] {(byte) 1, (byte) 2, (byte) 3});
+
     assertAll("workingWithBinariesInZeroArrayShouldReturnExpectedResults",
         () -> assertEquals((byte) 1, origin.getByte(0)),
         () -> assertEquals((byte) 1, origin.getByteArray(1)[0]),
@@ -420,6 +424,7 @@ class ZeroUtilityTest {
     var origin = ZeroUtility.newZeroMap();
     origin.putInteger("a", 10).putInteger("b", 20).putInteger("c", 30)
         .putNull("d");
+
     assertAll("fetchElementsFromZeroMapShouldHaveExpectedResults",
         () -> assertEquals(10, (int) origin.getZeroElement("a").getData()),
         () -> assertNull(origin.getZeroElement("d").getData()),

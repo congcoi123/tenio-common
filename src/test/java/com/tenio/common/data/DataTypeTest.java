@@ -42,7 +42,7 @@ class DataTypeTest {
   void testAllEnumValues(String name, String value) {
     DataType dataType = DataType.valueOf(name);
     DataType dataTypeByValue = DataType.getByValue(value);
-    assertEquals(dataType, dataTypeByValue);
+    assertEquals(dataTypeByValue, dataType);
     assertEquals(value, dataType.getValue());
     assertEquals(value, dataType.toString());
     assertEquals(name, dataType.name());
