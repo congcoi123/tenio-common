@@ -62,8 +62,13 @@ public final class ZeroArrayImpl implements ZeroArray {
 
   @Override
   public boolean contains(Object data) {
+    if (Objects.isNull(data)) {
+      return array.stream().anyMatch(element -> Objects.isNull(element.getData()));
+    }
     var match =
-        array.stream().filter(element -> element.getData().equals(data)).findFirst();
+        array.stream()
+            .filter(element -> Objects.nonNull(element.getData()) && element.getData().equals(data))
+            .findFirst();
     return match.orElse(null) != null;
   }
 
@@ -347,7 +352,8 @@ public final class ZeroArrayImpl implements ZeroArray {
       } else if (zeroElement.getType() == ZeroType.BYTE_ARRAY) {
         toString = String.format("byte[%d]", ((byte[]) zeroElement.getData()).length);
       } else {
-        toString = zeroElement.getData().toString();
+        toString = Objects.nonNull(zeroElement.getData()) ? zeroElement.getData().toString() :
+            "null";
       }
     }
 

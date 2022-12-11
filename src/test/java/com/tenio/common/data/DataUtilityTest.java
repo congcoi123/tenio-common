@@ -22,27 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.utility;
+package com.tenio.common.data;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.tenio.common.data.msgpack.MsgPackUtility;
+import com.tenio.common.data.msgpack.element.MsgPackArray;
+import com.tenio.common.data.msgpack.element.MsgPackMap;
+import com.tenio.common.data.zero.ZeroArray;
+import com.tenio.common.data.zero.ZeroMap;
+import com.tenio.common.data.zero.utility.ZeroUtility;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
-@DisplayName("Unit Test Cases For OS Utility")
-class OsUtilityTest {
+@DisplayName("Unit Test Cases For Data Utility")
+class DataUtilityTest {
 
   @Test
   @DisplayName("Throw an exception when the class's instance is attempted creating")
   void createNewInstanceShouldThrowException() throws NoSuchMethodException {
-    var constructor = OsUtility.class.getDeclaredConstructor();
+    var constructor = DataUtility.class.getDeclaredConstructor();
     assertTrue(Modifier.isPrivate(constructor.getModifiers()));
     assertThrows(InvocationTargetException.class, () -> {
       constructor.setAccessible(true);
@@ -51,30 +55,18 @@ class OsUtilityTest {
   }
 
   @Test
-  @EnabledOnOs(OS.MAC)
-  @DisplayName("Fetch operation system type should return MAC")
-  void getOperatingSystemTypeMac() {
-    assertEquals(OsUtility.OsType.MAC, OsUtility.getOperatingSystemType());
-  }
+  @DisplayName("Provided creation methods should work properly")
+  void instancesCreationShouldWork() {
+    assertAll("instancesCreationShouldWork",
+        () -> assertInstanceOf(ZeroArray.class, DataUtility.newZeroArray()),
+        () -> assertInstanceOf(ZeroMap.class, DataUtility.newZeroMap()),
+        () -> assertInstanceOf(MsgPackArray.class, DataUtility.newMsgArray()),
+        () -> assertInstanceOf(MsgPackMap.class, DataUtility.newMsgMap()));
 
-  @Test
-  @EnabledIfSystemProperty(named = "os.name", matches = "win")
-  @DisplayName("Fetch operation system type should return WINDOWS")
-  void getOperatingSystemTypeWindows() {
-    assertEquals(OsUtility.OsType.WINDOWS, OsUtility.getOperatingSystemType());
-  }
-
-  @Test
-  @EnabledIfSystemProperty(named = "os.name", matches = "nux")
-  @DisplayName("Fetch operation system type should return LINUX")
-  void getOperatingSystemTypeLinux() {
-    assertEquals(OsUtility.OsType.LINUX, OsUtility.getOperatingSystemType());
-  }
-
-  @Test
-  @EnabledOnOs(OS.OTHER)
-  @DisplayName("Fetch operation system type should return OTHER")
-  void getOperatingSystemTypeOther() {
-    assertEquals(OsUtility.OsType.OTHER, OsUtility.getOperatingSystemType());
+    var zeroMapBinaries = ZeroUtility.mapToBinary(ZeroUtility.newZeroMap());
+    var msgPackBinaries = MsgPackUtility.serialize(MsgPackMap.newInstance().putBoolean("a", true));
+    assertInstanceOf(ZeroMap.class, DataUtility.binaryToCollection(DataType.ZERO, zeroMapBinaries));
+    assertInstanceOf(MsgPackMap.class, DataUtility.binaryToCollection(DataType.MSG_PACK,
+        msgPackBinaries));
   }
 }

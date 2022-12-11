@@ -351,7 +351,8 @@ public final class ZeroMapImpl implements ZeroMap {
       } else if (zeroElement.getType() == ZeroType.BYTE_ARRAY) {
         builder.append(String.format("byte[%d]", ((byte[]) zeroElement.getData()).length));
       } else {
-        builder.append(zeroElement.getData().toString());
+        builder.append(Objects.nonNull(zeroElement.getData()) ? zeroElement.getData().toString()
+            : "null");
       }
     }
 
