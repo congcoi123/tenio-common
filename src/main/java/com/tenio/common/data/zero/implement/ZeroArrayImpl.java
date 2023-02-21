@@ -72,6 +72,14 @@ public final class ZeroArrayImpl implements ZeroArray {
     return match.orElse(null) != null;
   }
 
+  @Override
+  public boolean containsValueAt(int index) {
+    if (index < 0 || index >= size()) {
+      return false;
+    }
+    return Objects.nonNull(array.get(index));
+  }
+
   /**
    * This method potentially creates an issue called "escape references". Please be aware of
    * using it
