@@ -107,4 +107,11 @@ public abstract class SystemLogger extends AbstractLogger {
     stringPool.repay(builder);
   }
 
+  public boolean isTraceEnabled() {
+    return logger.isTraceEnabled();
+  }
+
+  public boolean isDebugEnabled() {
+    return logger.isDebugEnabled();
+  }
 }

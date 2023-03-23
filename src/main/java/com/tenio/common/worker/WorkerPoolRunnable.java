@@ -63,10 +63,12 @@ public final class WorkerPoolRunnable extends AbstractLogger implements Runnable
       try {
         Runnable runnable = taskQueue.take();
         runnable.run();
-      } catch (Exception e) {
+      } catch (Exception exception) {
         // log or otherwise report exception,
         // but keep pool thread alive.
-        error(e);
+        if (isErrorEnabled()) {
+          error(exception);
+        }
       }
     }
   }

@@ -297,4 +297,12 @@ public abstract class AbstractLogger {
     }
     return builder;
   }
+
+  public boolean isErrorEnabled() {
+    return logger.isErrorEnabled();
+  }
+
+  public boolean isInfoEnabled() {
+    return logger.isInfoEnabled();
+  }
 }
