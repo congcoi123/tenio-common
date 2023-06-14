@@ -212,6 +212,12 @@ public final class ZeroArrayImpl implements ZeroArray {
   }
 
   @Override
+  public ZeroArray setLong(int index, long data) {
+    array.set(index, ZeroUtility.newZeroElement(ZeroType.LONG, data));
+    return this;
+  }
+
+  @Override
   public ZeroArray addFloat(float data) {
     return addElement(ZeroType.FLOAT, data);
   }

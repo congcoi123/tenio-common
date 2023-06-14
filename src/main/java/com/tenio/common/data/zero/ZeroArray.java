@@ -86,6 +86,15 @@ public interface ZeroArray extends ReadonlyZeroArray, Iterable<ZeroElement> {
   ZeroArray addLong(long data);
 
   /**
+   * Sets a <code>long</code> value at index in the array.
+   *
+   * @param index the element's index
+   * @param data the appended data
+   * @return the pointer of this instance
+   */
+  ZeroArray setLong(int index, long data);
+
+  /**
    * Appends a <code>float</code> value into the array.
    *
    * @param data the appended data
