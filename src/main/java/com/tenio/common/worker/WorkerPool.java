@@ -60,7 +60,9 @@ public final class WorkerPool extends SystemLogger {
       runnableWorkerPools.add(new WorkerPoolRunnable(name, i, taskQueue));
     }
     for (WorkerPoolRunnable runnable : runnableWorkerPools) {
-      new Thread(runnable).start();
+      Thread thread = new Thread(runnable);
+      thread.setDaemon(true);
+      thread.start();
     }
   }
 
