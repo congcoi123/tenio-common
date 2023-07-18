@@ -35,7 +35,7 @@ public final class WorkerPoolRunnable extends AbstractLogger implements Runnable
   private final BlockingQueue<Runnable> taskQueue;
   private final String name;
   private final int index;
-  private Thread thread;
+  private Thread currentThread;
   private boolean isStopped;
 
   /**
@@ -56,18 +56,23 @@ public final class WorkerPoolRunnable extends AbstractLogger implements Runnable
    * Starts a new thread for a worker pool.
    */
   public void run() {
-    thread = Thread.currentThread();
-    thread.setName(String.format("worker-%s-%d", name, index));
+    currentThread = Thread.currentThread();
+    currentThread.setName(String.format("worker-%s-%d", name, index));
+    currentThread.setUncaughtExceptionHandler((thread, cause) -> {
+      if (isErrorEnabled()) {
+        error(cause, thread.getName());
+      }
+    });
 
     while (!isStopped()) {
       try {
         Runnable runnable = taskQueue.take();
         runnable.run();
-      } catch (Exception exception) {
+      } catch (Throwable cause) {
         // log or otherwise report exception,
         // but keep pool thread alive.
         if (isErrorEnabled()) {
-          error(exception);
+          error(cause);
         }
       }
     }
@@ -79,7 +84,7 @@ public final class WorkerPoolRunnable extends AbstractLogger implements Runnable
   public synchronized void doStop() {
     isStopped = true;
     // break pool thread out of dequeue() call.
-    thread.interrupt();
+    currentThread.interrupt();
   }
 
   /**
