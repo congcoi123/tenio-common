@@ -51,7 +51,7 @@
         <org.mockito.core.version>5.2.0</org.mockito.core.version>
 
         <maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
-        <jdk.release>11</jdk.release>
+        <jdk.release>17</jdk.release>
         <jdk.vendor>oracle</jdk.vendor>
 
         <maven.checkstyle.version>3.1.2</maven.checkstyle.version>
