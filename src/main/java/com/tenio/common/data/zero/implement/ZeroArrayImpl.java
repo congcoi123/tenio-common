@@ -197,6 +197,12 @@ public final class ZeroArrayImpl implements ZeroArray {
   }
 
   @Override
+  public ZeroArray setByte(int index, byte data) {
+    array.set(index, ZeroUtility.newZeroElement(ZeroType.BYTE, data));
+    return this;
+  }
+
+  @Override
   public ZeroArray addShort(short data) {
     return addElement(ZeroType.SHORT, data);
   }

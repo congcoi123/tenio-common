@@ -52,18 +52,18 @@ class ClassLoaderUtilityTest {
   @Test
   @DisplayName("Scanning a package should return a list of classes inside it")
   void scanPackageShouldReturnListOfClasses() throws ClassNotFoundException {
-    var listClasses = ClassLoaderUtility.getClasses("com.tenio.core.bootstrap.loader");
+    var listClasses = ClassLoaderUtility.getClasses("com.tenio.common.bootstrap.loader");
     assertAll("scanPackageShouldReturnListOfClasses",
-        () -> assertEquals(listClasses.size(), 3),
+        () -> assertEquals(3, listClasses.size()),
         () -> assertTrue(
             listClasses.stream().map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
-                "com.tenio.core.bootstrap.loader.TestClassA"))),
+                "com.tenio.common.bootstrap.loader.TestClassA"))),
         () -> assertTrue(
             listClasses.stream().map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
-                "com.tenio.core.bootstrap.loader.TestClassB"))),
+                "com.tenio.common.bootstrap.loader.TestClassB"))),
         () -> assertTrue(
             listClasses.stream().map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
-                "com.tenio.core.bootstrap.loader.TestClassC")))
+                "com.tenio.common.bootstrap.loader.TestClassC")))
     );
   }
 
