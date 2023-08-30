@@ -666,7 +666,6 @@ public final class ZeroUtility {
   }
 
   private static ByteBuffer encodeIntegerArray(ByteBuffer buffer, Collection<Integer> data) {
-
     var buf = ByteBuffer.allocate(ENCODE_HEADER_NUMERIC_ARRAY_BYTES + Integer.BYTES * data.size());
     buf.put((byte) ZeroType.INTEGER_ARRAY.getValue());
     buf.putShort((short) data.size());

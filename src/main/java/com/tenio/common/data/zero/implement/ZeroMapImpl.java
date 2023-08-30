@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 package com.tenio.common.data.zero.implement;
 
+import com.tenio.common.data.DataCollection;
 import com.tenio.common.data.zero.ReadonlyZeroMap;
 import com.tenio.common.data.zero.ZeroArray;
 import com.tenio.common.data.zero.ZeroElement;
@@ -153,6 +154,12 @@ public final class ZeroMapImpl implements ZeroMap {
   public String getString(String key) {
     var element = getZeroElement(key);
     return Objects.isNull(element) ? null : (String) element.getData();
+  }
+
+  @Override
+  public DataCollection getDataCollection(String key) {
+    var element = getZeroElement(key);
+    return Objects.isNull(element) ? null : (DataCollection) element.getData();
   }
 
   @Override

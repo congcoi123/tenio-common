@@ -75,8 +75,8 @@ public final class MsgPackUtility {
     dstMap.forEach((key, value) -> {
       try {
         msgObject.put(key, MsgPackConverter.valueToObject(value));
-      } catch (IOException e) {
-        e.printStackTrace();
+      } catch (IOException exception) {
+        exception.printStackTrace();
       }
     });
     return msgObject;
@@ -117,8 +117,8 @@ class MsgPackConverter {
   public static byte[] pack(Map<String, Object> map) {
     try {
       return PACKER.write(map);
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (IOException exception) {
+      exception.printStackTrace();
       return null;
     }
   }
@@ -136,8 +136,8 @@ class MsgPackConverter {
       byteArrayInput.reset(binaries);
       var unpacker = PACKER.createUnpacker(byteArrayInput);
       return unpacker.read(mapTmpl);
-    } catch (IOException | IllegalArgumentException e) {
-      e.printStackTrace();
+    } catch (IOException | IllegalArgumentException exception) {
+      exception.printStackTrace();
       return null;
     }
   }
@@ -169,8 +169,8 @@ class MsgPackConverter {
       arrayValue.forEach(element -> {
         try {
           array.add(valueToObject(element));
-        } catch (IOException e) {
-          e.printStackTrace();
+        } catch (IOException exception) {
+          exception.printStackTrace();
         }
       });
       return array;

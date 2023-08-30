@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.tenio.common.constant.CommonConstant;
+import com.tenio.common.custom.DisabledTestFindingSolution;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.DisplayName;
@@ -50,11 +50,46 @@ class ClassLoaderUtilityTest {
   }
 
   @Test
-  @DisplayName("Fetching a package should disclose all inside classes")
-  void fetchingPackageShouldReturnNumberOfClasses() throws ClassNotFoundException {
-    var classes = ClassLoaderUtility.getClasses("com.tenio.common.constant");
-    assertAll("fetchingPackageShouldReturnNumberOfClasses",
-        () -> assertTrue(classes.contains(CommonConstant.class)),
-        () -> assertEquals(2, classes.size()));
+  @DisplayName("Scanning a package should return a list of classes inside it")
+  void scanPackageShouldReturnListOfClasses() throws ClassNotFoundException {
+    var listClasses = ClassLoaderUtility.getClasses("com.tenio.common.bootstrap.loader");
+    assertAll("scanPackageShouldReturnListOfClasses",
+        () -> assertEquals(3, listClasses.size()),
+        () -> assertTrue(
+            listClasses.stream().map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
+                "com.tenio.common.bootstrap.loader.TestClassA"))),
+        () -> assertTrue(
+            listClasses.stream().map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
+                "com.tenio.common.bootstrap.loader.TestClassB"))),
+        () -> assertTrue(
+            listClasses.stream().map(clazz -> clazz.getName()).anyMatch(name -> name.equals(
+                "com.tenio.common.bootstrap.loader.TestClassC")))
+    );
+  }
+
+  @Test
+  @DisplayName("Scanning a non-existed package should return an empty list of classes")
+  void scanNonExistedPackageShouldReturnEmptyArray() throws ClassNotFoundException {
+    var listClasses = ClassLoaderUtility.getClasses("com.tenio.common.bootstrap.null");
+    assertTrue(listClasses.isEmpty());
+  }
+
+  @Test
+  @DisplayName("To be able to scan a package of a jar file and return a list of classes inside it")
+  void scanExternalLibraryShouldReturnListOfClasses() throws ClassNotFoundException {
+    var listClasses = ClassLoaderUtility.getClasses("com.google.common.annotations");
+    assertTrue(listClasses.size() > 0);
+  }
+
+
+  @DisabledTestFindingSolution
+  @DisplayName("Attempt to recall the private constructor in order to create an instance should " +
+      "throw an exception")
+  void tryToReCreateClassLoaderShouldThrowException() {
+  }
+
+  @DisabledTestFindingSolution
+  @DisplayName("Try to procedure throwable exception cases")
+  void getClassesInInvalidWaysShouldThrowException() {
   }
 }

@@ -72,6 +72,14 @@ public final class ZeroArrayImpl implements ZeroArray {
     return match.orElse(null) != null;
   }
 
+  @Override
+  public boolean containsValueAt(int index) {
+    if (index < 0 || index >= size()) {
+      return false;
+    }
+    return Objects.nonNull(array.get(index));
+  }
+
   /**
    * This method potentially creates an issue called "escape references". Please be aware of
    * using it
@@ -189,6 +197,12 @@ public final class ZeroArrayImpl implements ZeroArray {
   }
 
   @Override
+  public ZeroArray setByte(int index, byte data) {
+    array.set(index, ZeroUtility.newZeroElement(ZeroType.BYTE, data));
+    return this;
+  }
+
+  @Override
   public ZeroArray addShort(short data) {
     return addElement(ZeroType.SHORT, data);
   }
@@ -201,6 +215,12 @@ public final class ZeroArrayImpl implements ZeroArray {
   @Override
   public ZeroArray addLong(long data) {
     return addElement(ZeroType.LONG, data);
+  }
+
+  @Override
+  public ZeroArray setLong(int index, long data) {
+    array.set(index, ZeroUtility.newZeroElement(ZeroType.LONG, data));
+    return this;
   }
 
   @Override
