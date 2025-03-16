@@ -26,6 +26,7 @@ package com.tenio.common.utility;
 
 import java.io.File;
 import java.io.InputStream;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -55,12 +56,12 @@ public final class XmlUtility {
    * @throws Exception the exception
    */
   public static Document parseFile(File file) throws Exception {
-    var dbf = DocumentBuilderFactory.newInstance();
+    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     dbf.setValidating(false);
-    var db = dbf.newDocumentBuilder();
+    DocumentBuilder db = dbf.newDocumentBuilder();
     Document doc = db.parse(file);
 
-    var factory = XPathFactory.newInstance();
+    XPathFactory factory = XPathFactory.newInstance();
     oXpath = factory.newXPath();
 
     return doc;
@@ -74,12 +75,12 @@ public final class XmlUtility {
    * @throws Exception the exception
    */
   public static Document parseStream(InputStream in) throws Exception {
-    var dbf = DocumentBuilderFactory.newInstance();
+    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     dbf.setValidating(false);
-    var db = dbf.newDocumentBuilder();
+    DocumentBuilder db = dbf.newDocumentBuilder();
     Document doc = db.parse(in);
 
-    var factory = XPathFactory.newInstance();
+    XPathFactory factory = XPathFactory.newInstance();
     oXpath = factory.newXPath();
 
     return doc;
@@ -127,7 +128,7 @@ public final class XmlUtility {
    * @return the value of node's attribute
    */
   public static String getAttrVal(Node node, String name) {
-    var elementNode = (Element) node;
+    Element elementNode = (Element) node;
     return elementNode.getAttribute(name);
   }
 }

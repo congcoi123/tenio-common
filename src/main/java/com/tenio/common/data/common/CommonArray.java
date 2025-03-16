@@ -24,17 +24,14 @@ THE SOFTWARE.
 
 package com.tenio.common.data.common;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is an element array class holds data in a map. All message comes from other services
+ * This is an element object class holds data in an array. All message comes from other services
  * will be converted to this object. That helps normalize the way to communicate and be easy to use.
  */
-public final class CommonArray extends ArrayList<Object> implements Serializable {
-
-  private static final long serialVersionUID = -5100842875580575666L;
+public final class CommonArray extends ArrayList<Object> {
 
   /**
    * Create a fresh instance.

@@ -89,7 +89,7 @@ public final class WorkerPool extends SystemLogger {
    */
   public synchronized void stop() {
     isStopped = true;
-    for (var runnable : runnableWorkerPools) {
+    for (WorkerPoolRunnable runnable : runnableWorkerPools) {
       runnable.doStop();
     }
   }

@@ -26,8 +26,6 @@ package com.tenio.common.data.msgpack.element;
 
 import com.tenio.common.data.DataCollection;
 import com.tenio.common.data.msgpack.MsgPackUtility;
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -37,10 +35,7 @@ import java.util.Objects;
  * will be converted to this object. That helps normalize the way to communicate and be easy to use.
  */
 public final class MsgPackMap extends HashMap<String, Object>
-    implements DataCollection, Serializable {
-
-  @Serial
-  private static final long serialVersionUID = 6697372748701824069L;
+    implements DataCollection {
 
   /**
    * Creates a new fresh instance.

@@ -24,79 +24,115 @@ THE SOFTWARE.
 
 package com.tenio.common.configuration;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 /**
- * This server needs some basic configuration to start running. The configuration file can be
- * defined as an XML file. See an example in <code>configuration.example.xml</code>. You can also
- * extend this file to create your own configuration values.
+ * Enhanced configuration interface that provides type-safe access to configuration values
+ * with validation and reload capabilities.
  */
 public interface Configuration {
 
   /**
-   * Load the configuration by configured files.
+   * Load the configuration from a file.
    *
-   * @param file the configuration file
-   * @throws Exception something went wrong on parsing the configuration file
+   * @param file the configuration file path
+   * @throws ConfigurationException if there are any issues loading or validating the configuration
    */
-  void load(String file) throws Exception;
+  void load(String file) throws ConfigurationException;
 
   /**
-   * Retrieves the value by key.
+   * Reload the configuration from the last loaded file.
    *
-   * @param key the configuration's key
-   * @return the value in {@link Boolean}
+   * @throws ConfigurationException if there are any issues reloading or validating the configuration
    */
-  boolean getBoolean(ConfigurationType key);
+  void reload() throws ConfigurationException;
 
   /**
-   * Retrieves the value by key.
+   * Get a boolean configuration value.
    *
-   * @param key the configuration's key
-   * @return the value in {@link Integer}
+   * @param key the configuration key
+   * @return the boolean value
+   * @throws ConfigurationException if the value is not present and no default exists
    */
-  int getInt(ConfigurationType key);
+  boolean getBoolean(ConfigurationType key) throws ConfigurationException;
 
   /**
-   * Retrieves the value by key.
+   * Get an integer configuration value.
    *
-   * @param key the configuration's key
-   * @return the value in {@link Float}
+   * @param key the configuration key
+   * @return the integer value
+   * @throws ConfigurationException if the value is not present and no default exists
    */
-  float getFloat(ConfigurationType key);
+  int getInt(ConfigurationType key) throws ConfigurationException;
 
   /**
-   * Retrieves the value by key.
+   * Get a float configuration value.
    *
-   * @param key the configuration's key
-   * @return the value in {@link String}
+   * @param key the configuration key
+   * @return the float value
+   * @throws ConfigurationException if the value is not present and no default exists
    */
-  String getString(ConfigurationType key);
+  float getFloat(ConfigurationType key) throws ConfigurationException;
 
   /**
-   * Retrieves the value by key.
+   * Get a string configuration value.
    *
-   * @param key the configuration's key
-   * @return the value in {@link Object}
+   * @param key the configuration key
+   * @return the string value
+   * @throws ConfigurationException if the value is not present and no default exists
    */
-  Object get(ConfigurationType key);
+  String getString(ConfigurationType key) throws ConfigurationException;
 
   /**
-   * Determines if this configuration is existed or defined. If you want some configuration value
-   * to be treated as an <code>undefined</code> status, let its value <code>-1</code>.
+   * Get a configuration value as an Optional.
    *
-   * @param key The desired configuration's key
-   * @return <code>true</code> if the configuration is defined, otherwise return <code>false</code>
+   * @param key the configuration key
+   * @param type the expected type of the value
+   * @return an Optional containing the value if present
+   * @param <T> the type parameter
+   */
+  <T> Optional<T> get(ConfigurationType key, Class<T> type);
+
+  /**
+   * Check if a configuration value is defined.
+   *
+   * @param key the configuration key
+   * @return true if the value is defined, false otherwise
    */
   boolean isDefined(ConfigurationType key);
 
   /**
-   * Retrieves readable text.
+   * Get all defined configuration keys.
    *
-   * @return configuration information as human-readable data
+   * @return a Set of all defined configuration keys
    */
-  String toString();
+  Set<ConfigurationType> getDefinedKeys();
 
   /**
-   * Remove all configurations.
+   * Get the current configuration version.
+   *
+   * @return the configuration version string
+   */
+  String getVersion();
+
+  /**
+   * Export the current configuration as a Map.
+   *
+   * @return a Map containing all configuration key-value pairs
+   */
+  Map<ConfigurationType, Object> export();
+
+  /**
+   * Validate the entire configuration.
+   *
+   * @throws ConfigurationException if any validation fails
+   */
+  void validate() throws ConfigurationException;
+
+  /**
+   * Clear all configuration values.
    */
   void clear();
 }

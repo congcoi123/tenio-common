@@ -24,10 +24,45 @@ THE SOFTWARE.
 
 package com.tenio.common.configuration;
 
+import java.util.function.Predicate;
+
 /**
- * This server needs some basic configuration to start running. The configuration file can be
- * defined as an XML file. See an example in <code>configuration.example.xml</code>. You can also
- * extend this file to create your own configuration values.
+ * Enhanced configuration type interface that includes type information and validation.
+ * This interface defines the contract for configuration keys and their associated metadata.
  */
 public interface ConfigurationType {
+    /**
+     * Gets the expected type of the configuration value.
+     *
+     * @return The Class representing the expected type
+     */
+    Class<?> getValueType();
+
+    /**
+     * Gets the default value for this configuration type.
+     *
+     * @return The default value, may be null if no default is specified
+     */
+    Object getDefaultValue();
+
+    /**
+     * Gets the validator for this configuration type.
+     *
+     * @return A predicate that validates values for this configuration type
+     */
+    Predicate<Object> getValidator();
+
+    /**
+     * Gets the description of this configuration type.
+     *
+     * @return A human-readable description of what this configuration represents
+     */
+    String getDescription();
+
+    /**
+     * Checks if this configuration is required.
+     *
+     * @return true if this configuration must be provided, false otherwise
+     */
+    boolean isRequired();
 }

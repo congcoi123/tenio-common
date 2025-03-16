@@ -40,7 +40,7 @@ enum DefaultConfigurationType implements ConfigurationType {
   private static final Map<String, DefaultConfigurationType> lookup = new HashMap<>();
 
   static {
-    for (var configurationType : DefaultConfigurationType.values()) {
+    for (DefaultConfigurationType configurationType : DefaultConfigurationType.values()) {
       lookup.put(configurationType.getValue(), configurationType);
     }
   }
@@ -62,5 +62,36 @@ enum DefaultConfigurationType implements ConfigurationType {
   @Override
   public final String toString() {
     return name();
+  }
+
+  @Override
+  public Class<?> getValueType() {
+    switch (this) {
+      case BOOLEAN: return Boolean.class;
+      case INTEGER: return Integer.class;
+      case FLOAT: return Float.class;
+      case OBJECT: return Object.class;
+      default: return String.class;
+    }
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return null;
+  }
+
+  @Override
+  public java.util.function.Predicate<Object> getValidator() {
+    return value -> true;
+  }
+
+  @Override
+  public String getDescription() {
+    return value;
+  }
+
+  @Override
+  public boolean isRequired() {
+    return false;
   }
 }

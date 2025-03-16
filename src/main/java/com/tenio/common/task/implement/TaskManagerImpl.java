@@ -27,6 +27,7 @@ package com.tenio.common.task.implement;
 import com.tenio.common.exception.RunningScheduledTaskException;
 import com.tenio.common.logger.SystemLogger;
 import com.tenio.common.task.TaskManager;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -83,7 +84,7 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
 
   @Override
   public void kill(String id) {
-    var task = tasks.remove(id);  // Atomically remove and get the task
+    ScheduledFuture<?> task = tasks.remove(id);  // Atomically remove and get the task
     if (task != null) {
       if (!task.isDone() && !task.isCancelled()) {
         task.cancel(true);
@@ -96,11 +97,11 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
 
   @Override
   public void clear() {
-    var iterator = tasks.entrySet().iterator();
+    Iterator<Map.Entry<String, ScheduledFuture<?>>> iterator = tasks.entrySet().iterator();
     while (iterator.hasNext()) {
-      var entry = iterator.next();
-      var id = entry.getKey();
-      var task = entry.getValue();
+      Map.Entry<String, ScheduledFuture<?>> entry = iterator.next();
+      String id = entry.getKey();
+      ScheduledFuture<?> task = entry.getValue();
 
       if (isInfoEnabled()) {
         info("KILLED TASK", id);
@@ -116,7 +117,7 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
 
   @Override
   public int getRemainTime(String id) {
-    var task = tasks.get(id);
+    ScheduledFuture<?> task = tasks.get(id);
     if (Objects.nonNull(task)) {
       return (int) task.getDelay(TimeUnit.SECONDS);
     }

@@ -42,7 +42,7 @@ public final class OsUtility {
    * @return The operating system detected
    */
   public static OsType getOperatingSystemType() {
-    var osName = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+    String osName = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
     if ((osName.contains("mac")) || (osName.contains("darwin"))) {
       return OsType.MAC;
     } else if (osName.contains("win")) {
