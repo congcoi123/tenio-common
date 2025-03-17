@@ -1,12 +1,32 @@
+/*
+The MIT License
+
+Copyright (c) 2016-2023 kong <congcoi123@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
 package com.tenio.common.configuration;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import com.tenio.common.configuration.format.ConfigurationFormatHandler;
-import com.tenio.common.configuration.format.YamlConfigurationHandler;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,43 +55,31 @@ class ConfigurationPerformanceTest {
     private static final int WARMUP_ITERATIONS = 10;
     private static final int TEST_ITERATIONS = 100;
     private static final int CONCURRENT_THREADS = 4;
-    private static final int LARGE_CONFIG_SIZE = 50;
 
     @BeforeEach
-    void setUp() throws IOException, ConfigurationException {
+    void setUp() throws Exception {
         configuration = new TestConfiguration();
-        configFile = new File(tempDir, "performance-test.yml");
+        configFile = new File("src/test/resources/test-config.xml");
         largeConfig = createLargeConfig();
-        createConfigFile();
     }
 
     private Map<String, Object> createLargeConfig() {
         Map<String, Object> config = new HashMap<>();
         
-        // Add required configuration values
-        config.put("STRING_VALUE", "test string");
-        config.put("INT_VALUE", 42);
-        config.put("FLOAT_VALUE", 3.14f);
-        config.put("SERVER_NAME", "Test Server");
-        
-        // Add dynamic configuration values
-        for (int i = 0; i < LARGE_CONFIG_SIZE; i++) {
-            config.put("string_" + i, "value_" + i);
-            config.put("int_" + i, i);
-            config.put("bool_" + i, i % 2 == 0);
-            
-            // Add nested structures
-            Map<String, Object> nested = new HashMap<>();
-            nested.put("nested_string_" + i, "nested_value_" + i);
-            nested.put("nested_int_" + i, i * 2);
-            config.put("nested_" + i, nested);
+        // Add all the TestConfigurationType values
+        for (TestConfigurationType type : TestConfigurationType.values()) {
+            if (type.getValueType() == String.class) {
+                config.put(type.name(), "test_" + type.name().toLowerCase());
+            } else if (type.getValueType() == Integer.class) {
+                config.put(type.name(), 42);
+            } else if (type.getValueType() == Float.class) {
+                config.put(type.name(), 3.14f);
+            } else if (type.getValueType() == Boolean.class) {
+                config.put(type.name(), true);
+            }
         }
+        
         return config;
-    }
-
-    private void createConfigFile() throws IOException, ConfigurationException {
-        ConfigurationFormatHandler handler = new YamlConfigurationHandler();
-        handler.save(configFile, largeConfig);
     }
 
     @Test
@@ -107,14 +115,10 @@ class ConfigurationPerformanceTest {
         List<CompletableFuture<Void>> warmupFutures = new ArrayList<>();
         for (int i = 0; i < WARMUP_ITERATIONS; i++) {
             warmupFutures.add(CompletableFuture.runAsync(() -> {
-                try {
-                    configuration.getString(TestConfigurationType.STRING_VALUE);
-                    configuration.getInt(TestConfigurationType.INT_VALUE);
-                    configuration.getFloat(TestConfigurationType.FLOAT_VALUE);
-                    configuration.getBoolean(TestConfigurationType.BOOLEAN_VALUE);
-                } catch (ConfigurationException e) {
-                    fail("Concurrent read failed", e);
-                }
+                configuration.getString(TestConfigurationType.STRING_VALUE);
+                configuration.getInt(TestConfigurationType.INT_VALUE);
+                configuration.getFloat(TestConfigurationType.FLOAT_VALUE);
+                configuration.getBoolean(TestConfigurationType.BOOLEAN_VALUE);
             }, executor));
         }
         CompletableFuture.allOf(warmupFutures.toArray(new CompletableFuture[0])).join();
@@ -125,16 +129,12 @@ class ConfigurationPerformanceTest {
             final int iteration = i;
             futures.add(CompletableFuture.runAsync(() -> {
                 long startTime = System.nanoTime();
-                try {
-                    configuration.getString(TestConfigurationType.STRING_VALUE);
-                    configuration.getInt(TestConfigurationType.INT_VALUE);
-                    configuration.getFloat(TestConfigurationType.FLOAT_VALUE);
-                    configuration.getBoolean(TestConfigurationType.BOOLEAN_VALUE);
-                    long endTime = System.nanoTime();
-                    responseTimes.put(iteration, endTime - startTime);
-                } catch (ConfigurationException e) {
-                    fail("Concurrent read failed", e);
-                }
+                configuration.getString(TestConfigurationType.STRING_VALUE);
+                configuration.getInt(TestConfigurationType.INT_VALUE);
+                configuration.getFloat(TestConfigurationType.FLOAT_VALUE);
+                configuration.getBoolean(TestConfigurationType.BOOLEAN_VALUE);
+                long endTime = System.nanoTime();
+                responseTimes.put(iteration, endTime - startTime);
             }, executor));
         }
 

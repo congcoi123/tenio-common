@@ -1,75 +1,105 @@
+/*
+The MIT License
+
+Copyright (c) 2016-2023 kong <congcoi123@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
 package com.tenio.common.logger;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.*;
 
+import com.google.common.base.Throwables;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Unit Test Cases For AbstractLogger")
 class AbstractLoggerTest {
 
-    private static class TestLogger extends AbstractLogger {
-        // Concrete implementation for testing
-    }
+  private Logger mockLogger;
+  private TestLogger logger;
 
-    private TestLogger logger;
+  private static class TestLogger extends AbstractLogger {
+    // No need to override anything - we'll use reflection to set the logger field
+  }
 
-    @BeforeEach
-    void setUp() {
-        logger = new TestLogger();
-    }
+  @BeforeEach
+  void setUp() throws Exception {
+    mockLogger = mock(Logger.class);
+    logger = new TestLogger();
+    
+    // Use reflection to set the logger field
+    var loggerField = AbstractLogger.class.getDeclaredField("logger");
+    loggerField.setAccessible(true);
+    loggerField.set(logger, mockLogger);
+  }
 
-    @Test
-    void buildgen_shouldCreateStringBuilder() {
-        var result = logger.buildgen("test", 123, true);
-        assertEquals("test123true", result.toString());
-    }
+  @Test
+  @DisplayName("error with throwable should log when enabled")
+  void error_withThrowable_shouldLogWhenEnabled() {
+    when(mockLogger.isErrorEnabled()).thenReturn(true);
+    Throwable throwable = new RuntimeException("Test exception");
+    logger.error(throwable);
+    verify(mockLogger).error(Throwables.getStackTraceAsString(throwable));
+  }
 
-    @Test
-    void info_withStringTagAndObject_shouldNotThrowException() {
-        assertDoesNotThrow(() -> logger.info("TestTag", "Test message"));
-    }
+  @Test
+  @DisplayName("info with string tag and object should log when enabled")
+  void info_withStringTagAndObject_shouldLogWhenEnabled() {
+    when(mockLogger.isInfoEnabled()).thenReturn(true);
+    logger.info("TAG", "message");
+    verify(mockLogger).info("[TAG] message");
+  }
 
-    @Test
-    void info_withStringBuilderTagAndMsg_shouldNotThrowException() {
-        var tag = logger.buildgen("TestTag");
-        var msg = logger.buildgen("Test message");
-        assertDoesNotThrow(() -> logger.info(tag, msg));
-    }
+  @Test
+  @DisplayName("info with string tag and object should not log when disabled")
+  void info_withStringTagAndObject_shouldNotLogWhenDisabled() {
+    when(mockLogger.isInfoEnabled()).thenReturn(false);
+    logger.info("TAG", "message");
+    verify(mockLogger, never()).info(anyString());
+  }
 
-    @Test
-    void error_withThrowable_shouldNotThrowException() {
-        var exception = new RuntimeException("Test exception");
-        assertDoesNotThrow(() -> logger.error(exception));
-    }
+  @Test
+  @DisplayName("buildgen should create StringBuilder with concatenated content")
+  void buildgen_shouldCreateStringBuilderWithConcatenatedContent() {
+    StringBuilder result = logger.buildgen("Hello", " ", "World");
+    assertEquals("Hello World", result.toString());
+  }
 
-    @Test
-    void error_withVarargs_shouldNotThrowException() {
-        assertDoesNotThrow(() -> logger.error("Error 1", "Error 2", "Error 3"));
-    }
+  @Test
+  @DisplayName("buildgen with mixed types should concatenate properly")
+  void buildgen_withMixedTypes_shouldConcatenateProperly() {
+    StringBuilder result = logger.buildgen("Count: ", 42, " and ", true);
+    assertEquals("Count: 42 and true", result.toString());
+  }
 
-    @Test
-    void isErrorEnabled_shouldReturnBoolean() {
-        boolean result = logger.isErrorEnabled();
-        assertNotNull(result);
-    }
-
-    @Test
-    void isInfoEnabled_shouldReturnBoolean() {
-        boolean result = logger.isInfoEnabled();
-        assertNotNull(result);
-    }
-
-    @Test
-    void info_withMultipleParameters_shouldNotThrowException() {
-        var where = logger.buildgen("TestClass");
-        var tag = logger.buildgen("TestTag");
-        var msg = logger.buildgen("Test message");
-        assertDoesNotThrow(() -> logger.info(where, tag, msg));
-    }
-
-    @Test
-    void error_withThrowableAndExtra_shouldNotThrowException() {
-        var exception = new RuntimeException("Test exception");
-        var extra = logger.buildgen("Extra info");
-        assertDoesNotThrow(() -> logger.error(exception, extra));
-    }
+  @Test
+  @DisplayName("buildgen with no objects should return empty StringBuilder")
+  void buildgen_withNoObjects_shouldReturnEmptyStringBuilder() {
+    StringBuilder result = logger.buildgen();
+    assertEquals("", result.toString());
+  }
 } 

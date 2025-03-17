@@ -1,10 +1,31 @@
+/*
+The MIT License
+
+Copyright (c) 2016-2023 kong <congcoi123@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
 package com.tenio.common.configuration;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Test implementation of CommonConfiguration for unit testing.
@@ -14,37 +35,45 @@ public class TestConfiguration extends CommonConfiguration {
     @Override
     protected void loadInternal(String file) throws ConfigurationException {
         try {
-            Properties properties = new Properties();
             File configFile = new File(file);
             
             if (!configFile.exists()) {
                 throw new ConfigurationException("Configuration file not found: " + file,
-                    null, ConfigurationException.ErrorType.LOAD_ERROR);
+                    null, null, ConfigurationException.ErrorType.LOAD_ERROR);
             }
 
-            try (FileInputStream fis = new FileInputStream(configFile)) {
-                properties.load(fis);
-            }
-
-            // Load standard properties
-            for (TestConfigurationType type : TestConfigurationType.values()) {
-                String value = properties.getProperty(type.name());
-                if (value != null) {
-                    push(type, convertValue(value, type.getValueType()));
+            // Load from XML file
+            try {
+                javax.xml.parsers.DocumentBuilderFactory dbFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+                javax.xml.parsers.DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                org.w3c.dom.Document doc = dBuilder.parse(configFile);
+                doc.getDocumentElement().normalize();
+                
+                org.w3c.dom.Element root = doc.getDocumentElement();
+                org.w3c.dom.NodeList properties = root.getChildNodes();
+                
+                for (int i = 0; i < properties.getLength(); i++) {
+                    org.w3c.dom.Node node = properties.item(i);
+                    if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                        org.w3c.dom.Element element = (org.w3c.dom.Element) node;
+                        String key = element.getNodeName();
+                        String value = element.getTextContent();
+                        
+                        try {
+                            TestConfigurationType type = TestConfigurationType.valueOf(key);
+                            push(type, convertValue(value, type.getValueType()));
+                        } catch (IllegalArgumentException e) {
+                            // Skip unknown properties
+                        }
+                    }
                 }
+            } catch (Exception e) {
+                throw new ConfigurationException("Failed to load configuration file: " + file,
+                    e, null, ConfigurationException.ErrorType.LOAD_ERROR);
             }
-
-            // Handle extensions
-            Map<String, String> extensions = properties.entrySet().stream()
-                .filter(e -> !isStandardProperty(e.getKey().toString()))
-                .collect(java.util.stream.Collectors.toMap(
-                    e -> e.getKey().toString(),
-                    e -> e.getValue().toString()
-                ));
-
-            extend(extensions);
-
-        } catch (IOException e) {
+        } catch (ConfigurationException e) {
+            throw e;
+        } catch (Exception e) {
             throw new ConfigurationException("Failed to load configuration file: " + file,
                 e, null, ConfigurationException.ErrorType.LOAD_ERROR);
         }
@@ -60,22 +89,8 @@ public class TestConfiguration extends CommonConfiguration {
         try {
             return TestConfigurationType.valueOf(name);
         } catch (IllegalArgumentException e) {
-            // For performance tests, handle dynamic keys
-            if (name.startsWith("string_") || name.startsWith("int_") || 
-                name.startsWith("float_") || name.startsWith("bool_") ||
-                name.startsWith("nested_")) {
-                return new DynamicConfigurationType(name);
-            }
+            // Skip unknown properties
             return null;
-        }
-    }
-
-    private boolean isStandardProperty(String key) {
-        try {
-            TestConfigurationType.valueOf(key);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
         }
     }
 
@@ -91,7 +106,7 @@ public class TestConfiguration extends CommonConfiguration {
                 return value;
             } else {
                 throw new ConfigurationException("Unsupported type: " + targetType.getSimpleName(),
-                    null, ConfigurationException.ErrorType.INVALID_VALUE_TYPE);
+                    null, null, ConfigurationException.ErrorType.INVALID_VALUE_TYPE);
             }
         } catch (NumberFormatException e) {
             throw new ConfigurationException("Failed to convert value: " + value,
@@ -107,68 +122,71 @@ public class TestConfiguration extends CommonConfiguration {
     @Override
     public void validate() throws ConfigurationException {
         super.validate();
-        
-        // Additional validation logic for TestConfiguration
-        for (TestConfigurationType type : TestConfigurationType.values()) {
-            if (isDefined(type)) {
-                Object value = get(type, Object.class).orElse(null);
-                if (!type.getValidator().test(value)) {
-                    throw new ConfigurationException(
-                        "Validation failed for " + type + ": " + value,
-                        type,
-                        ConfigurationException.ErrorType.VALIDATION_FAILED
-                    );
-                }
+        // No additional validation needed
+    }
+
+    @Override
+    protected void loadInternalToMap(String file, Map<ConfigurationType, Object> configMap) throws ConfigurationException {
+        try {
+            File configFile = new File(file);
+            
+            if (!configFile.exists()) {
+                throw new ConfigurationException("Configuration file not found: " + file,
+                    null, null, ConfigurationException.ErrorType.LOAD_ERROR);
             }
+
+            // Load from XML file
+            try {
+                javax.xml.parsers.DocumentBuilderFactory dbFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+                javax.xml.parsers.DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                org.w3c.dom.Document doc = dBuilder.parse(configFile);
+                doc.getDocumentElement().normalize();
+                
+                org.w3c.dom.Element root = doc.getDocumentElement();
+                org.w3c.dom.NodeList properties = root.getChildNodes();
+                
+                for (int i = 0; i < properties.getLength(); i++) {
+                    org.w3c.dom.Node node = properties.item(i);
+                    if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                        org.w3c.dom.Element element = (org.w3c.dom.Element) node;
+                        String key = element.getNodeName();
+                        String value = element.getTextContent();
+                        
+                        try {
+                            TestConfigurationType type = TestConfigurationType.valueOf(key);
+                            configMap.put(type, convertValue(value, type.getValueType()));
+                        } catch (IllegalArgumentException e) {
+                            // Skip unknown properties
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                throw new ConfigurationException("Failed to load configuration file: " + file,
+                    e, null, ConfigurationException.ErrorType.LOAD_ERROR);
+            }
+        } catch (ConfigurationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ConfigurationException("Failed to load configuration file: " + file,
+                e, null, ConfigurationException.ErrorType.LOAD_ERROR);
         }
     }
 
-    // Inner class to handle dynamic configuration types for performance tests
-    private static class DynamicConfigurationType implements ConfigurationType {
-        private final String name;
-        
-        public DynamicConfigurationType(String name) {
-            this.name = name;
-        }
-        
-        @Override
-        public Class<?> getValueType() {
-            if (name.startsWith("string_")) {
-                return String.class;
-            } else if (name.startsWith("int_")) {
-                return Integer.class;
-            } else if (name.startsWith("float_")) {
-                return Float.class;
-            } else if (name.startsWith("bool_")) {
-                return Boolean.class;
-            } else {
-                return Object.class;
-            }
-        }
-        
-        @Override
-        public boolean isRequired() {
-            return false;
-        }
-        
-        @Override
-        public java.util.function.Predicate<Object> getValidator() {
-            return obj -> true;
-        }
-        
-        @Override
-        public Object getDefaultValue() {
+    @Override
+    public String getString(ConfigurationType key) {
+        if (key == null) {
             return null;
         }
         
-        @Override
-        public String getDescription() {
-            return "Dynamic configuration type for performance testing";
+        return super.getString(key);
+    }
+
+    @Override
+    public int getInt(ConfigurationType key) {
+        if (key == null) {
+            return 0;
         }
         
-        @Override
-        public String toString() {
-            return name;
-        }
+        return super.getInt(key);
     }
 } 

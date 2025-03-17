@@ -79,7 +79,8 @@ public final class MsgPackMap extends HashMap<String, Object>
    * @return the value converted in <code>boolean</code> type fetched by its key in the map
    */
   public boolean getBoolean(String key) {
-    return (boolean) get(key);
+    Object value = get(key);
+    return value != null ? (boolean) value : false;
   }
 
   /**
@@ -109,7 +110,8 @@ public final class MsgPackMap extends HashMap<String, Object>
    * @return the value converted in <code>integer</code> type fetched by its key in the map
    */
   public int getInteger(String key) {
-    return (int) get(key);
+    Object value = get(key);
+    return value != null ? (int) value : 0;
   }
 
   /**
@@ -119,7 +121,8 @@ public final class MsgPackMap extends HashMap<String, Object>
    * @return the value converted in <code>float</code> type fetched by its key in the map
    */
   public float getFloat(String key) {
-    return (float) get(key);
+    Object value = get(key);
+    return value != null ? (float) value : 0.0f;
   }
 
   /**

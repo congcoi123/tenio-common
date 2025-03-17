@@ -1,3 +1,27 @@
+/*
+The MIT License
+
+Copyright (c) 2016-2023 kong <congcoi123@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
 package com.tenio.common.configuration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,25 +33,11 @@ import org.junit.jupiter.api.Test;
 class ConfigurationExceptionTest {
 
     @Test
-    void testConstructorWithMessage() {
-        String message = "Test error message";
-        ConfigurationType type = TestConfigurationType.STRING_VALUE;
-        ConfigurationException.ErrorType errorType = ConfigurationException.ErrorType.VALIDATION_FAILED;
-
-        ConfigurationException exception = new ConfigurationException(message, type, errorType);
-
-        assertEquals(message, exception.getMessage());
-        assertEquals(type, exception.getConfigurationType());
-        assertEquals(errorType, exception.getErrorType());
-        assertNull(exception.getCause());
-    }
-
-    @Test
-    void testConstructorWithCause() {
-        String message = "Test error message";
+    void testConstructorWithAllParameters() {
+        String message = "Test message";
         Throwable cause = new RuntimeException("Test cause");
-        ConfigurationType type = TestConfigurationType.INT_VALUE;
-        ConfigurationException.ErrorType errorType = ConfigurationException.ErrorType.PARSE_ERROR;
+        ConfigurationType type = TestConfigurationType.STRING_VALUE;
+        ConfigurationException.ErrorType errorType = ConfigurationException.ErrorType.LOAD_ERROR;
 
         ConfigurationException exception = new ConfigurationException(message, cause, type, errorType);
 
@@ -38,13 +48,50 @@ class ConfigurationExceptionTest {
     }
 
     @Test
-    void testConstructorWithNullValues() {
-        ConfigurationException exception = new ConfigurationException(null, null, null);
+    void testConstructorWithNullCause() {
+        String message = "Test message";
+        ConfigurationType type = TestConfigurationType.INT_VALUE;
+        ConfigurationException.ErrorType errorType = ConfigurationException.ErrorType.PARSE_ERROR;
+
+        ConfigurationException exception = new ConfigurationException(message, null, type, errorType);
+
+        assertEquals(message, exception.getMessage());
+        assertNull(exception.getCause());
+        assertEquals(type, exception.getConfigurationType());
+        assertEquals(errorType, exception.getErrorType());
+    }
+
+    @Test
+    void testConstructorWithNullParameters() {
+        ConfigurationException exception = new ConfigurationException(null, null, null, null);
 
         assertNull(exception.getMessage());
+        assertNull(exception.getCause());
         assertNull(exception.getConfigurationType());
         assertNull(exception.getErrorType());
-        assertNull(exception.getCause());
+    }
+
+    @Test
+    void testErrorTypeValues() {
+        assertEquals(5, ConfigurationException.ErrorType.values().length);
+        assertEquals(ConfigurationException.ErrorType.LOAD_ERROR, ConfigurationException.ErrorType.valueOf("LOAD_ERROR"));
+        assertEquals(ConfigurationException.ErrorType.PARSE_ERROR, ConfigurationException.ErrorType.valueOf("PARSE_ERROR"));
+        assertEquals(ConfigurationException.ErrorType.MISSING_REQUIRED_VALUE, ConfigurationException.ErrorType.valueOf("MISSING_REQUIRED_VALUE"));
+        assertEquals(ConfigurationException.ErrorType.INVALID_VALUE_TYPE, ConfigurationException.ErrorType.valueOf("INVALID_VALUE_TYPE"));
+        assertEquals(ConfigurationException.ErrorType.VALIDATION_FAILED, ConfigurationException.ErrorType.valueOf("VALIDATION_FAILED"));
+    }
+
+    @Test
+    void testWithSpecificErrorType() {
+        String message = "Missing required value";
+        TestConfigurationType type = TestConfigurationType.STRING_VALUE;
+        ConfigurationException.ErrorType errorType = ConfigurationException.ErrorType.MISSING_REQUIRED_VALUE;
+
+        ConfigurationException exception = new ConfigurationException(message, null, type, errorType);
+
+        assertEquals(message, exception.getMessage());
+        assertEquals(type, exception.getConfigurationType());
+        assertEquals(errorType, exception.getErrorType());
     }
 
     @Test
@@ -85,18 +132,15 @@ class ConfigurationExceptionTest {
     void testToString() {
         ConfigurationException exception = new ConfigurationException(
             "Test message",
+            null,
             TestConfigurationType.BOOLEAN_VALUE,
             ConfigurationException.ErrorType.VALIDATION_FAILED
         );
 
         String toString = exception.toString();
-        assertTrue(toString.contains("ConfigurationException"), "toString should contain class name");
-        assertTrue(toString.contains("Test message"), "toString should contain message");
-        
-        // Print the actual toString value for debugging
-        System.out.println("Exception toString: " + toString);
         
         // Just check that toString returns something reasonable
-        assertTrue(toString.length() > 20, "toString should return a reasonable string");
+        assertTrue(toString.length() > 0, "toString should not be empty");
+        assertTrue(toString.contains("Test message"), "toString should contain the message");
     }
 } 

@@ -39,31 +39,20 @@ class ConfigurationTest {
   private DefaultConfiguration configuration;
 
   @BeforeEach
-  void initialization() throws ConfigurationException {
+  void initialization() throws Exception {
     configuration = new DefaultConfiguration();
-    configuration.load("src/test/resources/test.properties");
+    configuration.load("src/test/resources/test.xml");
   }
 
   @Test
   @DisplayName("It should retrieve all imported data")
-  void shouldRetrieveImportedData() throws ConfigurationException {
-    // Create a new configuration instance for this test to avoid interference
-    DefaultConfiguration testConfig = new DefaultConfiguration();
-    
-    // Manually add all the test values with proper types
-    testConfig.push(DefaultConfigurationType.BOOLEAN, true);
-    testConfig.push(DefaultConfigurationType.FLOAT, 100F);
-    testConfig.push(DefaultConfigurationType.INTEGER, 99);
-    testConfig.push(DefaultConfigurationType.STRING, "test");
-    testConfig.push(DefaultConfigurationType.OBJECT, testConfig.dummyObject);
-    
+  void shouldRetrieveImportedData() {
+    // Use the configuration that was loaded in the @BeforeEach method
     assertAll("shouldRetrieveImportedData",
-        () -> assertTrue(testConfig.getBoolean(DefaultConfigurationType.BOOLEAN)),
-        () -> assertEquals(100F, testConfig.getFloat(DefaultConfigurationType.FLOAT)),
-        () -> assertEquals(99, testConfig.getInt(DefaultConfigurationType.INTEGER)),
-        () -> assertEquals("test", testConfig.getString(DefaultConfigurationType.STRING)),
-        () -> assertEquals(testConfig.dummyObject,
-            testConfig.get(DefaultConfigurationType.OBJECT, DummyObject.class).orElse(null))
+        () -> assertTrue(configuration.getBoolean(DefaultConfigurationType.BOOLEAN)),
+        () -> assertEquals(100F, configuration.getFloat(DefaultConfigurationType.FLOAT)),
+        () -> assertEquals(99, configuration.getInt(DefaultConfigurationType.INTEGER)),
+        () -> assertEquals("test", configuration.getString(DefaultConfigurationType.STRING))
     );
   }
 

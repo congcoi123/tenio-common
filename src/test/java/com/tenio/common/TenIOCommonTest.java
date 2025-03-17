@@ -24,22 +24,23 @@ THE SOFTWARE.
 
 package com.tenio.common;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectPackages;
+import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
-import org.junit.runner.RunWith;
 
-@RunWith(JUnitPlatform.class)
-// @Suite
+@Suite
 @SuiteDisplayName("Test all unit test cases for tenio-common module")
 @SelectPackages({
     "com.tenio.common.configuration",
     "com.tenio.common.constant",
     "com.tenio.common.data",
+    "com.tenio.common.exception",
+    "com.tenio.common.logger",
     "com.tenio.common.pool",
     "com.tenio.common.task",
     "com.tenio.common.utility",
     "com.tenio.common.worker"
 })
-class TenIOCommonTest {
+public class TenIOCommonTest {
+    // This class serves as a test suite container
 }

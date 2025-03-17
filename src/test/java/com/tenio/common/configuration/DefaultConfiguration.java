@@ -34,29 +34,48 @@ class DefaultConfiguration extends CommonConfiguration {
   protected void loadInternal(String file) throws ConfigurationException {
     if (file.equals("dummy")) {
       // Use hardcoded values for dummy test
-      push(DefaultConfigurationType.BOOLEAN, "true");
-      push(DefaultConfigurationType.FLOAT, "100F");
-      push(DefaultConfigurationType.INTEGER, "99");
+      push(DefaultConfigurationType.BOOLEAN, true);
+      push(DefaultConfigurationType.FLOAT, 100.0f);
+      push(DefaultConfigurationType.INTEGER, 99);
       push(DefaultConfigurationType.STRING, "test");
       push(DefaultConfigurationType.STRING, "test overridden");
-      push(DefaultConfigurationType.NOT_DEFINED, "-1");
+      push(DefaultConfigurationType.NOT_DEFINED, -1);
       push(DefaultConfigurationType.OBJECT, dummyObject);
     } else {
-      // Load from properties file
-      java.util.Properties props = new java.util.Properties();
-      try (java.io.FileInputStream fis = new java.io.FileInputStream(file)) {
-        props.load(fis);
-        for (String key : props.stringPropertyNames()) {
-          try {
-            DefaultConfigurationType type = DefaultConfigurationType.valueOf(key);
-            // Special handling for OBJECT property
-            if (type == DefaultConfigurationType.OBJECT) {
-              push(type, dummyObject);
-            } else {
-              push(type, props.getProperty(key));
+      // Load from XML file
+      try {
+        javax.xml.parsers.DocumentBuilderFactory dbFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+        javax.xml.parsers.DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        org.w3c.dom.Document doc = dBuilder.parse(new java.io.File(file));
+        doc.getDocumentElement().normalize();
+        
+        org.w3c.dom.Element root = doc.getDocumentElement();
+        org.w3c.dom.NodeList properties = root.getChildNodes();
+        
+        for (int i = 0; i < properties.getLength(); i++) {
+          org.w3c.dom.Node node = properties.item(i);
+          if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+            org.w3c.dom.Element element = (org.w3c.dom.Element) node;
+            String key = element.getNodeName();
+            String value = element.getTextContent();
+            
+            try {
+              DefaultConfigurationType type = DefaultConfigurationType.valueOf(key);
+              // Special handling for OBJECT property
+              if (type == DefaultConfigurationType.OBJECT) {
+                push(type, dummyObject);
+              } else if (type.getValueType() == Boolean.class) {
+                push(type, Boolean.parseBoolean(value));
+              } else if (type.getValueType() == Integer.class) {
+                push(type, Integer.parseInt(value));
+              } else if (type.getValueType() == Float.class) {
+                push(type, Float.parseFloat(value));
+              } else {
+                push(type, value);
+              }
+            } catch (IllegalArgumentException e) {
+              // Skip unknown properties
             }
-          } catch (IllegalArgumentException e) {
-            // Skip unknown properties
           }
         }
         
@@ -64,7 +83,7 @@ class DefaultConfiguration extends CommonConfiguration {
         if (!isDefined(DefaultConfigurationType.OBJECT)) {
           push(DefaultConfigurationType.OBJECT, dummyObject);
         }
-      } catch (java.io.IOException e) {
+      } catch (Exception e) {
         throw new ConfigurationException("Failed to load configuration file: " + file,
             e, null, ConfigurationException.ErrorType.LOAD_ERROR);
       }
@@ -88,5 +107,64 @@ class DefaultConfiguration extends CommonConfiguration {
   @Override
   protected ConfigurationType[] getConfigurationTypes() {
     return DefaultConfigurationType.values();
+  }
+
+  @Override
+  protected void loadInternalToMap(String file, Map<ConfigurationType, Object> configMap) throws ConfigurationException {
+    if (file.equals("dummy")) {
+      // Use hardcoded values for dummy test
+      configMap.put(DefaultConfigurationType.BOOLEAN, true);
+      configMap.put(DefaultConfigurationType.FLOAT, 100.0f);
+      configMap.put(DefaultConfigurationType.INTEGER, 99);
+      configMap.put(DefaultConfigurationType.STRING, "test");
+      configMap.put(DefaultConfigurationType.NOT_DEFINED, -1);
+      configMap.put(DefaultConfigurationType.OBJECT, dummyObject);
+    } else {
+      // Load from XML file
+      try {
+        javax.xml.parsers.DocumentBuilderFactory dbFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+        javax.xml.parsers.DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        org.w3c.dom.Document doc = dBuilder.parse(new java.io.File(file));
+        doc.getDocumentElement().normalize();
+        
+        org.w3c.dom.Element root = doc.getDocumentElement();
+        org.w3c.dom.NodeList properties = root.getChildNodes();
+        
+        for (int i = 0; i < properties.getLength(); i++) {
+          org.w3c.dom.Node node = properties.item(i);
+          if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+            org.w3c.dom.Element element = (org.w3c.dom.Element) node;
+            String key = element.getNodeName();
+            String value = element.getTextContent();
+            
+            try {
+              DefaultConfigurationType type = DefaultConfigurationType.valueOf(key);
+              // Special handling for OBJECT property
+              if (type == DefaultConfigurationType.OBJECT) {
+                configMap.put(type, dummyObject);
+              } else if (type.getValueType() == Boolean.class) {
+                configMap.put(type, Boolean.parseBoolean(value));
+              } else if (type.getValueType() == Integer.class) {
+                configMap.put(type, Integer.parseInt(value));
+              } else if (type.getValueType() == Float.class) {
+                configMap.put(type, Float.parseFloat(value));
+              } else {
+                configMap.put(type, value);
+              }
+            } catch (IllegalArgumentException e) {
+              // Skip unknown properties
+            }
+          }
+        }
+        
+        // Always add the dummy object if it's not already added
+        if (!configMap.containsKey(DefaultConfigurationType.OBJECT)) {
+          configMap.put(DefaultConfigurationType.OBJECT, dummyObject);
+        }
+      } catch (Exception e) {
+        throw new ConfigurationException("Failed to load configuration file: " + file,
+            e, null, ConfigurationException.ErrorType.LOAD_ERROR);
+      }
+    }
   }
 }

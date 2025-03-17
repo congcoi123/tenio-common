@@ -27,42 +27,104 @@ package com.tenio.common.configuration;
 import java.util.function.Predicate;
 
 /**
- * Enhanced configuration type interface that includes type information and validation.
- * This interface defines the contract for configuration keys and their associated metadata.
+ * The ConfigurationType interface defines the contract for configuration keys.
+ * <p>
+ * This interface is typically implemented by enums to provide a type-safe way
+ * to access configuration values. Each configuration type represents a specific
+ * configuration key and provides metadata about the expected value type,
+ * validation rules, default values, and whether the value is required.
+ * <p>
+ * Example implementation:
+ * <pre>
+ * public enum ServerConfigType implements ConfigurationType {
+ *     PORT(Integer.class, true, port -> (int)port > 0 && (int)port < 65536, "Server port number"),
+ *     HOST(String.class, true, host -> host != null && !((String)host).isEmpty(), "Server hostname"),
+ *     DEBUG(Boolean.class, false, value -> true, "Debug mode flag");
+ *     
+ *     private final Class<?> valueType;
+ *     private final boolean required;
+ *     private final Predicate<Object> validator;
+ *     private final String description;
+ *     
+ *     ServerConfigType(Class<?> valueType, boolean required, Predicate<Object> validator, String description) {
+ *         this.valueType = valueType;
+ *         this.required = required;
+ *         this.validator = validator;
+ *         this.description = description;
+ *     }
+ *     
+ *     // Implement interface methods...
+ * }
+ * </pre>
+ * 
+ * @see Configuration
  */
 public interface ConfigurationType {
-    /**
-     * Gets the expected type of the configuration value.
-     *
-     * @return The Class representing the expected type
-     */
-    Class<?> getValueType();
 
-    /**
-     * Gets the default value for this configuration type.
-     *
-     * @return The default value, may be null if no default is specified
-     */
-    Object getDefaultValue();
+  /**
+   * Returns the expected type of the configuration value.
+   * <p>
+   * This method returns the Java class that represents the expected type of the
+   * configuration value. This is used for type checking and conversion when
+   * retrieving values from the configuration.
+   * <p>
+   * Common return values include:
+   * <ul>
+   *   <li>{@link String}.class for text values</li>
+   *   <li>{@link Integer}.class for integer values</li>
+   *   <li>{@link Float}.class for floating-point values</li>
+   *   <li>{@link Boolean}.class for boolean values</li>
+   * </ul>
+   *
+   * @return the Java class representing the expected type of the configuration value
+   */
+  Class<?> getValueType();
 
-    /**
-     * Gets the validator for this configuration type.
-     *
-     * @return A predicate that validates values for this configuration type
-     */
-    Predicate<Object> getValidator();
+  /**
+   * Returns the default value for this configuration type.
+   * <p>
+   * This method returns the default value to use when the configuration does not
+   * contain a value for this key. If there is no sensible default, this method
+   * may return {@code null}.
+   * <p>
+   * The returned value should be of the type specified by {@link #getValueType()}.
+   *
+   * @return the default value, or {@code null} if there is no default
+   */
+  Object getDefaultValue();
 
-    /**
-     * Gets the description of this configuration type.
-     *
-     * @return A human-readable description of what this configuration represents
-     */
-    String getDescription();
+  /**
+   * Returns a predicate that validates configuration values.
+   * <p>
+   * This method returns a predicate that tests whether a configuration value
+   * is valid for this configuration type. The predicate should return {@code true}
+   * if the value is valid, and {@code false} otherwise.
+   * <p>
+   * The predicate is used to validate values when they are added to the configuration.
+   *
+   * @return a predicate that validates configuration values
+   */
+  Predicate<Object> getValidator();
 
-    /**
-     * Checks if this configuration is required.
-     *
-     * @return true if this configuration must be provided, false otherwise
-     */
-    boolean isRequired();
+  /**
+   * Returns a description of this configuration type.
+   * <p>
+   * This method returns a human-readable description of this configuration type,
+   * which can be used for documentation or error messages.
+   *
+   * @return a description of this configuration type
+   */
+  String getDescription();
+
+  /**
+   * Returns whether this configuration type is required.
+   * <p>
+   * This method returns {@code true} if a value for this configuration type
+   * must be present in the configuration, and {@code false} if it is optional.
+   * <p>
+   * If a required configuration value is missing, validation will fail.
+   *
+   * @return {@code true} if this configuration type is required, {@code false} otherwise
+   */
+  boolean isRequired();
 }
