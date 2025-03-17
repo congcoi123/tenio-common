@@ -66,7 +66,7 @@ public final class MathUtility {
   /**
    * The epsilon value in float.
    */
-  public static final float EPSILON_FLOAT = Float.MIN_NORMAL;
+  public static final float EPSILON_FLOAT = 0.000001f;
   // ----------------------------------------------
   // some random number functions
   // ----------------------------------------------
@@ -97,18 +97,18 @@ public final class MathUtility {
    * @return a converted value in radian unit
    */
   public static float degreeToRadian(float degree) {
-    return TWO_PI * (degree / 360);
+    return (float) (PI * degree / 180.0);
   }
 
   /**
-   * Compares two real numbers.
+   * Determines if two float values are equal.
    *
-   * @param a a value
-   * @param b b value
-   * @return Returns <b>true</b> if they are equal
+   * @param a the first value
+   * @param b the second value
+   * @return <code>true</code> if two values are equal, otherwise <code>false</code>
    */
   public static boolean isEqual(float a, float b) {
-    return Math.abs(a - b) < 1E-12;
+    return Math.abs(a - b) < EPSILON_FLOAT;
   }
 
   /**
@@ -153,14 +153,15 @@ public final class MathUtility {
   }
 
   /**
-   * Retrieves a random integer number.
+   * Returns a random integer value in range [x, y].
    *
-   * @param x from value
-   * @param y to value
-   * @return a random integer between x and y (included x and y)
+   * @param x the minimum value
+   * @param y the maximum value
+   * @return a random integer value
    */
   public static int randInt(int x, int y) {
-    return x + (int) (Math.random() * ((y - x) + 1));
+    if (x == y) return x;
+    return random.nextInt(y - x + 1) + x;
   }
 
   /**
@@ -173,14 +174,15 @@ public final class MathUtility {
   }
 
   /**
-   * Retrieves a random float number in range.
+   * Returns a random float value in range [x, y].
    *
-   * @param x x value
-   * @param y y value
-   * @return a random float between x and y
+   * @param x the minimum value
+   * @param y the maximum value
+   * @return a random float value
    */
   public static float randInRange(float x, float y) {
-    return x + randFloat() * (y - x);
+    if (x == y) return x;
+    return x + random.nextFloat() * (y - x);
   }
 
   /**

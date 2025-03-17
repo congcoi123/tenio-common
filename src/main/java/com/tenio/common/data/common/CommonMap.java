@@ -24,7 +24,6 @@ THE SOFTWARE.
 
 package com.tenio.common.data.common;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,9 +31,7 @@ import java.util.Map;
  * This is an element object class holds data in a map. All message comes from other services
  * will be converted to this object. That helps normalize the way to communicate and be easy to use.
  */
-public final class CommonMap extends HashMap<String, Object> implements Serializable {
-
-  private static final long serialVersionUID = 8818783476027583633L;
+public final class CommonMap extends HashMap<String, Object> {
 
   /**
    * Creates a new fresh instance.

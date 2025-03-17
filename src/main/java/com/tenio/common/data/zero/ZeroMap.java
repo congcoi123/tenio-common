@@ -24,15 +24,13 @@ THE SOFTWARE.
 
 package com.tenio.common.data.zero;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
 /**
  * This class holds data by pairs of key and value, works like a map.
  */
-public interface ZeroMap extends ReadonlyZeroMap, Iterable<Map.Entry<String, ZeroElement>>,
-    Serializable {
+public interface ZeroMap extends ReadonlyZeroMap, Iterable<Map.Entry<String, ZeroElement>> {
 
   /**
    * Removes an element by using its key.

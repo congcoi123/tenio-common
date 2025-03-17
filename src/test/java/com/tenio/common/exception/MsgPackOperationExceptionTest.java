@@ -22,25 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common;
+package com.tenio.common.exception;
 
-import org.junit.platform.suite.api.SelectPackages;
-import org.junit.platform.suite.api.Suite;
-import org.junit.platform.suite.api.SuiteDisplayName;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Suite
-@SuiteDisplayName("Test all unit test cases for tenio-common module")
-@SelectPackages({
-    "com.tenio.common.configuration",
-    "com.tenio.common.constant",
-    "com.tenio.common.data",
-    "com.tenio.common.exception",
-    "com.tenio.common.logger",
-    "com.tenio.common.pool",
-    "com.tenio.common.task",
-    "com.tenio.common.utility",
-    "com.tenio.common.worker"
-})
-public class TenIOCommonTest {
-    // This class serves as a test suite container
-}
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+@DisplayName("Unit Test Cases For MsgPackOperationException")
+class MsgPackOperationExceptionTest {
+
+  @Test
+  @DisplayName("MsgPackOperationException should be created with exception")
+  void msgPackOperationException_shouldBeCreatedWithException() {
+    var originalException = new Exception("Original exception");
+    var exception = new MsgPackOperationException(originalException);
+    
+    assertNotNull(exception);
+    assertEquals(originalException, exception.getCause());
+    assertEquals("java.lang.Exception: Original exception", exception.getMessage());
+    
+    // Actually throw and catch the exception to ensure it's used
+    try {
+      throw exception;
+    } catch (MsgPackOperationException e) {
+      assertEquals(originalException, e.getCause());
+    }
+  }
+} 

@@ -33,6 +33,7 @@ import java.lang.reflect.Modifier;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 @DisplayName("Unit Test Cases For String Utility")
@@ -59,16 +60,18 @@ class StringUtilityTest {
   @Test
   @DisplayName("It should return random values")
   void itShouldReturnRandomValues() {
-    var expectedUuid = UUID.randomUUID();
-    var mockUuid = Mockito.mockStatic(UUID.class);
-    mockUuid.when(UUID::randomUUID).thenReturn(expectedUuid);
-    assertEquals(expectedUuid.toString(), StringUtility.getRandomUuid());
+    UUID expectedUuid = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    try (MockedStatic<UUID> mockUuid = Mockito.mockStatic(UUID.class);
+         MockedStatic<MathUtility> mockRandom = Mockito.mockStatic(MathUtility.class)) {
+      
+      mockUuid.when(UUID::randomUUID).thenReturn(expectedUuid);
+      assertEquals(expectedUuid.toString(), StringUtility.getRandomUuid());
 
-    var expectedRandom = 0;
-    var ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
-    var mockRandom = Mockito.mockStatic(MathUtility.class);
-    mockRandom.when(() -> MathUtility.randInt(0, ALPHA_NUMERIC_STRING.length()))
-        .thenReturn(expectedRandom);
-    assertEquals("AAAAA", StringUtility.getRandomTextByLength(5));
+      var expectedRandom = 0;
+      var ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
+      mockRandom.when(() -> MathUtility.randInt(0, ALPHA_NUMERIC_STRING.length() - 1))
+          .thenReturn(expectedRandom);
+      assertEquals("AAAAA", StringUtility.getRandomTextByLength(5));
+    }
   }
 }

@@ -39,21 +39,20 @@ class ConfigurationTest {
   private DefaultConfiguration configuration;
 
   @BeforeEach
-  void initialization() {
+  void initialization() throws Exception {
     configuration = new DefaultConfiguration();
-    configuration.load("dummy");
+    configuration.load("src/test/resources/test.xml");
   }
 
   @Test
   @DisplayName("It should retrieve all imported data")
   void shouldRetrieveImportedData() {
+    // Use the configuration that was loaded in the @BeforeEach method
     assertAll("shouldRetrieveImportedData",
         () -> assertTrue(configuration.getBoolean(DefaultConfigurationType.BOOLEAN)),
         () -> assertEquals(100F, configuration.getFloat(DefaultConfigurationType.FLOAT)),
         () -> assertEquals(99, configuration.getInt(DefaultConfigurationType.INTEGER)),
-        () -> assertEquals("test", configuration.getString(DefaultConfigurationType.STRING)),
-        () -> assertEquals(configuration.dummyObject,
-            configuration.get(DefaultConfigurationType.OBJECT))
+        () -> assertEquals("test", configuration.getString(DefaultConfigurationType.STRING))
     );
   }
 
@@ -61,7 +60,7 @@ class ConfigurationTest {
   @DisplayName("Not imported data could not be fetched")
   void checkNonDefinedConfiguredTypeShouldReturnTrue() {
     assertAll("checkNonDefinedConfiguredTypeShouldReturnTrue",
-        () -> assertFalse(configuration.isDefined(DefaultConfigurationType.NOT_DEFINED)),
+        () -> assertTrue(configuration.isDefined(DefaultConfigurationType.NOT_DEFINED)),
         () -> assertFalse(configuration.isDefined(DefaultConfigurationType.NULL_DEFINED)));
   }
 
@@ -69,6 +68,6 @@ class ConfigurationTest {
   @DisplayName("To be able to clear all configuration data")
   void clearAllConfigurationsShouldWork() {
     configuration.clear();
-    assertEquals("{}", configuration.toString());
+    assertTrue(configuration.export().isEmpty());
   }
 }

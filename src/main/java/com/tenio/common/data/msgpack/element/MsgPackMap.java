@@ -26,8 +26,6 @@ package com.tenio.common.data.msgpack.element;
 
 import com.tenio.common.data.DataCollection;
 import com.tenio.common.data.msgpack.MsgPackUtility;
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -37,10 +35,7 @@ import java.util.Objects;
  * will be converted to this object. That helps normalize the way to communicate and be easy to use.
  */
 public final class MsgPackMap extends HashMap<String, Object>
-    implements DataCollection, Serializable {
-
-  @Serial
-  private static final long serialVersionUID = 6697372748701824069L;
+    implements DataCollection {
 
   /**
    * Creates a new fresh instance.
@@ -84,7 +79,8 @@ public final class MsgPackMap extends HashMap<String, Object>
    * @return the value converted in <code>boolean</code> type fetched by its key in the map
    */
   public boolean getBoolean(String key) {
-    return (boolean) get(key);
+    Object value = get(key);
+    return value != null ? (boolean) value : false;
   }
 
   /**
@@ -114,7 +110,8 @@ public final class MsgPackMap extends HashMap<String, Object>
    * @return the value converted in <code>integer</code> type fetched by its key in the map
    */
   public int getInteger(String key) {
-    return (int) get(key);
+    Object value = get(key);
+    return value != null ? (int) value : 0;
   }
 
   /**
@@ -124,7 +121,8 @@ public final class MsgPackMap extends HashMap<String, Object>
    * @return the value converted in <code>float</code> type fetched by its key in the map
    */
   public float getFloat(String key) {
-    return (float) get(key);
+    Object value = get(key);
+    return value != null ? (float) value : 0.0f;
   }
 
   /**

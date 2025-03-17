@@ -24,13 +24,12 @@ THE SOFTWARE.
 
 package com.tenio.common.data.zero;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 /**
  * This class holds sequence elements.
  */
-public interface ZeroArray extends ReadonlyZeroArray, Iterable<ZeroElement>, Serializable {
+public interface ZeroArray extends ReadonlyZeroArray, Iterable<ZeroElement> {
 
   /**
    * Removes an element at an <code>integer</code> index.

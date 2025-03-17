@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <BOOLEAN>true</BOOLEAN>
+    <FLOAT>100.0</FLOAT>
+    <INTEGER>99</INTEGER>
+    <STRING>test</STRING>
+    <NOT_DEFINED>-1</NOT_DEFINED>
+    <OBJECT>dummy</OBJECT>
+</configuration> 

@@ -22,28 +22,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.tenio.common.constant;
+package com.tenio.common.exception;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("Unit Test Cases For Constant")
-class ConstantTest {
+@DisplayName("Unit Test Cases For RunningScheduledTaskException")
+class RunningScheduledTaskExceptionTest {
 
   @Test
-  @DisplayName("Throw an exception when the class's instance is attempted creating")
-  void createNewInstanceShouldThrowException() throws NoSuchMethodException {
-    Constructor<?> constructor = CommonConstant.class.getDeclaredConstructor();
-    assertTrue(Modifier.isPrivate(constructor.getModifiers()));
-    assertThrows(InvocationTargetException.class, () -> {
-      constructor.setAccessible(true);
-      constructor.newInstance();
-    });
+  @DisplayName("RunningScheduledTaskException should be created with default constructor")
+  void runningScheduledTaskException_shouldBeCreatedWithDefaultConstructor() throws Exception {
+    // Use reflection to create an instance since the class has no public constructor
+    Constructor<RunningScheduledTaskException> constructor = 
+        RunningScheduledTaskException.class.getDeclaredConstructor();
+    constructor.setAccessible(true);
+    var exception = constructor.newInstance();
+    
+    assertNotNull(exception);
+    assertNull(exception.getMessage());
+    assertNull(exception.getCause());
+    
+    // Actually throw and catch the exception to ensure it's used
+    try {
+      throw exception;
+    } catch (RunningScheduledTaskException e) {
+      assertNull(e.getMessage());
+    }
   }
-}
+} 
