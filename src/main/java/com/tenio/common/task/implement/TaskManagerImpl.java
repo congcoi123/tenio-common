@@ -68,15 +68,10 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
   public void create(String id, ScheduledFuture<?> task) {
     tasks.compute(id, (key, existingTask) -> {
       if (existingTask != null && (!existingTask.isDone() || !existingTask.isCancelled())) {
-        if (isErrorEnabled()) {
-          error(new RunningScheduledTaskException(), "task id: ", id);
-        }
+        error(new RunningScheduledTaskException(), "task id: ", id);
         return existingTask; // Keep the old task
       }
-
-      if (isInfoEnabled()) {
-        info("RUN TASK", buildgen(id, " >Time left> ", task.getDelay(TimeUnit.SECONDS), " seconds"));
-      }
+      info("RUN TASK", buildgen(id, " >Time left> ", task.getDelay(TimeUnit.SECONDS), " seconds"));
       return task;
     });
   }
@@ -88,9 +83,7 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
       if (!task.isDone() && !task.isCancelled()) {
         task.cancel(true);
       }
-      if (isInfoEnabled()) {
-        info("KILLED TASK", id);
-      }
+      info("KILLED TASK", id);
     }
   }
 
@@ -102,9 +95,7 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
       var id = entry.getKey();
       var task = entry.getValue();
 
-      if (isInfoEnabled()) {
-        info("KILLED TASK", id);
-      }
+      info("KILLED TASK", id);
 
       if (task != null && (!task.isDone() || !task.isCancelled())) {
         task.cancel(true);
