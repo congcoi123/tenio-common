@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2016-2023 kong <congcoi123@gmail.com>
+Copyright (c) 2016-2025 kong <congcoi123@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@ package com.tenio.common.utility;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -33,6 +34,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.jar.JarEntry;
 
 /**
@@ -75,19 +77,20 @@ public final class ClassLoaderUtility {
   private static void checkJarFile(JarURLConnection connection, String packages,
                                    HashSet<Class<?>> classes)
       throws ClassNotFoundException, IOException {
-    final var jarFile = connection.getJarFile();
-    final var entries = jarFile.entries();
-    String name;
+    try (var jarFile = connection.getJarFile()) {
+      final var entries = jarFile.entries();
+      String name;
 
-    for (JarEntry jarEntry; entries.hasMoreElements()
-        && ((jarEntry = entries.nextElement()) != null); ) {
-      name = jarEntry.getName();
+      for (JarEntry jarEntry; entries.hasMoreElements()
+          && ((jarEntry = entries.nextElement()) != null); ) {
+        name = jarEntry.getName();
 
-      if (name.contains(".class")) {
-        name = name.substring(0, name.length() - 6).replace('/', '.');
+        if (name.endsWith(".class")) {
+          name = name.substring(0, name.length() - 6).replace('/', '.');
 
-        if (name.contains(packages)) {
-          classes.add(Class.forName(name));
+          if (name.startsWith(packages + ".")) {
+            classes.add(Class.forName(name));
+          }
         }
       }
     }
@@ -98,7 +101,7 @@ public final class ClassLoaderUtility {
    * by the context class loader.
    *
    * @param packages the package name to search
-   * @return a list of classes that exist within that package
+   * @return a set of classes that exist within that package
    * @throws ClassNotFoundException if the finding class cannot be found
    */
   public static HashSet<Class<?>> getClasses(String packages)
@@ -147,5 +150,34 @@ public final class ClassLoaderUtility {
     }
 
     return classes;
+  }
+
+  /**
+   * Attempts to list all the classes in the specified packages as determined
+   * by the context class loader.
+   *
+   * @param packages the set of package names to search
+   * @return a set of classes that exist within that package
+   * @throws ClassNotFoundException if the finding class cannot be found
+   */
+  public static HashSet<Class<?>> getClasses(Set<String> packages) throws ClassNotFoundException {
+    var classes = new HashSet<Class<?>>();
+    for (var packageName : packages) {
+      classes.addAll(ClassLoaderUtility.getClasses(packageName));
+    }
+    return classes;
+  }
+
+  public static Set<Class<?>> getTypesAnnotatedWith(Set<Class<?>> allClasses,
+                                                  Class<? extends Annotation> annotation)
+      throws ClassNotFoundException {
+    Set<Class<?>> annotatedClasses = new HashSet<>();
+
+    for (Class<?> clazz : allClasses) {
+      if (clazz.isAnnotationPresent(annotation)) {
+        annotatedClasses.add(clazz);
+      }
+    }
+    return annotatedClasses;
   }
 }
