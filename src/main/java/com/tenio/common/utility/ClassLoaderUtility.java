@@ -168,9 +168,15 @@ public final class ClassLoaderUtility {
     return classes;
   }
 
+  /**
+   * Fetches classes by their annotations.
+   *
+   * @param allClasses all scanned {@link Class}es
+   * @param annotation {@link Annotation} which is annotated on classes
+   * @return a set of classes if available, or an empty one
+   */
   public static Set<Class<?>> getTypesAnnotatedWith(Set<Class<?>> allClasses,
-                                                  Class<? extends Annotation> annotation)
-      throws ClassNotFoundException {
+                                                    Class<? extends Annotation> annotation) {
     Set<Class<?>> annotatedClasses = new HashSet<>();
 
     for (Class<?> clazz : allClasses) {
