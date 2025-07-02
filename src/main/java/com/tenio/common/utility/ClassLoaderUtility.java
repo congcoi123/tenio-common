@@ -32,6 +32,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -49,11 +50,11 @@ public final class ClassLoaderUtility {
   private static void scanDirectory(File directory, String packageName, Set<Class<?>> classes)
       throws ClassNotFoundException {
     File[] files = directory.listFiles();
-    if (files == null) {
+    if (Objects.isNull(files)) {
       return;
     }
 
-    for (File file : files) {
+    for (var file : files) {
       if (file.isDirectory()) {
         scanDirectory(file, packageName + "." + file.getName(), classes);
       } else if (file.getName().endsWith(".class")) {
@@ -86,8 +87,8 @@ public final class ClassLoaderUtility {
           }
         }
       }
-    } catch (IOException e) {
-      throw new ClassNotFoundException("Failed to read jar file: " + jarPath, e);
+    } catch (IOException exception) {
+      throw new ClassNotFoundException("Failed to read jar file: " + jarPath, exception);
     }
   }
 
@@ -100,8 +101,8 @@ public final class ClassLoaderUtility {
    * @throws ClassNotFoundException if the finding class cannot be found
    */
   public static Set<Class<?>> getClasses(String packageName) throws ClassNotFoundException {
-    Set<Class<?>> classes = new HashSet<>();
-    String packagePath = packageName.replace('.', '/');
+    var classes = new HashSet<Class<?>>();
+    var packagePath = packageName.replace('.', '/');
 
     try {
       Enumeration<URL> resources =
@@ -140,7 +141,7 @@ public final class ClassLoaderUtility {
   public static Set<Class<?>> getClasses(Set<String> packages) throws ClassNotFoundException {
     var classes = new HashSet<Class<?>>();
     for (var packageName : packages) {
-      classes.addAll(ClassLoaderUtility.getClasses(packageName));
+      classes.addAll(getClasses(packageName));
     }
     return classes;
   }
@@ -154,9 +155,8 @@ public final class ClassLoaderUtility {
    */
   public static Set<Class<?>> getTypesAnnotatedWith(Set<Class<?>> allClasses,
                                                     Class<? extends Annotation> annotation) {
-    Set<Class<?>> annotatedClasses = new HashSet<>();
-
-    for (Class<?> clazz : allClasses) {
+    var annotatedClasses = new HashSet<Class<?>>();
+    for (var clazz : allClasses) {
       if (clazz.isAnnotationPresent(annotation)) {
         annotatedClasses.add(clazz);
       }
