@@ -37,6 +37,12 @@ public class ZeroElementImpl implements ZeroElement {
   private final ZeroType type;
   private final Object data;
 
+  /**
+   * Constructor.
+   *
+   * @param type {@link ZeroType}
+   * @param data {@link Object}
+   */
   public ZeroElementImpl(ZeroType type, Object data) {
     this.type = type;
     this.data = data;

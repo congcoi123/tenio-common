@@ -37,6 +37,9 @@ public final class UnsupportedMsgPackDataTypeException extends RuntimeException 
   @Serial
   private static final long serialVersionUID = -814968367492853470L;
 
+  /**
+   * Constructor.
+   */
   public UnsupportedMsgPackDataTypeException() {
     super("The data type is not supported. Please check out this available list: null, boolean, byte, short, int, " +
         "float, long, double, String, boolean[], byte[], short[], int[], float[], long[], double[], String[].");

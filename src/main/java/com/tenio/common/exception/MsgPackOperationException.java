@@ -37,6 +37,11 @@ public final class MsgPackOperationException extends RuntimeException {
   @Serial
   private static final long serialVersionUID = -4038782519959446592L;
 
+  /**
+   * Constructor.
+   *
+   * @param exception instance of {@link Exception}
+   */
   public MsgPackOperationException(Exception exception) {
     super(exception);
   }
