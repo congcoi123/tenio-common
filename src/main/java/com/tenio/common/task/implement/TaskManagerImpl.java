@@ -28,7 +28,6 @@ import com.tenio.common.exception.RunningScheduledTaskException;
 import com.tenio.common.logger.SystemLogger;
 import com.tenio.common.task.TaskManager;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -108,7 +107,7 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
   @Override
   public int getRemainTime(String id) {
     var task = tasks.get(id);
-    if (Objects.nonNull(task)) {
+    if (task != null) {
       return (int) task.getDelay(TimeUnit.SECONDS);
     }
     return -1;
