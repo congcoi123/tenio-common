@@ -78,7 +78,9 @@ public final class WorkerPool extends SystemLogger {
       throw new IllegalStateException("WorkersPool is stopped");
     }
 
-    trace("EXECUTED A TASK", debugText);
+    if (isTraceEnabled()) {
+      trace("EXECUTED A TASK", debugText);
+    }
 
     taskQueue.offer(task);
   }
