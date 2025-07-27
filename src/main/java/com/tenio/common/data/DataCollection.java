@@ -42,4 +42,12 @@ public interface DataCollection {
    * @return the collection's size
    */
   int size();
+
+  /**
+   * Retrieves the data type.
+   *
+   * @return the {@link DataType}
+   * @since 0.6.7
+   */
+  DataType getType();
 }

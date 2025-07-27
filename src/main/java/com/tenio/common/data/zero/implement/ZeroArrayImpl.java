@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 package com.tenio.common.data.zero.implement;
 
+import com.tenio.common.data.DataType;
 import com.tenio.common.data.zero.ReadonlyZeroArray;
 import com.tenio.common.data.zero.ZeroArray;
 import com.tenio.common.data.zero.ZeroElement;
@@ -116,6 +117,11 @@ public final class ZeroArrayImpl implements ZeroArray {
   @Override
   public int size() {
     return array.size();
+  }
+
+  @Override
+  public DataType getType() {
+    return DataType.ZERO;
   }
 
   @Override

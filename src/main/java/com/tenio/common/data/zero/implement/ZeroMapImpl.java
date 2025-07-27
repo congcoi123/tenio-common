@@ -25,6 +25,7 @@ THE SOFTWARE.
 package com.tenio.common.data.zero.implement;
 
 import com.tenio.common.data.DataCollection;
+import com.tenio.common.data.DataType;
 import com.tenio.common.data.zero.ReadonlyZeroMap;
 import com.tenio.common.data.zero.ZeroArray;
 import com.tenio.common.data.zero.ZeroElement;
@@ -96,6 +97,11 @@ public final class ZeroMapImpl implements ZeroMap {
   @Override
   public int size() {
     return map.size();
+  }
+
+  @Override
+  public DataType getType() {
+    return DataType.ZERO;
   }
 
   /**
