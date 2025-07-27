@@ -69,8 +69,8 @@ class MsgPackUtilityTest {
   void addedDataInArrayShouldMatch() {
     var origin = new int[] { 10, 20, 30, 40, 50 };
     var carry = MsgPackUtility.newMsgPackMap().putIntegerArray("k", origin);
-    var binary = carry.toBinaries();
-    var newOne = MsgPackUtility.deserialize(binary);
+    var binaries = carry.toBinaries();
+    var newOne = MsgPackUtility.deserialize(binaries);
 
     assert newOne != null;
     assertAll("addedDataInArrayShouldMatch",
@@ -91,8 +91,8 @@ class MsgPackUtilityTest {
         .putFloat("f", 101.1f)
         .putString("s", "msgpack")
         .putMsgPackMap("map", MsgPackMap.newInstance().putBoolean("mapb", true));
-    var binary = origin.toBinaries();
-    var newOne = MsgPackUtility.deserialize(binary);
+    var binaries = origin.toBinaries();
+    var newOne = MsgPackUtility.deserialize(binaries);
 
     assert newOne != null;
     assertAll("putDataInMapShouldMatch",
