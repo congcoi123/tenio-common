@@ -34,7 +34,7 @@ public interface DataCollection {
    *
    * @return the object's array of binaries
    */
-  byte[] toBinary();
+  byte[] toBinaries();
 
   /**
    * Retrieves the number of elements in collection.

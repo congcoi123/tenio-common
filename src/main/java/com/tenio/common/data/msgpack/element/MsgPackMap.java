@@ -463,7 +463,7 @@ public final class MsgPackMap extends HashMap<String, Object>
   }
 
   @Override
-  public byte[] toBinary() {
+  public byte[] toBinaries() {
     return MsgPackUtility.serialize(this);
   }
 

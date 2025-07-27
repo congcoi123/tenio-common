@@ -161,15 +161,15 @@ public final class ZeroUtility {
    * @param map the map
    * @return the stream of bytes converted from the map
    */
-  public static byte[] mapToBinary(ZeroMap map) {
+  public static byte[] mapToBinaries(ZeroMap map) {
     var buffer = ByteBuffer.allocate(BUFFER_CHUNK_BYTES);
     buffer.put((byte) ZeroType.ZERO_MAP.getValue());
     buffer.putShort((short) map.size());
 
-    return mapToBinary(map, buffer);
+    return mapToBinaries(map, buffer);
   }
 
-  private static byte[] mapToBinary(ZeroMap map, ByteBuffer buffer) {
+  private static byte[] mapToBinaries(ZeroMap map, ByteBuffer buffer) {
     var keys = map.getKeys();
     ZeroElement zeroElement;
     Object data;
@@ -196,15 +196,15 @@ public final class ZeroUtility {
    * @param array the array
    * @return the stream of bytes converted from the array
    */
-  public static byte[] arrayToBinary(ZeroArray array) {
+  public static byte[] arrayToBinaries(ZeroArray array) {
     var buffer = ByteBuffer.allocate(BUFFER_CHUNK_BYTES);
     buffer.put((byte) ZeroType.ZERO_ARRAY.getValue());
     buffer.putShort((short) array.size());
 
-    return arrayToBinary(array, buffer);
+    return arrayToBinaries(array, buffer);
   }
 
-  private static byte[] arrayToBinary(ZeroArray array, ByteBuffer buffer) {
+  private static byte[] arrayToBinaries(ZeroArray array, ByteBuffer buffer) {
     ZeroElement zeroElement;
     Object data;
 
@@ -278,8 +278,8 @@ public final class ZeroUtility {
       case FLOAT_ARRAY -> buffer = encodeFloatArray(buffer, (Collection<Float>) data);
       case DOUBLE_ARRAY -> buffer = encodeDoubleArray(buffer, (Collection<Double>) data);
       case STRING_ARRAY -> buffer = encodeStringArray(buffer, (Collection<String>) data);
-      case ZERO_ARRAY -> buffer = appendBinaryToBuffer(buffer, arrayToBinary((ZeroArray) data));
-      case ZERO_MAP -> buffer = appendBinaryToBuffer(buffer, mapToBinary((ZeroMap) data));
+      case ZERO_ARRAY -> buffer = appendBinaryToBuffer(buffer, arrayToBinaries((ZeroArray) data));
+      case ZERO_MAP -> buffer = appendBinaryToBuffer(buffer, mapToBinaries((ZeroMap) data));
     }
 
     return buffer;

@@ -64,8 +64,8 @@ public final class ZeroMapImpl implements ZeroMap {
   }
 
   @Override
-  public byte[] toBinary() {
-    return ZeroUtility.mapToBinary(this);
+  public byte[] toBinaries() {
+    return ZeroUtility.mapToBinaries(this);
   }
 
   @Override

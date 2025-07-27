@@ -60,8 +60,8 @@ public final class ZeroArrayImpl implements ZeroArray {
   }
 
   @Override
-  public byte[] toBinary() {
-    return ZeroUtility.arrayToBinary(this);
+  public byte[] toBinaries() {
+    return ZeroUtility.arrayToBinaries(this);
   }
 
   @Override

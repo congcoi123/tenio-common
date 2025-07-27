@@ -57,7 +57,7 @@ class MsgPackUtilityTest {
   void itShouldReturnCorrectDataCollection() {
     var msgpackArray = new boolean[] { true, false, true };
     var msgpackMap = MsgPackUtility.newMsgPackMap().putBoolean("a", true).putBooleanArray("b", msgpackArray);
-    var checkMsgPackMap = MsgPackUtility.deserialize(msgpackMap.toBinary());
+    var checkMsgPackMap = MsgPackUtility.deserialize(msgpackMap.toBinaries());
 
     assert checkMsgPackMap != null;
     assertEquals(msgpackMap.getBoolean("a"), checkMsgPackMap.getBoolean("a"));
@@ -69,7 +69,7 @@ class MsgPackUtilityTest {
   void addedDataInArrayShouldMatch() {
     var origin = new int[] { 10, 20, 30, 40, 50 };
     var carry = MsgPackUtility.newMsgPackMap().putIntegerArray("k", origin);
-    var binary = carry.toBinary();
+    var binary = carry.toBinaries();
     var newOne = MsgPackUtility.deserialize(binary);
 
     assert newOne != null;
@@ -91,7 +91,7 @@ class MsgPackUtilityTest {
         .putFloat("f", 101.1f)
         .putString("s", "msgpack")
         .putMsgPackMap("map", MsgPackMap.newInstance().putBoolean("mapb", true));
-    var binary = origin.toBinary();
+    var binary = origin.toBinaries();
     var newOne = MsgPackUtility.deserialize(binary);
 
     assert newOne != null;

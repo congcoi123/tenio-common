@@ -130,11 +130,11 @@ class ZeroUtilityTest {
   @DisplayName("Checking whether binaries data is a collection should work")
   void itShouldReturnCorrectDataCollection() {
     var zeroMap = ZeroUtility.newZeroMap().putBoolean("a", true);
-    var checkZeroMap = ZeroUtility.binaryToCollection(zeroMap.toBinary());
+    var checkZeroMap = ZeroUtility.binaryToCollection(zeroMap.toBinaries());
     assertEquals(zeroMap.toString(), checkZeroMap.toString());
 
     var zeroArray = ZeroUtility.newZeroArray().addBoolean(true);
-    var checkZeroArray = ZeroUtility.binaryToCollection(zeroArray.toBinary());
+    var checkZeroArray = ZeroUtility.binaryToCollection(zeroArray.toBinaries());
 
     assertEquals(zeroArray.toString(), checkZeroArray.toString());
     assertThrows(UnsupportedOperationException.class,
@@ -147,7 +147,7 @@ class ZeroUtilityTest {
     var origin = ZeroUtility.newZeroArray();
     origin.addBoolean(true).addByte((byte) 1).addShort((short) 11).addInteger(1000).addFloat(101.1f)
         .addLong(1000L).addDouble(1010101.101);
-    var binary = origin.toBinary();
+    var binary = origin.toBinaries();
     var newOne = ZeroUtility.binaryToArray(binary);
 
     assertAll("primitiveDataInArrayShouldMatch",
@@ -167,7 +167,7 @@ class ZeroUtilityTest {
     var origin = ZeroUtility.newZeroArray();
     origin.addNull().addZeroElement(ZeroUtility.newZeroElement(ZeroType.BOOLEAN, false))
         .addString("test");
-    var binary = origin.toBinary();
+    var binary = origin.toBinaries();
     var newOne = ZeroUtility.binaryToArray(binary);
 
     assertAll("instanceDataInArrayShouldMatch",
@@ -189,7 +189,7 @@ class ZeroUtilityTest {
         .addIntegerArray(integers)
         .addLongArray(longs).addFloatArray(floats).addDoubleArray(doubles).addStringArray(strings)
         .addZeroArray(zeroArray);
-    var binary = origin.toBinary();
+    var binary = origin.toBinaries();
     var newOne = ZeroUtility.binaryToArray(binary);
 
     assertAll("collectionDataInArrayShouldMatch",
@@ -211,7 +211,7 @@ class ZeroUtilityTest {
     var origin = ZeroUtility.newZeroArray();
     origin.addBooleanArray(booleans).addShortArray(shorts).addBooleanArray(booleans)
         .addShortArray(shorts);
-    var binary = origin.toBinary();
+    var binary = origin.toBinaries();
     var newOne = ZeroUtility.binaryToArray(binary);
 
     assertAll("duplicatedValueInArrayShouldWork",
@@ -232,7 +232,7 @@ class ZeroUtilityTest {
         .putInteger("i", 100)
         .putShortArray("sa", shorts);
     origin.addZeroMap(zeroMap);
-    var binary = origin.toBinary();
+    var binary = origin.toBinaries();
     var newOne = ZeroUtility.binaryToArray(binary);
 
     assertEquals(zeroMap.toString(), newOne.getZeroMap(0).toString());
@@ -249,7 +249,7 @@ class ZeroUtilityTest {
         .putLong("l", 1000L)
         .putDouble("d", 1010101.101)
         .putZeroArray("za", ZeroUtility.newZeroArray().addDoubleArray(doubles));
-    var binary = origin.toBinary();
+    var binary = origin.toBinaries();
     var newOne = ZeroUtility.binaryToMap(binary);
 
     assertAll("primitiveDataInObjectShouldMatch",
@@ -269,7 +269,7 @@ class ZeroUtilityTest {
     origin.putNull("n")
         .putZeroElement("z", ZeroUtility.newZeroElement(ZeroType.BOOLEAN, false))
         .putString("s", "test");
-    var binary = origin.toBinary();
+    var binary = origin.toBinaries();
     var newOne = ZeroUtility.binaryToMap(binary);
 
     assertAll("instanceDataInObjectShouldMatch",
@@ -295,7 +295,7 @@ class ZeroUtilityTest {
         .putDoubleArray("d", doubles)
         .putStringArray("ss", strings)
         .putZeroArray("za", zeroArray);
-    var binary = origin.toBinary();
+    var binary = origin.toBinaries();
     var newOne = ZeroUtility.binaryToMap(binary);
 
     assertAll("collectionDataInObjectShouldMatch",
@@ -316,7 +316,7 @@ class ZeroUtilityTest {
     var origin = ZeroUtility.newZeroMap();
     origin.putBooleanArray("b1", booleans).putShortArray("s1", shorts)
         .putBooleanArray("b2", booleans).putShortArray("s2", shorts);
-    var binary = origin.toBinary();
+    var binary = origin.toBinaries();
     var newOne = ZeroUtility.binaryToMap(binary);
 
     assertAll("duplicatedValueInObjectShouldWork",
@@ -338,7 +338,7 @@ class ZeroUtilityTest {
         .putBooleanArray("ba", booleans)
         .putZeroArray("za", ZeroUtility.newZeroArray().addDoubleArray(doubles));
     origin.putZeroMap("z", zeroMap);
-    var binary = origin.toBinary();
+    var binary = origin.toBinaries();
     var newOne = ZeroUtility.binaryToMap(binary);
 
     assertEquals(zeroMap.toString(), newOne.getZeroMap("z").toString());
@@ -615,11 +615,11 @@ class ZeroUtilityTest {
         .putInteger("i", 100)
         .putFloat("f", 10.0f)
         .putShortArray("sa", shorts);
-    var binaryMap = zeroMap.toBinary();
+    var binaryMap = zeroMap.toBinaries();
     for (char i = 'a'; i <= 'z'; i++) {
       origin.putZeroMap(String.valueOf(i), ZeroUtility.binaryToMap(binaryMap));
     }
 
-    origin.toBinary();
+    origin.toBinaries();
   }
 }
