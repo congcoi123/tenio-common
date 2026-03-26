@@ -35,35 +35,44 @@ import java.net.URL;
  */
 public final class LoggerBootstrap {
 
-    public static void initialize() {
+    /**
+     * Initializes configuration for Log4j2.
+     *
+     * @param fwLog4j2File   the default configuration file which should be used when the user self-defined
+     *                       configuration file not found
+     * @param userLog4j2File the user self-defined configuration file
+     */
+    public static void initialize(String fwLog4j2File, String userLog4j2File) {
         // 1. Respect system property (highest priority)
         if (System.getProperty("log4j.configurationFile") != null) {
+            System.out.println("[LOG4J2] Using user configuration: " + userLog4j2File);
             return;
         }
 
         // 2. Check if application provides its own config
-        if (hasUserLog4jConfig()) {
+        if (hasUserLog4jConfig(userLog4j2File)) {
+            System.out.println("[LOG4J2] Using user configuration: " + userLog4j2File);
             return;
         }
 
         // 3. Fallback to framework default
         URL url = LoggerBootstrap.class
                 .getClassLoader()
-                .getResource("log4j2.tenio.xml");
+                .getResource(fwLog4j2File);
 
         if (url != null) {
             Configurator.initialize(null, url.toString());
-            System.out.println("[Log4j] Using framework default configuration: " + url);
+            System.out.println("[LOG4J2] Using framework default configuration: " + url);
         } else {
-            System.err.println("[Log4j] No default configuration found!");
+            System.err.println("[LOG4J2] No default configuration found!");
         }
     }
 
-    private static boolean hasUserLog4jConfig() {
+    private static boolean hasUserLog4jConfig(String userLog4j2File) {
         try {
             return Thread.currentThread()
                     .getContextClassLoader()
-                    .getResources("log4j2.xml")
+                    .getResources(userLog4j2File)
                     .hasMoreElements();
         } catch (Exception e) {
             return false;

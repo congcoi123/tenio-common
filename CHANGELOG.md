@@ -60,6 +60,6 @@
 ## 0.6.9 2026-03-23 Chore release
 - Updated License
 
-## 0.6.10 2026-XX-XX Chore release
+## 0.6.10 2026-03-26 Chore release
 - Supported default log4j configurations
 - Supported pretty print for configurations
