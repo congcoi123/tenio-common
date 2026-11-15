@@ -24,12 +24,12 @@ THE SOFTWARE.
 
 package com.tenio.common.logger.pool;
 
-import com.google.common.base.Throwables;
 import com.tenio.common.constant.CommonConstant;
 import com.tenio.common.exception.NullElementPoolException;
 import com.tenio.common.pool.ElementPool;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * The object pool mechanism for {@link StringBuilder}.
@@ -37,13 +37,17 @@ import org.apache.logging.log4j.Logger;
 public final class StringBuilderPool implements ElementPool<StringBuilder> {
 
   private static volatile StringBuilderPool instance;
-  private final Logger logger = LogManager.getLogger(getClass());
+  private static final int MAX_RETAINED_CAPACITY = 8 * 1024;
 
-  private StringBuilder[] pool;
-  private boolean[] used;
+  private final ConcurrentLinkedQueue<StringBuilder> available;
+  private final Set<StringBuilder> borrowed;
+  private final Object expansionLock;
 
   private StringBuilderPool() {
-    initialization();
+    available = new ConcurrentLinkedQueue<>();
+    borrowed = ConcurrentHashMap.newKeySet();
+    expansionLock = new Object();
+    refill(CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL);
   }
 
   /**
@@ -65,134 +69,57 @@ public final class StringBuilderPool implements ElementPool<StringBuilder> {
     return reference;
   }
 
-  private void initialization() {
-    pool = new StringBuilder[CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL];
-    used = new boolean[CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL];
-
-    for (int i = 0; i < pool.length; i++) {
-      pool[i] = new StringBuilder();
-      used[i] = false;
+  private void refill(int count) {
+    for (int i = 0; i < count; i++) {
+      available.offer(new StringBuilder());
     }
   }
 
   @Override
-  public synchronized StringBuilder get() {
-    for (int i = 0; i < used.length; i++) {
-      if (!used[i]) {
-        used[i] = true;
-        return pool[i];
+  public StringBuilder get() {
+    var element = available.poll();
+    if (element == null) {
+      synchronized (expansionLock) {
+        element = available.poll();
+        if (element == null) {
+          refill(CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL);
+          element = available.poll();
+        }
       }
     }
-    // If we got here, then all the Elements are in use. We will
-    // increase the number in our pool by @ADD_ELEMENT_POOL (arbitrary value for
-    // illustration purposes).
-    var oldUsed = used;
-    used = new boolean[oldUsed.length + CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL];
-    System.arraycopy(oldUsed, 0, used, 0, oldUsed.length);
-
-    var oldPool = pool;
-    pool = new StringBuilder[oldPool.length + CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL];
-    System.arraycopy(oldPool, 0, pool, 0, oldPool.length);
-
-    for (int i = oldPool.length; i < pool.length; i++) {
-      pool[i] = new StringBuilder();
-      used[i] = false;
+    if (!borrowed.add(element)) {
+      throw new IllegalStateException("StringBuilder was borrowed more than once");
     }
-
-    if (logger.isInfoEnabled()) {
-      infoWithoutPool(strgen("Increased the number of elements by ",
-          CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL, " to ", used.length));
-    }
-
-    // and allocate the last old element
-    used[oldPool.length - 1] = true;
-    return pool[oldPool.length - 1];
+    return element;
   }
 
   @Override
-  public synchronized void repay(StringBuilder element) {
-    var flagFound = false;
-    for (int i = 0; i < pool.length; i++) {
-      if (pool[i] == element) {
-        used[i] = false;
-        // clear the array
-        element.setLength(0);
-        flagFound = true;
-        break;
-      }
+  public void repay(StringBuilder element) {
+    if (element == null || !borrowed.remove(element)) {
+      throw new NullElementPoolException(String.valueOf(element));
     }
-    if (!flagFound) {
-      var exception = new NullElementPoolException(element.toString());
-      if (logger.isErrorEnabled()) {
-        errorWithoutPool(exception);
-      }
-      throw exception;
+    if (element.capacity() > MAX_RETAINED_CAPACITY) {
+      available.offer(new StringBuilder());
+    } else {
+      element.setLength(0);
+      available.offer(element);
     }
   }
 
   @Override
   public synchronized void cleanup() {
-    for (int i = 0; i < pool.length; i++) {
-      pool[i] = null;
-      used[i] = false;
-    }
-
-    initialization();
+    available.clear();
+    borrowed.clear();
+    refill(CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL);
   }
 
   @Override
-  public synchronized int getPoolSize() {
-    return (pool.length == used.length) ? pool.length : -1;
+  public int getPoolSize() {
+    return available.size() + borrowed.size();
   }
 
   @Override
-  public synchronized int getAvailableSlot() {
-    int slot = 0;
-    for (boolean b : used) {
-      if (!b) {
-        slot++;
-      }
-    }
-
-    return slot;
-  }
-
-  /**
-   * Only use for {@link StringBuilderPool}. It might cause out of memory, so be
-   * careful if you use it. You are warned!
-   *
-   * @param msg the message content
-   */
-  private void infoWithoutPool(String msg) {
-    if (logger.isInfoEnabled()) {
-      logger.info("[STRING BUILDER POOL] {}", msg);
-    }
-  }
-
-  /**
-   * Only use for {@link StringBuilderPool}. It might cause out of memory, so be
-   * careful if you use it. You are warned!
-   *
-   * @param cause the throwable
-   */
-  private void errorWithoutPool(Throwable cause) {
-    if (logger.isErrorEnabled()) {
-      logger.error(Throwables.getStackTraceAsString(cause));
-    }
-  }
-
-  /**
-   * To generate {@code String} for logging information by the corresponding
-   * objects.
-   *
-   * @param objects the corresponding objects, see {@link Object}
-   * @return a string value
-   */
-  private String strgen(Object... objects) {
-    var builder = new StringBuilder();
-    for (var object : objects) {
-      builder.append(object);
-    }
-    return builder.toString();
+  public int getAvailableSlot() {
+    return available.size();
   }
 }
