@@ -107,10 +107,12 @@ public final class StringBuilderPool implements ElementPool<StringBuilder> {
   }
 
   @Override
-  public synchronized void cleanup() {
-    available.clear();
-    borrowed.clear();
-    refill(CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL);
+  public void cleanup() {
+    synchronized (expansionLock) {
+      available.clear();
+      borrowed.clear();
+      refill(CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL);
+    }
   }
 
   @Override
