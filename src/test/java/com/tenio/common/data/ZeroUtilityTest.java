@@ -613,4 +613,29 @@ class ZeroUtilityTest {
 
     origin.toBinaries();
   }
+
+  @Test
+  @DisplayName("Large nested ZeroMap should round-trip cleanly with exponential buffer growth")
+  void largeZeroMapShouldRoundTripCleanly() {
+    var origin = ZeroUtility.newZeroMap();
+    for (int i = 0; i < 200; i++) {
+      origin.putString("k" + i, "payload-" + i + "-".repeat(40));
+    }
+    var decoded = ZeroUtility.binariesToMap(origin.toBinaries());
+    assertEquals(200, decoded.size());
+    assertEquals("payload-199" + "-".repeat(40), decoded.getString("k199"));
+  }
+
+  @Test
+  @DisplayName("Encoding a deeply nested ZeroMap beyond max depth should throw")
+  void encodingDeeplyNestedZeroMapShouldThrow() {
+    var root = ZeroUtility.newZeroMap();
+    var current = root;
+    for (int i = 0; i < 70; i++) {
+      var child = ZeroUtility.newZeroMap();
+      current.putZeroMap("n", child);
+      current = child;
+    }
+    assertThrows(IllegalArgumentException.class, root::toBinaries);
+  }
 }
