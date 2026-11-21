@@ -140,7 +140,10 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
     Objects.requireNonNull(id, "id");
     var task = tasks.get(id);
     if (task != null) {
-      return (int) task.getScheduler().getDelay(TimeUnit.SECONDS);
+      var scheduler = task.getScheduler();
+      if (scheduler != null) {
+        return (int) scheduler.getDelay(TimeUnit.SECONDS);
+      }
     }
     return -1;
   }
