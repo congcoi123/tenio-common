@@ -28,6 +28,7 @@ import com.tenio.common.exception.RunningScheduledTaskException;
 import com.tenio.common.logger.SystemLogger;
 import com.tenio.common.task.Task;
 import com.tenio.common.task.TaskManager;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,11 +51,12 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
    */
   private final Map<String, Task> tasks;
   private final Object lifecycleLock;
-  private long lifecycleVersion;
+  private final Map<String, Object> startingTasks;
 
   private TaskManagerImpl() {
     tasks = new ConcurrentHashMap<>();
     lifecycleLock = new Object();
+    startingTasks = new HashMap<>();
   }
 
   /**
@@ -71,27 +73,39 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
     Objects.requireNonNull(id, "id");
     Objects.requireNonNull(task, "task");
 
-    final long observedVersion;
+    var registration = new Object();
     synchronized (lifecycleLock) {
-      var existingTask = tasks.get(id);
-      if (isActive(existingTask)) {
+      if (startingTasks.containsKey(id) || isActive(tasks.get(id))) {
         if (isErrorEnabled()) {
           error(new RunningScheduledTaskException(), "task id: ", id);
         }
         return;
       }
-      observedVersion = lifecycleVersion;
+      startingTasks.put(id, registration);
     }
 
-    task.run();
-    var scheduler = Objects.requireNonNull(task.getScheduler(), "A task must expose its scheduler after run()");
-
+    ScheduledFuture<?> scheduler;
     boolean installed = false;
-    synchronized (lifecycleLock) {
-      var existingTask = tasks.get(id);
-      if (lifecycleVersion == observedVersion && !isActive(existingTask)) {
-        tasks.put(id, task);
-        installed = true;
+    try {
+      task.run();
+      scheduler = Objects.requireNonNull(task.getScheduler(),
+          "A task must expose its scheduler after run()");
+      synchronized (lifecycleLock) {
+        if (startingTasks.get(id) == registration) {
+          tasks.put(id, task);
+          installed = true;
+        }
+      }
+    } catch (RuntimeException | Error failure) {
+      try {
+        task.shutdown();
+      } catch (RuntimeException | Error shutdownFailure) {
+        failure.addSuppressed(shutdownFailure);
+      }
+      throw failure;
+    } finally {
+      synchronized (lifecycleLock) {
+        startingTasks.remove(id, registration);
       }
     }
     if (!installed) {
@@ -108,7 +122,7 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
     Objects.requireNonNull(id, "id");
     final Task task;
     synchronized (lifecycleLock) {
-      lifecycleVersion++;
+      startingTasks.remove(id);
       task = tasks.remove(id);
     }
     if (task != null) {
@@ -123,8 +137,8 @@ public final class TaskManagerImpl extends SystemLogger implements TaskManager {
   public void clear() {
     final Map<String, Task> tasksToStop;
     synchronized (lifecycleLock) {
-      lifecycleVersion++;
-      tasksToStop = new java.util.HashMap<>(tasks);
+      startingTasks.clear();
+      tasksToStop = new HashMap<>(tasks);
       tasks.clear();
     }
     for (var entry : tasksToStop.entrySet()) {

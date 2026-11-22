@@ -56,29 +56,22 @@ public abstract class CommonConfiguration extends SystemLogger implements Config
 
   @Override
   public boolean getBoolean(ConfigurationType key) {
-    var value = configuration.get(key);
-    return value instanceof Boolean booleanValue
-        ? booleanValue : Boolean.parseBoolean(String.valueOf(value));
+    return Boolean.parseBoolean((String) configuration.get(key));
   }
 
   @Override
   public int getInt(ConfigurationType key) {
-    var value = configuration.get(key);
-    return value instanceof Number number ? number.intValue()
-        : Integer.parseInt(String.valueOf(value));
+    return Integer.parseInt((String) configuration.get(key));
   }
 
   @Override
   public float getFloat(ConfigurationType key) {
-    var value = configuration.get(key);
-    return value instanceof Number number ? number.floatValue()
-        : Float.parseFloat(String.valueOf(value));
+    return Float.parseFloat((String) configuration.get(key));
   }
 
   @Override
   public String getString(ConfigurationType key) {
-    var value = configuration.get(key);
-    return value == null ? null : String.valueOf(value);
+    return (String) configuration.get(key);
   }
 
   @Override
@@ -88,8 +81,7 @@ public abstract class CommonConfiguration extends SystemLogger implements Config
 
   @Override
   public boolean isDefined(ConfigurationType key) {
-    var value = configuration.get(key);
-    return value != null && !"-1".equals(String.valueOf(value));
+    return getString(key) != null && !getString(key).equals("-1");
   }
 
   @Override

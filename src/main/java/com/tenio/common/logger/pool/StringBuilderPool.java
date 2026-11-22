@@ -27,9 +27,12 @@ package com.tenio.common.logger.pool;
 import com.tenio.common.constant.CommonConstant;
 import com.tenio.common.exception.NullElementPoolException;
 import com.tenio.common.pool.ElementPool;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.WeakHashMap;
 
 /**
  * The object pool mechanism for {@link StringBuilder}.
@@ -39,14 +42,15 @@ public final class StringBuilderPool implements ElementPool<StringBuilder> {
   private static volatile StringBuilderPool instance;
   private static final int MAX_RETAINED_CAPACITY = 8 * 1024;
 
-  private final ConcurrentLinkedQueue<StringBuilder> available;
+  private final Queue<StringBuilder> available;
   private final Set<StringBuilder> borrowed;
-  private final Object expansionLock;
+  /** Weak keys allow abandoned builders from earlier pool generations to be collected. */
+  private final Map<StringBuilder, Boolean> retired;
 
   private StringBuilderPool() {
-    available = new ConcurrentLinkedQueue<>();
-    borrowed = ConcurrentHashMap.newKeySet();
-    expansionLock = new Object();
+    available = new ArrayDeque<>();
+    borrowed = new HashSet<>();
+    retired = new WeakHashMap<>();
     refill(CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL);
   }
 
@@ -76,26 +80,25 @@ public final class StringBuilderPool implements ElementPool<StringBuilder> {
   }
 
   @Override
-  public StringBuilder get() {
-    var element = available.poll();
-    if (element == null) {
-      synchronized (expansionLock) {
-        element = available.poll();
-        if (element == null) {
-          refill(CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL);
-          element = available.poll();
-        }
-      }
+  public synchronized StringBuilder get() {
+    if (available.isEmpty()) {
+      refill(CommonConstant.ADDITIONAL_NUMBER_ELEMENTS_POOL);
     }
-    if (!borrowed.add(element)) {
-      throw new IllegalStateException("StringBuilder was borrowed more than once");
-    }
+    var element = available.remove();
+    borrowed.add(element);
     return element;
   }
 
   @Override
-  public void repay(StringBuilder element) {
-    if (element == null || !borrowed.remove(element)) {
+  public synchronized void repay(StringBuilder element) {
+    if (element == null) {
+      throw new NullElementPoolException("null");
+    }
+    if (!borrowed.remove(element)) {
+      if (retired.remove(element) != null) {
+        element.setLength(0);
+        return;
+      }
       throw new NullElementPoolException(String.valueOf(element));
     }
     if (element.capacity() > MAX_RETAINED_CAPACITY) {
@@ -106,20 +109,27 @@ public final class StringBuilderPool implements ElementPool<StringBuilder> {
     }
   }
 
+  /**
+   * Resets idle capacity while allowing outstanding builders to be returned once.
+   * Builders borrowed before cleanup are discarded when returned.
+   */
   @Override
   public synchronized void cleanup() {
     available.clear();
+    for (var builder : borrowed) {
+      retired.put(builder, Boolean.TRUE);
+    }
     borrowed.clear();
     refill(CommonConstant.DEFAULT_NUMBER_ELEMENTS_POOL);
   }
 
   @Override
-  public int getPoolSize() {
+  public synchronized int getPoolSize() {
     return available.size() + borrowed.size();
   }
 
   @Override
-  public int getAvailableSlot() {
+  public synchronized int getAvailableSlot() {
     return available.size();
   }
 }
